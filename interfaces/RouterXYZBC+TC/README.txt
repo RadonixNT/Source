@@ -14,7 +14,7 @@ Customizing your copy
   RouterXYZBC+TC/MainForm*.cs and associated resources contain the operator UI.
   Localization/Catalogs, PLCPrograms, Configuration, Machining and Simulation under the application project contain translations, factory programs, settings, machining integration and simulation sources.
   Router-Development.md describes this model. Reference/index.html opens the operator manual.
-  Keep DeliveryReferences.props, Runtime and NuGet.Config alongside the solution. Runtime contains the matched Radonix DLLs, API XML documentation, native Core and ENI tools. PublicPackages contains the public NuGet dependencies for the application and tests. The supplied NuGet.Config restores from the delivery itself. Packages contains the matched nine Radonix 1.0.0 packages for separate package consumers.
+  Keep DeliveryReferences.props, Runtime and NuGet.Config alongside the solution. Runtime contains the matched Radonix DLLs, API XML documentation, native Core and ENI tools. PublicPackages contains the public NuGet dependencies for the application and tests. Extract PublicPackages.zip from the same release into this directory before offline restore. Packages contains the matched nine Radonix 1.0.0 packages for separate package consumers.
   Delivery.json records original file hashes. Keep the original ZIP and edit a working copy.
 
 Building your installer
@@ -33,3 +33,11 @@ Public preview and machine prerequisites
   runtime files and the local NuGet dependencies needed to build the source.
   Physical operation also requires the applicable Radonix and Acontis runtime
   licenses and machine-specific commissioning.
+
+NuGet restore options
+  Offline: extract PublicPackages.zip into this model's extracted folder so
+  PublicPackages and NuGet.Config are side by side. Run the restore and build
+  commands above.
+  Online: replace NuGet.Config with the included NuGet.Online.Config before
+  building the solution or installer. The online configuration uses nuget.org
+  for third-party dependencies and the local Packages folder for Radonix.
