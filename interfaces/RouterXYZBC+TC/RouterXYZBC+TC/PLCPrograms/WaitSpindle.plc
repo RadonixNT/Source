@@ -1,0 +1,17 @@
+// Hold the safe entry until this exchange's shutdown and Background stop result agree.
+// Background uses S3 edges when assigned, otherwise its stop delays alone.
+// Pressure must be confirmed only when assigned; grip feedback is qualified per stage.
+IF NOT TP2.Running OR NOT ToolChangeActive THEN END_FUNCTION(Result := 1); END_IF;
+IF ToolChangeFault <> 0 OR NOT SpindleToolChangeConfigured THEN
+    IF ToolChangeFault = 0 THEN ToolChangeFault := 2; END_IF;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 2);
+END_IF;
+IF ToolChangeSpindleStopped AND SpindleStopped AND (NOT ASSIGNED(PressureSensor) OR PressureSensor) THEN
+    END_FUNCTION(Result := 0);
+END_IF;
+IF SF.Time >= SpindleOffTime + 1000 + SpindleFeedbackTimeout THEN
+    ToolChangeFault := 3;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 3);
+END_IF;

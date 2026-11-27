@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 19 — Editing a G-code File | RouterXYZAC+RTCP</title>
+<meta name="description" content="Operator guide to opening the G-code editor, making controlled text corrections, saving to the original file, handling failures and checking the prepared result.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+RTCP · CHAPTER 19</p><p class="edition">Operator Manual · English · 9 October 2026</p>
+<h1>Editing a G-code File</h1><p class="lead">Make an approved correction to the correct source file, understand when the original file changes, and check the newly prepared job before requesting any movement.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> This chapter explains the editing workflow. It does not teach an operator to design a machining program or approve unfamiliar cutting conditions. Use the approved job information for the change itself.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-19">Manual contents</a> · <a href="18-selected-start-line.html">Previous chapter: Starting from a selected line</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZAC update — 10 November 2026.</strong> Use the XYZAC+TC dialect: A/C are direct angles; B and RTCP are unsupported. Inch mode never scales angular values. See the <a href="XYZAC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Understand what editing changes and when to use it</a></li>
+<li><a href="#opening">Open the correct document in a settled machine state</a></li>
+<li><a href="#navigation">Find the intended text without changing it accidentally</a></li>
+<li><a href="#editing">Make one controlled correction and inspect the replacement</a></li>
+<li><a href="#editor-aids">Use coloring, suggestions and local warnings without treating them as approval</a></li>
+<li><a href="#review">Review the whole effect of the correction before Save</a></li>
+<li><a href="#saving">Save to the original file and wait for the result</a></li>
+<li><a href="#cancel">Cancel an unsaved draft without confusing it with restoration</a></li>
+<li><a href="#save-errors">Handle a save failure and establish the actual file state</a></li>
+<li><a href="#reload">Follow the reload and distinguish saving from program acceptance</a></li>
+<li><a href="#verify">Check the revised job and establish a new start intention</a></li>
+<li><a href="#practice">Practise an approved correction and record the result</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">19.1 Understand what editing changes and when to use it</h2>
+
+<p>The G-code editor changes the text of a machining file. That text is the source from which the application prepares movement and equipment instructions. Editing is therefore different from panning the preview, selecting a source row, adjusting the live feed percentage or choosing a new start line. A saved text change can affect this job and later uses of the same file.</p>
+<p>Use the editor for a clearly defined, approved correction. For an operator with limited programming knowledge, the correction should identify the exact file, the text to change and the replacement to use. You should also know why the change is needed and what result must be checked afterwards. The ability to type a new value is not enough to establish that it is suitable for the machine.</p>
+<h3>Separate the editing task from the machining decision</h3>
+<p>This chapter explains how to navigate the editor, control a text change, save it and verify the result. It does not ask you to invent coordinates, select a cutter from unfamiliar material requirements or reconstruct a damaged program. Those decisions belong to the person responsible for preparing or approving the job.</p>
+<p>A seemingly small change can have a large effect. A missing minus sign can place a movement on the other side of a reference. A different tool number can call another cutter. A changed instruction near the beginning may influence many later lines. Review the full approved correction, not just how many characters it contains.</p>
+<div class="table-scroll"><table><caption>Table 19-1. Choose the workflow that matches the task</caption><thead><tr><th scope="col">Intention</th><th scope="col">Relevant workflow</th><th scope="col">Does it edit the source file?</th></tr></thead><tbody>
+<tr><td>Inspect a feature or text row</td><td>Main source viewer and 3D preview.</td><td>No.</td></tr>
+<tr><td>Start at an approved later entry</td><td>Start Line procedure in Chapter 18.</td><td>No.</td></tr>
+<tr><td>Adjust an approved live cutting feed</td><td>Main-program feed control.</td><td>No.</td></tr>
+<tr><td>Correct approved program text</td><td>Edit GCode, then Save and reload review.</td><td>Yes, when saved.</td></tr>
+<tr><td>Change machine-control logic</td><td>The separate authorized PLC workflow.</td><td>Not through this G-code editor.</td></tr>
+</tbody></table></div>
+<h3>Think in three stages</h3>
+<p>While the editor is open, you work on an editable draft of the loaded document. Save writes that draft to the original file. The application then opens and prepares the saved file again. These are separate events: a draft can contain mistakes, a saved file can fail preparation, and a prepared file can still be unsuitable for the actual workpiece.</p>
+<p>Saving does not request Run. However, it changes the disk file before the subsequent program preparation establishes whether it is accepted. Do not expect the old file to remain automatically available if the revised program is rejected. The later sections explain how to preserve an approved revision through the shop's file-control procedure.</p>
+<div class="learning-example"><h3>Example: the part is in the wrong place on the table</h3><p>Before editing coordinates, establish whether the stock was placed at the intended datum and whether the correct work origin was selected. A setup error may need a setup correction rather than a file change. Changing program text to compensate for an unexplained setup can create a second problem for the next workpiece.</p></div>
+<p>Before opening the editor, be able to state the task in a sentence: “In this approved file revision, replace this exact text with this approved replacement.” If the task is only “make the part come out right,” obtain the missing machining guidance first. A controlled editing workflow depends on a defined correction and a defined check of its result.</p>
+</section>
+<section id="opening" aria-labelledby="opening-title"><h2 id="opening-title">19.2 Open the correct document in a settled machine state</h2>
+
+<p>Edit GCode opens the source associated with the document currently held by the interpreter. It requires a document with a known filename. The editor begins with that loaded document's text and uses the associated full file path as its save destination. Confirm both before making any change.</p>
+
+<h3>Do not discard a paused job casually</h3>
+<p>If the file belongs to a partly completed job, decide whether editing and reloading are appropriate for that workpiece. Reloading replaces the prepared program and clears the pending selected-start request. It is not a way to preserve a paused cut while quietly changing one of its future instructions.</p>
+
+<div class="table-scroll"><table><caption>Table 19-2. Checks before opening Edit GCode</caption><thead><tr><th scope="col">Check</th><th scope="col">What to establish</th><th scope="col">Why it matters</th></tr></thead><tbody>
+<tr><td>Machine activity</td><td>The relevant operations have settled and editing is available.</td><td>Stillness alone does not establish an inactive program.</td></tr>
+<tr><td>Document identity</td><td>The loaded document is the intended job and revision.</td><td>The editor does not ask you to select a different file when it opens.</td></tr>
+<tr><td>Filename</td><td>The full destination path is correct.</td><td>Save writes back to that original path.</td></tr>
+<tr><td>Approved correction</td><td>The location, original text and replacement are known.</td><td>Editing controls cannot choose suitable machining conditions.</td></tr>
+<tr><td>Partly completed work</td><td>The effect of replacing the prepared job is understood.</td><td>A later restart must be reviewed against the new source.</td></tr>
+<tr><td>Revision preservation</td><td>The approved earlier revision is available under the shop's file-control procedure if required.</td><td>The dialog has no Save As step or automatic revision archive.</td></tr>
+</tbody></table></div>
+<h3>Check the title after the editor opens</h3>
+<p>The editor title includes the full source path. Read it, especially when two folders contain files with the same short name. A training copy and a production file may look identical in the text area while having very different consequences when saved.</p>
+<p>The application opens the loaded text; it does not first reread the disk file specifically for the editor. If another person or program has changed that same disk file since it was loaded, the editor may still contain the older loaded text. Avoid simultaneous editing of the same file, and reload the intended revision before starting this workflow when external changes are known.</p>
+<div class="learning-example"><h3>Example: two files have the same name</h3><p>The production folder and a training folder both contain a file called Panel.nc. The text looks familiar, but the editor title points to the production folder. If the exercise was intended for the training copy, cancel before saving and open the correct file through the ordinary loading procedure.</p></div>
+<p>A source document retained after a preparation rejection may still be editable when the other conditions permit it. This allows an approved correction to be made without implying that the rejected program is runnable. Conversely, a missing filename or unavailable document can prevent this editor from opening even if a previous filename is remembered by the operator.</p>
+<p>If the command remains unavailable, identify the unmet condition rather than repeatedly clicking it. Record the current loading, connection and operation state. Once the right document is open in the editor, keep the task confined to the approved correction and verify the destination again before Save.</p>
+</section>
+<section id="navigation" aria-labelledby="navigation-title"><h2 id="navigation-title">19.3 Find the intended text without changing it accidentally</h2>
+
+<p>The editor contains a writable text area, a line-number margin and Save and Cancel buttons. It can be resized to make more of the program visible. Unlike the main source viewer, this text area accepts edits. Clicking it places the text insertion point, and typing can change the document.</p>
+<p>Begin by locating the approved correction without typing. Read its surrounding text and compare it with the instruction you were given. If the same value appears in several operations, identify the correct occurrence through the nearby tool, operation description or other approved context.</p>
+<h3>Recognize the insertion point and selected text</h3>
+<p>The thin insertion marker, often called the caret, shows where typed characters will enter. A highlighted text selection is the range that typing or pasting can replace. This is different from a selected whole source row in the read-only main viewer. Before making a change, check whether you have selected one value, several words or several lines.</p>
+<p>The editor does not wrap long source lines onto multiple display rows. Use horizontal scrolling or a wider window to inspect text beyond the right edge. Do not assume that the visible part of a line is the complete instruction.</p>
+<div class="table-scroll"><table><caption>Table 19-3. Navigating the editable document</caption><thead><tr><th scope="col">Action</th><th scope="col">Purpose</th><th scope="col">Check before editing</th></tr></thead><tbody>
+<tr><td>Scroll vertically</td><td>Locate the required part of the file.</td><td>Read the physical line numbers and neighboring content.</td></tr>
+<tr><td>Scroll horizontally</td><td>Read the hidden end of a long line.</td><td>Include every word on the line in your review.</td></tr>
+<tr><td>Click in the text</td><td>Place the insertion point.</td><td>The next typed character enters at this position.</td></tr>
+<tr><td>Drag across text</td><td>Select the exact range to replace or copy.</td><td>Check both ends of the selection, including signs and line breaks.</td></tr>
+<tr><td>Resize the window</td><td>Expose more text for review.</td><td>Resizing changes the view, not program content.</td></tr>
+<tr><td>Read the margin number</td><td>Identify a physical source row.</td><td>It is not necessarily the N number written inside that row.</td></tr>
+</tbody></table></div>
+<h3>Use line numbers with their surrounding content</h3>
+<p>Physical line numbers include comments and blank lines. Inserting or deleting rows shifts the numbers that follow. If the correction refers to a physical line, verify the original text there before replacing it. A different file revision may place the same operation on another row.</p>
+<p>Do not double-click a word in the editor expecting the selected-start behavior of the main viewer. Here you are using a native text editor, not issuing a machine entry selection. The editor's task is to change source text; the later selected-start procedure occurs after the revised file is saved and prepared.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 19-1</div><h3>The G-code editor and its save destination</h3><p>Capture the actual editor using an approved training file. Label the full-path title, line-number margin, insertion point, text selection, horizontal scrollbar and Save/Cancel buttons. Use a non-private example path and keep enough surrounding text to make the selected correction understandable.</p><p>Suggested file: <code>assets/images/19-editor-window.png</code>.</p><figcaption>Reserved for the delivered editor layout; the text area is writable, unlike the main source viewer.</figcaption></figure>
+<div class="learning-example"><h3>Example: a value appears twice on the screen</h3><p>Two neighboring operations contain the same number. The approved correction applies to only one of them. Locate that operation by its context before selecting the number. A matching value alone does not identify the correct place to edit.</p></div>
+<p>If you lose your place, stop typing and locate the operation again. Do not use speculative changes to discover which line controls a feature. The editor's visual styling can help you distinguish text categories, but it does not replace the approved identification of the correction.</p>
+</section>
+<section id="editing" aria-labelledby="editing-title"><h2 id="editing-title">19.4 Make one controlled correction and inspect the replacement</h2>
+
+<p>Make the approved change in a small, reviewable step. Select the exact text to replace, enter the approved replacement and read the complete affected line afterwards. Then check the neighboring lines. This is easier to verify than making many unrelated changes and trying to remember all of them before Save.</p>
+<p>When text is selected, typing or pasting replaces the selected range. With no selection, text is inserted at the caret. Backspace and Delete remove text on different sides of the caret, and a selected range can be removed as a whole. Check the selection before each destructive text action.</p>
+<h3>Use the native editing controls carefully</h3>
+<p>The editor retains native text selection, clipboard and undo/redo behavior. Copy leaves the selected text in place; Cut removes it into the clipboard; Paste inserts the clipboard content or replaces a selection. Undo reverses an available recent editing action, and Redo reapplies an available undone action. These operate on the open draft, not on already performed machining.</p>
+<div class="table-scroll"><table><caption>Table 19-4. Check the scope of each edit</caption><thead><tr><th scope="col">Action</th><th scope="col">Possible unintended effect</th><th scope="col">Review immediately</th></tr></thead><tbody>
+<tr><td>Replace a number</td><td>A sign, decimal point or adjacent word is included or omitted.</td><td>The complete approved value and its surrounding instruction.</td></tr>
+<tr><td>Paste text</td><td>Extra rows, labels or punctuation enter with the clipboard content.</td><td>The full pasted range, not just its first visible line.</td></tr>
+<tr><td>Delete selected text</td><td>The selection includes a line break and joins two instructions.</td><td>The resulting line boundaries and neighboring text.</td></tr>
+<tr><td>Insert a row</td><td>All subsequent physical line numbers change.</td><td>Any correction list or restart instruction based on old line numbers.</td></tr>
+<tr><td>Undo or Redo</td><td>The action affects a larger editing step than expected.</td><td>The actual restored text before proceeding.</td></tr>
+<tr><td>Select the whole document</td><td>The next typed character or paste can replace the entire program.</td><td>Selection extent before typing.</td></tr>
+</tbody></table></div>
+<h3>Do not treat the clipboard as an approved program source</h3>
+<p>If the correction is supplied in a message or document, paste only the approved source text. Explanatory labels, quotation marks and formatting characters may look harmless in a message but do not belong automatically in the machining file. Inspect what the editor actually received, including signs, spaces, line breaks and any text beyond the right edge.</p>
+<p>Prefer an exact approved replacement over retyping a long unfamiliar instruction from memory. If the supplied text is ambiguous, resolve it before saving. Do not choose between two possible values by seeing which one the editor colors or accepts.</p>
+<div class="learning-example"><h3>Example: replacing only an operation comment</h3><p>The approved task is to correct a descriptive comment. Select only the intended comment text and preserve its delimiters and neighboring instructions. After the change, verify that you did not remove the closing parenthesis or join the comment to another line. Even a non-motion wording correction should be checked in its actual source context.</p></div>
+<h3>Understand the limits of Undo</h3>
+<p>Undo is useful while editing, but it is not a revision archive. A newly opened editor starts with a fresh document and no history of changes made in a previous editor session. Once a successful save closes the window, reopening the file does not give you an undo step back to the old disk revision.</p>
+<p>If you are unsure whether the open draft still matches the intended correction, stop editing and compare it with the approved original information. Before a save has been attempted, Cancel can discard this draft and let you begin again from the loaded source. After a failed save attempt, the disk state also needs review, as explained later in this chapter.</p>
+<p>Keep a short record of the changes made, especially if there is more than one approved correction. The record should identify the operation and original/replacement text, not only a line number that may shift during editing. This makes the final review specific and reproducible.</p>
+</section>
+<section id="editor-aids" aria-labelledby="editor-aids-title"><h2 id="editor-aids-title">19.5 Use coloring, suggestions and local warnings without treating them as approval</h2>
+
+<p>The editor styles different kinds of text to make the source easier to read. Commands, numbers, axis-related words and comments can have different appearances. This visual assistance helps you follow a line, but it is not the interpreter's complete acceptance check and does not prove that an instruction is supported by this machine.</p>
+<p>The shared G-code editing profile contains a broader vocabulary than any particular machine configuration may execute. A familiar command can appear in a suggestion list or receive normal coloring even when the job preparation later rejects it or reports that an equipment action is not bound. Always review the saved file's preparation result.</p>
+<h3>Completion can insert more than the word you chose</h3>
+<p>The editor can show completion suggestions as you type. While the text area has focus, Ctrl+Space explicitly requests available completions. Some suggestions are simple words; others insert an example instruction containing additional coordinates or feed text.</p>
+<p>For example, the profile has movement templates that include zero-valued coordinates and a sample feed. These are editing templates, not calculated values for your part. Accepting one can change more text than the few letters originally typed. Review every inserted word before retaining it, and never use template values as machining recommendations.</p>
+<div class="table-scroll"><table><caption>Table 19-5. Editing assistance and its limits</caption><thead><tr><th scope="col">Aid</th><th scope="col">Useful for</th><th scope="col">Does not establish</th></tr></thead><tbody>
+<tr><td>Text coloring</td><td>Recognizing broad categories of source text.</td><td>That the machine supports or should execute the instruction.</td></tr>
+<tr><td>Completion list</td><td>Reducing typing and locating known words.</td><td>The correct operation, tool or coordinates for the job.</td></tr>
+<tr><td>Inserted template</td><td>Providing a text pattern for a knowledgeable user.</td><td>Approved values or a collision-free movement.</td></tr>
+<tr><td>Local warning marks</td><td>Drawing attention to limited text checks.</td><td>Complete syntax, geometry, equipment or setup validation.</td></tr>
+<tr><td>No visible warning</td><td>No current displayed diagnostic from the editor's limited checks.</td><td>Permission to save or run without review.</td></tr>
+</tbody></table></div>
+<h3>What the built-in local checks cover</h3>
+<p>The reviewed G-code editor profile checks for excessively long lines and unmatched comment parentheses. It flags lines longer than 1024 characters and parenthesis mismatches. These checks are helpful for obvious text problems, but they do not evaluate the entire machining meaning of the document.</p>
+<p>The editor performs document checks when its source is assigned and checks a line when you move to another line. Edits can clear existing marks in affected areas until checks run again. A warning disappearing while you are typing is not proof that the complete document has passed a new preparation cycle.</p>
+<p>The dialog's Save operation does not use these local marks as a complete validation gate. It saves the text through the application's file-writing operation, then the application prepares the file again. Consequently, a file can be saved successfully and still be rejected afterwards.</p>
+<div class="learning-example"><h3>Example: a suggestion adds unexpected coordinates</h3><p>You intend to correct a command name, accept a movement completion and discover that the line now includes extra coordinate words. Do not keep them merely because they came from the editor. Undo the unintended insertion or restore the exact approved text, then inspect the whole line.</p></div>
+<p>If you are only making a supplied correction, you generally do not need to explore unfamiliar suggestions. Use the exact approved replacement and verify what is present. Do not try commands from the completion list to discover the machine's capabilities.</p>
+<p>Keep three checks separate: the editor's text assistance, the application's post-save program preparation, and the operator's physical setup review. Each serves a different purpose. A successful result at one stage cannot replace the later checks needed before movement.</p>
+</section>
+<section id="review" aria-labelledby="review-title"><h2 id="review-title">19.6 Review the whole effect of the correction before Save</h2>
+
+<p>Before saving, compare the edited text with the approved correction. Read the complete affected instruction and its neighboring lines, not just the changed number. Check that no extra text was inserted through completion or pasting, and that no sign, decimal point, comment delimiter or line break was lost.</p>
+<p>The reviewed dialog does not provide a separate before-and-after comparison screen or a revision summary. Keep your correction record and approved reference available. If several changes were authorized, check each one against that record before writing the file.</p>
+<h3>Use a review that follows the possible machining effect</h3>
+<div class="table-scroll"><table><caption>Table 19-6. Pre-save review of an approved correction</caption><thead><tr><th scope="col">Review item</th><th scope="col">What to compare</th><th scope="col">Why it matters</th></tr></thead><tbody>
+<tr><td>File and revision</td><td>The title's path and the approved job information.</td><td>A correct edit in the wrong file is still the wrong result.</td></tr>
+<tr><td>Original and replacement text</td><td>The exact approved change, including signs and decimal places.</td><td>Small text differences can change movement substantially.</td></tr>
+<tr><td>Units and coordinate interpretation</td><td>Any changed instruction that affects how later values are read.</td><td>An early instruction can influence many following movements.</td></tr>
+<tr><td>Tool and spindle requests</td><td>The intended tool, speed and equipment sequence.</td><td>Text acceptance does not select suitable cutting conditions.</td></tr>
+<tr><td>Line boundaries and comments</td><td>Complete instructions and correctly bounded comments.</td><td>Joining or hiding text can alter what the interpreter receives.</td></tr>
+<tr><td>Program ending</td><td>The intended final movements and end instructions remain present.</td><td>An accidental deletion can change the end-of-job sequence.</td></tr>
+<tr><td>Restart information</td><td>Any saved physical line numbers affected by inserted or deleted rows.</td><td>A previous selected-start instruction may no longer refer to the same operation.</td></tr>
+</tbody></table></div>
+<h3>Know when a change exceeds the operator's task</h3>
+<p>If the correction exposes an inconsistency in the supplied program, return it to the person responsible rather than extending the edit yourself. For example, changing one coordinate may suggest that an arc or a later return movement also needs modification. That is a machining-program decision, not a routine text-entry choice.</p>
+<p>Similarly, do not remove an unfamiliar equipment instruction simply because it produces a warning. Determine what physical action the job requires and why the instruction is present. The warning may reveal a configuration or equipment issue that cannot be corrected by deleting text.</p>
+<div class="learning-example"><h3>Example: the corrected value is right, but the sign is missing</h3><p>The approved replacement includes a negative sign. The digits were entered correctly, but the selected range did not preserve or include that sign as expected. Reading only the digits misses the problem. Read the whole value with its sign and the word that identifies what it controls.</p></div>
+<p>For comment-only changes, still inspect delimiters and line boundaries. The intent may be descriptive, but an incorrectly closed comment can affect nearby source. If line numbers were added or removed, update the correction record so later readers do not use stale physical references.</p>
+<p>If the original revision must remain available, establish that preservation before pressing Save. The application's Save writes to the original path and does not first ask where to create a new version. Cancel the draft and use the shop's file-management procedure if the chosen destination is not the one that should be changed.</p>
+<p>Finish the review by defining the post-save checks. State which feature, tool requirement, dimension or message should change, and which neighboring operations need comparison. This turns reload review into a specific verification of the correction rather than a glance at whether the preview still looks familiar.</p>
+</section>
+<section id="saving" aria-labelledby="saving-title"><h2 id="saving-title">19.7 Save to the original file and wait for the result</h2>
+
+<p>Save writes the complete edited document to the original source path shown in the editor title. This dialog does not include Save As, a choice of another destination or automatic version numbering. If a new revision needs a different filename, establish that through the shop's approved file-management procedure before using this editor on it.</p>
+<p>The application uses the source's retained text encoding when available. In ordinary terms, it tries to write the text using the character format identified when the file was loaded. There is no operator-facing encoding selector in this dialog. If text characters cannot be saved as expected, treat the result as a file problem to investigate rather than removing unfamiliar text at random.</p>
+<h3>What happens while Save is pending</h3>
+<p>Press Save once after the review. The editor becomes read-only and the Save and Cancel buttons are disabled while the write is in progress. This prevents a second button request or a new edit from changing the draft being written. Wait for the reported result instead of repeatedly clicking or closing the application.</p>
+<p>If the file write succeeds, the dialog closes with a successful result and the application starts its reopen-and-prepare workflow for that same path. If a handled write error occurs, a message is shown and editing is restored for another decision. The later reload is a separate operation; do not infer its success merely from the dialog closing.</p>
+<div class="table-scroll"><table><caption>Table 19-7. The meaning of the save stages</caption><thead><tr><th scope="col">Stage</th><th scope="col">What has happened</th><th scope="col">What is not yet established</th></tr></thead><tbody>
+<tr><td>Draft reviewed</td><td>The open text has been checked against the approved correction.</td><td>The disk file has not changed through typing alone.</td></tr>
+<tr><td>Save pending</td><td>The application is writing the complete text to the original path.</td><td>Write success and program acceptance.</td></tr>
+<tr><td>Write succeeds</td><td>The file-writing operation completed successfully.</td><td>The revised program may still fail preparation.</td></tr>
+<tr><td>Reopen/preparation succeeds</td><td>The application has prepared the revised file.</td><td>Suitability of the physical setup and part quality.</td></tr>
+<tr><td>Run requested later</td><td>A separate machine-operation request is made.</td><td>Completion of preparation, positioning or machining.</td></tr>
+</tbody></table></div>
+<h3>Saving is a full-file replacement</h3>
+<p>The save operation writes the whole editor text, not only the highlighted line or changed characters. A forgotten pasted section elsewhere in the document is part of the saved file too. This is another reason to keep edits controlled and review the full scope before Save.</p>
+<p>The workflow does not create an automatic rollback copy or a built-in comparison with external edits made since loading. If the source is shared with another operator or application, coordinate ownership of that file. Saving an older loaded draft can overwrite more recent disk changes if the same path was modified elsewhere.</p>
+<div class="learning-example"><h3>Example: the editor closes, then preparation rejects the file</h3><p>The write succeeded, so the revised text is already at the original path. A subsequent geometry error is a preparation failure, not evidence that Save was cancelled. Correct or restore the file through the approved procedure, then reload and review it again.</p></div>
+<p>Use the Save button as the explicit completion action for this workflow. Do not assume that a familiar keyboard shortcut from another text editor provides an equivalent file save here. Likewise, pressing Enter while editing text should not be treated as proof that the file was written. Follow the actual dialog result and subsequent loading state.</p>
+<p>Once the write has succeeded, Cancel is no longer an undo for that disk change. Returning to the earlier revision requires the approved original source or a reviewed reverse correction, followed by another save and preparation cycle. Keep this distinction clear before committing a production-file change.</p>
+</section>
+<section id="cancel" aria-labelledby="cancel-title"><h2 id="cancel-title">19.8 Cancel an unsaved draft without confusing it with restoration</h2>
+
+<p>Cancel closes the editor without submitting a new save through that button. If you have only typed and have not attempted Save, cancelling abandons the open draft. The editor does not ask the application to reload the file as a successfully saved edit.</p>
+<p>This is useful when you opened the wrong file, cannot verify a correction or accidentally changed more text than intended. Before choosing Cancel, decide whether the draft contains work that must be retained in the approved correction record. The dialog does not provide a built-in unsaved-change review or revision archive for later recovery.</p>
+<h3>Cancellation depends on what happened earlier</h3>
+<div class="table-scroll"><table><caption>Table 19-8. What Cancel can and cannot do</caption><thead><tr><th scope="col">Situation</th><th scope="col">Effect of Cancel</th><th scope="col">Remaining responsibility</th></tr></thead><tbody>
+<tr><td>Text edited, no Save attempted</td><td>Abandons that editor draft without writing it.</td><td>Return to the correct file or approved correction if needed.</td></tr>
+<tr><td>No changes made</td><td>Closes the inspection session without a save/reload cycle.</td><td>Remember that opening the editor did not validate the machine job.</td></tr>
+<tr><td>Save is still pending</td><td>The Cancel button is disabled.</td><td>Wait for the result; do not force-close to infer cancellation.</td></tr>
+<tr><td>A save attempt failed</td><td>Closes without another write attempt.</td><td>Verify the disk file; cancellation is not rollback of a possibly interrupted write.</td></tr>
+<tr><td>A previous save succeeded</td><td>A later Cancel cannot restore the old disk revision.</td><td>Use an approved original or reviewed correction and prepare the result again.</td></tr>
+</tbody></table></div>
+<p>Use the labelled Cancel button when the intention is to abandon the draft. The dialog assigns Cancel as its standard cancellation action, but keyboard focus and open completion controls can affect key handling. Do not rely on an unfamiliar key sequence when the on-screen button makes the intended action clear.</p>
+<h3>Closing a draft does not repair a file</h3>
+<p>Before the first save attempt, the draft and the disk file are separate. After a save attempt, that distinction becomes more complicated: a successful write has changed the file, while a failed write must be investigated. Cancelling after an error tells the application not to retry; it does not prove that the original disk contents survived.</p>
+<p>Similarly, reopening the editor after a successful save begins a new editing session with the currently loaded text. Undo history from the previous dialog is not available as an archive of the earlier revision. To restore that revision, obtain its approved source and follow the normal load, edit if needed, save and verification process.</p>
+<div class="learning-example"><h3>Example: the wrong production file was opened</h3><p>You notice the wrong folder in the title before pressing Save. Cancel abandons your unsaved draft. Open the intended file through the main loading workflow and verify its title before beginning again. If Save was already attempted, check the write result and the actual disk file instead of assuming Cancel repaired the mistake.</p></div>
+<p>Do not use the window close button or application shutdown as a substitute for waiting on a pending write. The visible Save/Cancel lockout exists while the operation is in progress. Wait for its result and handle a reported failure deliberately so you know which text remains authoritative.</p>
+<p>After cancellation, the main window can still show the earlier loaded program and preview. That is expected when no successful save/reload occurred, but it does not resolve any external disk changes made by another application. If file identity or freshness is uncertain, reopen the approved source and confirm preparation before returning to machining.</p>
+</section>
+<section id="save-errors" aria-labelledby="save-errors-title"><h2 id="save-errors-title">19.9 Handle a save failure and establish the actual file state</h2>
+
+<p>If the application reports that the G-code save failed, read the message and its details before another action. The problem concerns writing text to the file; it is not yet the same as a program-preparation rejection. Keep the editor open while deciding how to preserve the approved correction and resolve the reported cause.</p>
+<p>For handled write failures, the dialog remains open and restores editing and its Save/Cancel buttons. This permits correction or retry, but it does not prove that the disk file is untouched. The reviewed implementation writes directly to the original path and does not use an automatic rollback archive.</p>
+<h3>Identify the reported category</h3>
+<div class="table-scroll"><table><caption>Table 19-9. Investigating a save failure</caption><thead><tr><th scope="col">Reported problem</th><th scope="col">What to check</th><th scope="col">Avoid</th></tr></thead><tbody>
+<tr><td>Access denied or permission problem</td><td>Whether the intended file is writable under the approved user/file procedure.</td><td>Changing system permissions or machine access settings without understanding ownership.</td></tr>
+<tr><td>File or folder unavailable</td><td>The full path and availability of the intended storage location.</td><td>Assuming a familiar filename refers to an accessible destination.</td></tr>
+<tr><td>Storage or input/output error</td><td>The stated storage condition and actual file contents after the failure.</td><td>Assuming the original file was preserved automatically.</td></tr>
+<tr><td>Unsupported or invalid text/path condition</td><td>The exact technical details and any newly pasted characters.</td><td>Removing arbitrary instructions until saving appears to work.</td></tr>
+<tr><td>Successful save followed by program rejection</td><td>The new loading/preparation diagnostic.</td><td>Treating it as a failed write or believing the old file remains on disk.</td></tr>
+</tbody></table></div>
+<p>The full message may contain information that distinguishes a protected file from an unavailable drive or a character-format problem. Record it accurately rather than reporting only “Save does not work.” Include the destination path and whether a save or reload had already succeeded.</p>
+<h3>Do not assume failed writing was harmless</h3>
+<p>A write can fail before changing a file, or after the operation has begun. Because this workflow does not provide a transactional replacement with an automatic original copy, treat the disk file as needing verification after a write error. Do not run it merely because an earlier loaded preview still looks correct.</p>
+<p>If the original source must be restored, use the approved revision from the shop's file-control process. If you retain the edited draft, compare it with the approved correction before retrying. Once the cause is resolved, another successful save must still be followed by complete preparation and setup review.</p>
+<div class="learning-example"><h3>Example: a file on removable storage becomes unavailable</h3><p>The operator presses Save and receives a storage error. The editor still contains the draft, but the state of the disk file must be established. Reconnecting storage and immediately requesting Run is not a verification step. Confirm the intended file, complete a successful write or restore, then reopen and prepare it.</p></div>
+<p>Where a character-format error is involved, keep the exact diagnostic. A pasted symbol may not be representable in the original file's encoding. Ask for an approved source correction or file-format resolution rather than changing language, punctuation or program content without review. The dialog does not offer an encoding conversion control.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 19-2</div><h3>A file-save error with useful details</h3><p>Capture an approved training example of a save failure, showing the message and relevant path context. Clearly identify it as a write failure, not a syntax or geometry rejection. Use a disposable training file and redact private path information; do not interrupt a production write to obtain an image.</p><p>Suggested file: <code>assets/images/19-save-error.png</code>.</p><figcaption>Reserved screenshot for recognizing the stage at which the edit failed.</figcaption></figure>
+<p>If the file state cannot be established, leave the job out of production until the responsible person resolves it. Closing the dialog, cancelling after the failure or seeing an old preview does not provide the missing evidence.</p>
+</section>
+<section id="reload" aria-labelledby="reload-title"><h2 id="reload-title">19.10 Follow the reload and distinguish saving from program acceptance</h2>
+
+<p>After a successful save, the application calls its normal file-opening workflow for the original path. It reads the saved source, prepares the program and publishes the resulting text, geometry and diagnostics. This is a new preparation cycle, not a small live patch to the previously running job.</p>
+<p>Wait for the complete result. A progress indicator reaching the end of one stage does not by itself establish readiness. The file may still need geometry preparation or preview publication. Read the final accepted, rejected, cancelled or failed result as described in <a href="14-opening-programs.html">Chapter 14</a>.</p>
+<h3>The previous prepared job is replaced</h3>
+<p>When loading begins, the application clears the prior presentation and prepared execution state. The pending selected-start request is also cleared by the file-opening workflow. A failed replacement does not leave an automatically runnable copy of the old job behind for you to continue.</p>
+<p>This matters after a production interruption. The old paused cursor and old physical line selection are not a recovery plan for the revised document. If a later entry is approved after the edit, select it again using the newly prepared source and the procedure in <a href="18-selected-start-line.html">Chapter 18</a>.</p>
+<div class="table-scroll"><table><caption>Table 19-10. Identify the result after Save closes the editor</caption><thead><tr><th scope="col">Result</th><th scope="col">Meaning</th><th scope="col">Next action</th></tr></thead><tbody>
+<tr><td>Revised file accepted</td><td>The new source produced an accepted prepared program.</td><td>Inspect the correction, full path and physical setup before Run.</td></tr>
+<tr><td>Source or geometry rejected</td><td>The saved file did not produce an accepted machining job.</td><td>Retain diagnostics and make an approved correction or restore.</td></tr>
+<tr><td>Loading cancelled</td><td>The replacement preparation did not complete.</td><td>Do not assume either the old or new job is ready; reopen the approved source when appropriate.</td></tr>
+<tr><td>File reading or preparation failed</td><td>The reopen/preparation stage could not finish.</td><td>Investigate the specific failure and establish the file state.</td></tr>
+<tr><td>Save succeeded but no confirmed new preparation is visible</td><td>Write success alone does not establish the currently prepared job.</td><td>Check the application state and deliberately open the saved file when permitted.</td></tr>
+</tbody></table></div>
+<figure class="concept-figure"><img src="assets/images/19-save-reload.svg" alt="Review draft, save to original path, reopen and prepare, inspect the job, then request Run separately; a later preparation rejection does not undo saving."><figcaption>Figure 19-3. A saved correction becomes a candidate job that must be prepared and reviewed again.</figcaption></figure>
+<h3>Read warnings as well as blocking errors</h3>
+<p>A revised file can be accepted while reporting information that still requires an operator decision. In particular, ignored or unbound equipment instructions must not be dismissed simply because geometry is visible. Determine whether the required machine action is actually provided by the installed configuration.</p>
+<p>When preparation is rejected, the source may remain visible with diagnostics for correction. That visibility does not make an executable portion available. Do not select a later line as a way to avoid a blocking preparation problem. Correct the source or setup through the approved procedure and repeat the full preparation.</p>
+<div class="learning-example"><h3>Example: a comment edit accidentally removes a delimiter</h3><p>The edited text saves to disk, but the reload reports a source problem. The old file has not been preserved by that rejection. Use the diagnostic to locate the unintended change, restore the approved text and repeat Save and preparation. Then review the accepted result.</p></div>
+<p>If a reload is interrupted or the machine state changes before it can proceed, verify the actual outcome rather than relying on an automatic sequence that you did not observe. The title of the closed editor is evidence of the save destination, not confirmation that the main window now holds an accepted program from it.</p>
+<p>Once preparation succeeds, compare the specific expected effect of the correction. The absence of an error message is useful, but it is only the beginning of the post-edit review.</p>
+</section>
+<section id="verify" aria-labelledby="verify-title"><h2 id="verify-title">19.11 Check the revised job and establish a new start intention</h2>
+
+<p>After the revised file is accepted, inspect it as a newly prepared job. Confirm the file identity, locate the corrected text and compare the expected change in the preview or program information. Also inspect neighboring operations that could be affected by the correction.</p>
+<p>Use the planned post-save check from your correction record. If the change was intended to alter a particular depth or feature, identify that feature in the prepared path and verify it against the approved job information. If only a comment changed, confirm that movement instructions were preserved and the expected program still prepares.</p>
+<h3>Recheck the relationship between source and machine</h3>
+<div class="table-scroll"><table><caption>Table 19-11. Post-edit checks before another Run</caption><thead><tr><th scope="col">Check</th><th scope="col">What to inspect</th><th scope="col">Reason</th></tr></thead><tbody>
+<tr><td>Saved text</td><td>The approved replacement appears in the newly loaded source.</td><td>Confirms the result rather than the intended keystrokes.</td></tr>
+<tr><td>Diagnostics</td><td>Blocking errors, warnings and ignored equipment actions.</td><td>Accepted geometry does not settle every equipment requirement.</td></tr>
+<tr><td>Shape and dimensions</td><td>The affected feature and surrounding movements from useful views.</td><td>A valid numeric change can still be wrong for the part.</td></tr>
+<tr><td>Work references</td><td>The revised program's origin requirements and actual stock datum.</td><td>Program placement depends on more than the preview camera.</td></tr>
+<tr><td>Tools and compensation</td><td>The required cutters and verified tool data.</td><td>A changed tool request can alter preparation and approach.</td></tr>
+<tr><td>Travel and clearance</td><td>The full entry, transfer and end routes against the physical setup.</td><td>The scene is not a complete obstacle model.</td></tr>
+<tr><td>Start intention</td><td>Fresh start or a newly approved selected entry.</td><td>Reload cleared the previous pending selected-start request.</td></tr>
+</tbody></table></div>
+<p>The program status can help you identify cutting dimensions, required tool count and work-reference usage. Use those indications together with the actual source and approved setup. A familiar outline alone does not confirm the correct depth, reference system or tool sequence.</p>
+<h3>Review partly machined work separately</h3>
+<p>If the edit was made after a job interruption, determine what work has already been performed and how the revised instructions relate to it. A newly valid program cannot undo earlier cuts. Repeating the full program or beginning at a later line needs its own approved decision.</p>
+<p>Any inserted or removed source rows can invalidate old physical line numbers. Even if the same operation remains in the file, locate it again in the revised document. Do not copy a previous start-line number from a note without checking the actual text and entry policy.</p>
+<div class="learning-example"><h3>Example: the corrected program prepares but moves the feature differently</h3><p>The interpreter accepts the revised coordinate, yet the preview places the feature somewhere other than the approved drawing. This is not a successful correction merely because loading passed. Resolve the discrepancy before Run; software acceptance and job correctness are separate checks.</p></div>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 19-4</div><h3>The accepted revised source and its affected feature</h3><p>Capture a harmless approved training correction after successful reload. Show the corrected source text and the corresponding preview region, along with file identity and preparation status. Annotate what was checked and avoid implying that the screenshot proves fixture clearance or part quality.</p><p>Suggested file: <code>assets/images/19-revised-job-review.png</code>.</p><figcaption>Reserved screenshot demonstrating review of the actual prepared result.</figcaption></figure>
+<p>Complete the normal pre-run checks from <a href="16-running-programs.html">Chapter 16</a>, including the actual feed percentage and required equipment. Save and successful loading do not automatically request motion. The next Run must be deliberate, with the expected first operation understood.</p>
+<p>When the revised job is executed, apply the shop's first-piece or rework inspection requirements. Record the revision used and the observed outcome. A source correction is complete operationally only when its required review and production acceptance steps have been performed, not simply when the editor has closed.</p>
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">19.12 Practise an approved correction and record the result</h2>
+
+<p>The purpose of this exercise is to become comfortable with the editing workflow before using it for production. It teaches you to identify the document, control a small text change, distinguish a draft from a saved file and inspect the result after loading. It does not teach you to invent machining instructions.</p>
+<p>Ask the person responsible for training to provide a clearly identified training file and an exact approved correction. A change to an existing explanatory comment can be suitable when the trainer has checked its format and confirmed that the exercise preserves all movement and equipment instructions. Do not choose a production file just because its name is familiar.</p>
+<h3>Prepare the exercise</h3>
+<p>Use the shop's approved training arrangement with the machine settled and no active program. Identify the training file by its full path. Have an approved original available through the shop's file-control process so that the exercise can be repeated. The editor itself does not create that original copy or a revision history for you.</p>
+<p>Write down the original text, exact replacement and expected result before opening the editor. For a comment-only exercise, the expected result includes both the revised comment and preservation of the machining instructions. No machine movement is required to practise selecting text, cancelling a draft or saving and preparing a file.</p>
+<h3>First practise cancelling, then practise saving</h3>
+<ol class="steps">
+<li><strong>Open and identify.</strong> Load the training file, open its editor when available and confirm the full destination path. Locate the approved text using its surrounding content.</li>
+<li><strong>Make the small correction.</strong> Select only the intended characters, replace them and compare the complete line with the written instruction. Inspect the neighboring lines as well.</li>
+<li><strong>Cancel this first draft.</strong> Close with Cancel before any Save attempt. Reopen the editor and confirm that this unsaved correction was not retained. Explain why this differs from cancelling after a failed write.</li>
+<li><strong>Repeat and review.</strong> Make the same approved correction again. Check that no completion suggestion, selection mistake or accidental deletion has introduced another change.</li>
+<li><strong>Save deliberately.</strong> Use Save and wait for its result. If a failure appears, stop the exercise and record it; do not create a storage failure intentionally as part of this practice.</li>
+<li><strong>Observe the reload.</strong> Confirm that the new file has been prepared successfully, inspect the changed text and check the expected unchanged machining content. Finish the exercise without requesting Run unless a separate supervised execution has been arranged.</li>
+</ol>
+<div class="table-scroll"><table><caption>Table 19-12. A simple correction record</caption><thead><tr><th scope="col">Record item</th><th scope="col">What to write</th></tr></thead><tbody>
+<tr><td>File identity</td><td>The complete path and approved job or revision identification.</td></tr>
+<tr><td>Reason and authority</td><td>Why the correction was needed and who supplied or approved it.</td></tr>
+<tr><td>Exact correction</td><td>The original and replacement text, with enough surrounding context to locate it again.</td></tr>
+<tr><td>Write result</td><td>Whether Save succeeded; the exact message if it failed and how file state was established.</td></tr>
+<tr><td>Preparation result</td><td>Whether the saved file loaded successfully and which diagnostics required attention.</td></tr>
+<tr><td>Review outcome</td><td>The source, preview and setup checks performed, any unresolved issue, and the person completing the review.</td></tr>
+<tr><td>Production disposition</td><td>Training only, awaiting review, approved for the next supervised step, or the recorded production outcome.</td></tr>
+</tbody></table></div>
+<p>This record can be a paper job sheet or the shop's existing revision record. It is not a form that this editor automatically supplies. Keep the level of detail sufficient for another operator to understand which file was changed and whether it is ready for the next step.</p>
+<h3>Check your understanding</h3>
+<p>You should now be able to explain three situations without guessing: a draft cancelled before Save has not been written by this editor; a failed write requires verification of the disk file; and a successful save followed by rejection leaves a saved file that still needs correction or approved restoration. None of these outcomes is permission to run a job.</p>
+<p>You should also be able to explain why colored text and suggestions are editing aids, why an old selected line must be reconsidered after a reload, and why an accepted preview still needs a physical setup check. If any of these distinctions is unclear, repeat the relevant part of this chapter with the trainer before editing production source.</p>
+<p>The next chapter introduces simulation and verification. Use that stage to support the review of a prepared job, while continuing to follow the machine-specific checks and the shop's approval procedure.</p>
+
+</section>
+<details class="source-note"><summary>Documentation basis</summary><p>Checked against the source available on 9 October 2026. This is a source review, not a live-machine execution test or a rendered test of every native editor interaction. Reserved screenshots require capture from the delivered application.</p><ul>
+<li><code>RouterXYZAC+RTCP/MainForm.Machining.cs</code></li><li><code>RouterXYZAC+RTCP/Machining/GCodeInterpreter.cs</code></li><li><code>NT-Interpreter/WinForms/GCodeEditorDialog.cs</code></li><li><code>NT-ToolsWF/Tools/SEditors/sCodeEditor.cs</code></li><li><code>NT-ToolsWF/Tools/NTCodeEditorProfiles.cs</code></li>
+</ul></details></div><footer class="page-footer"><a href="18-selected-start-line.html">Previous chapter</a><a href="index.html">Manual contents</a><span>RouterXYZAC+RTCP · 19</span></footer></main></body></html>

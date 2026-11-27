@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 11 — Tool Selection and Tool Exchange | RouterXYZAC+TC</title>
+<meta name="description" content="Operator guide to tool selection, manual and automatic tool exchange, recorded tool state, station routes, compensation, interruption and recovery checks.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#basics">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+TC · CHAPTER 11</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Tool Selection and Tool Exchange</h1><p class="lead">Choose the intended tool, understand when selection starts an automatic movement, and follow the exchange through confirmed tool state, compensation and withdrawal.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> This chapter describes the supplied tool-selection and exchange behaviour. Actual tooling, magazine geometry and approved machine procedures must match the installation.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-11">Manual contents</a> · <a href="10-spindle.html">Previous chapter: Spindle operation</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZAC update — 10 November 2026.</strong> Tool stations include A/C angles. Exchange captures and restores complete XYZAC positions; insertion vectors stay linear. See the <a href="XYZAC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#basics">Distinguish the fitted tool, the requested tool and a completed exchange</a></li>
+<li><a href="#selector">Read the Tool field and the available tool list</a></li>
+<li><a href="#preparation">Prepare the magazine, complete route and machine state</a></li>
+<li><a href="#commit">Commit a manual request or discard an uncommitted choice</a></li>
+<li><a href="#sequence">Follow the exchange from roller release to final withdrawal</a></li>
+<li><a href="#confirmation">Interpret release, clamp and current-tool confirmation</a></li>
+<li><a href="#manual-outcomes">Understand manual replacement, pickup, unloading and same-tool requests</a></li>
+<li><a href="#automatic">Understand program-requested exchange and automatic continuation</a></li>
+<li><a href="#geometry-offset">Keep station coordinates, tool length and machining correction separate</a></li>
+<li><a href="#interruption">Stop an exchange and establish the physical state before recovery</a></li>
+<li><a href="#reports">Read exchange messages and report a fault with its stage</a></li>
+<li><a href="#practice">Follow an example exchange and check your understanding</a></li>
+</ol></nav>
+<section id="basics" aria-labelledby="basics-title"><h2 id="basics-title">11.1 Distinguish the fitted tool, the requested tool and a completed exchange</h2>
+
+<p>A tool exchange replaces the tool assembly held by the spindle with another assembly stored at a configured magazine station. It can involve movement across the machine, spindle shutdown, release and clamping, application of tool correction, and a return movement. It is not simply a change of text in the Tool field.</p>
+<p>In this chapter, a <strong>tool assembly</strong> means the cutter and its holder as fitted to the spindle or magazine. A <strong>station</strong> is the configured storage location associated with a tool number. The machine needs a clear, correctly configured route to both the old tool's station and the requested tool's station.</p>
+<h3>Keep three states separate</h3>
+<p>The <strong>current tool</strong> is the tool number the application records as physically held by the spindle. The <strong>requested tool</strong> is the destination of the operation you are asking it to perform. A <strong>completed exchange</strong> means the operation has finished its required stages; seeing the requested number become current is only one stage of that process.</p>
+<table><caption>Table 11-1. Tool information and what it means</caption><thead><tr><th scope="col">Information</th><th scope="col">Meaning</th><th scope="col">What it does not prove</th></tr></thead><tbody>
+<tr><td>Current tool number</td><td>The application's recorded physical tool state.</td><td>Independent identification of the actual cutter or proof that all exchange movement has ended.</td></tr>
+<tr><td>Requested tool number</td><td>The tool the operation intends to load.</td><td>That the tool has already been picked up.</td></tr>
+<tr><td>Blank Tool display / tool zero</td><td>The spindle is recorded as empty.</td><td>Permission to touch the spindle or assurance that a fault could not leave an uncertain physical condition.</td></tr>
+<tr><td>Enabled tool</td><td>The configured tool is available for selection.</td><td>A fresh physical inventory of its magazine pocket.</td></tr>
+<tr><td>New current tool shown during exchange</td><td>The pickup/clamp confirmation boundary has been reached and recorded.</td><td>Completion of correction, withdrawal, return or program continuation.</td></tr>
+</tbody></table>
+<p>Tool numbers are identifiers, not cutter dimensions. Tool 3 does not mean a 3 mm cutter, and a larger number does not mean a longer tool. Match each number to the job's approved tool list and the actual magazine arrangement.</p>
+<h3>“Manual” describes who requests the exchange</h3>
+<p>A <strong>manual tool change</strong> in this application is an operator-requested automatic exchange using the machine's configured routes. It does not mean that the operator should reach in and remove the tool by hand. Committing a selection can start the powered sequence.</p>
+<p>A <strong>program tool change</strong> is requested by the machining program, normally through M6 with its selected tool number. It uses the shared exchange mechanism but can automatically continue the machining program afterward. A manual request finishes without resuming that program.</p>
+<aside class="learning-example"><h3>You choose tool 5 while tool 2 is fitted</h3><p>Tool 5 is the request. Tool 2 remains the recorded current tool until its release is confirmed and recorded. The display can then become blank before tool 5 is clamped and recorded. Those changes describe progress; none is a reason to enter the magazine area while the operation is active.</p></aside>
+<p>Do not edit the recorded current tool merely to make the screen agree with your intention. If the display and actual spindle disagree, stop and use the authorized reconciliation procedure. The next route depends on which tool the application believes it must put away.</p>
+
+</section>
+<section id="selector" aria-labelledby="selector-title"><h2 id="selector-title">11.2 Read the Tool field and the available tool list</h2>
+
+<p>Locate the <strong>Tool</strong> field in the main-window spindle area. In its normal, unedited state it displays the recorded current tool. During a tool operation it becomes a disabled display of that current state so that the intermediate empty and newly clamped states can be shown.</p>
+<p>The supplied catalog has tool numbers <strong>1 through 32</strong>. The drop-down list includes only enabled tools, together with a blank entry for the empty spindle. A shorter list does not necessarily indicate a display problem: the installed magazine may use only a subset of the catalog.</p>
+<table><caption>Table 11-2. Reading the selector</caption><thead><tr><th scope="col">What you see</th><th scope="col">Interpretation</th><th scope="col">What to check</th></tr></thead><tbody>
+<tr><td>A tool number in the normal idle display</td><td>The recorded current tool.</td><td>That the actual assembly agrees with the job and machine record.</td></tr>
+<tr><td>A blank normal display</td><td>Tool zero: recorded empty spindle.</td><td>That the actual spindle condition agrees before a new exchange.</td></tr>
+<tr><td>A number missing from the choices</td><td>The tool may be disabled.</td><td>The approved magazine configuration and physical inventory.</td></tr>
+<tr><td>A disabled field</td><td>The machine is not currently accepting a manual selection or an operation is active.</td><td>The availability explanation and current operation.</td></tr>
+<tr><td>An uncommitted selection draft</td><td>A proposed value, not a completed exchange.</td><td>Whether you intend to commit it or discard it.</td></tr>
+</tbody></table>
+<h3>The blank entry is an operation, not a cosmetic choice</h3>
+<p>Choosing and committing the blank entry requests tool zero. If a tool is currently fitted, this means returning it to its station and ending with an empty spindle. Do not choose blank just to tidy the field or clear an old-looking number.</p>
+<p>In reports, the empty spindle can appear as zero or T00 rather than a blank. These are representations of the same empty-tool request or record. Always read whether the message refers to a request, a recorded state or a completed operation.</p>
+<h3>Enabled is configuration, not a pocket sensor</h3>
+<p>The Enabled setting states that a tool is installed and available. The software's representation of a tool being present in its pocket follows the enabled state and whether that tool is recorded in the spindle. It is not a separate physical inventory measurement of every pocket.</p>
+<p>If someone has removed a tool from a pocket, swapped assemblies or changed the magazine arrangement, the displayed choices can still look valid while the physical setup is wrong. Reconcile the magazine and setup information before selecting a tool. Enabling a number does not create the missing tool or correct its station coordinates.</p>
+<p>The recorded current tool is kept enabled and cannot be disabled through its ordinary Enabled editor. This preserves its availability as the tool that may need to be returned. Do not try to disable it as a workaround for an incorrect record.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 11-1 · TOOL-SELECTOR SCREENSHOT REQUIRED</p><h3>Current tool, enabled choices and empty-spindle entry</h3><p>Insert an English main-window crop showing Tool and its expanded list. Label the blank entry as “Request empty spindle when committed” and identify a few enabled tool numbers. Include a separate recorded view of the disabled current-tool display during an approved demonstration, if available.</p><p>Suggested image: <code>assets/images/11-tool-selector.png</code>. Do not select an item merely to take the picture: list selection can commit a powered exchange request.</p><figcaption>The list offers requests; the normal display reports the current recorded tool.</figcaption></figure>
+<p>The nearby <strong>Measure Tool</strong> control is a different command; some design views use the caption Measure Tool. It starts a measurement procedure rather than serving as an Apply button for the Tool selector. Length measurement is covered in Chapter 12.</p>
+
+</section>
+<section id="preparation" aria-labelledby="preparation-title"><h2 id="preparation-title">11.3 Prepare the magazine, complete route and machine state</h2>
+
+<p>Complete the preparation before using the selector. Because committing a choice can immediately start an exchange, the list is not a place to experiment with tool numbers while people or loose equipment remain in the movement area.</p>
+<p>For a manual request, the machine must be connected, the required axes homed and the machine appropriately idle. The main program, loading, homing, managed positioning and other tool operations must not be active. The tool changer also waits for initial tool-correction synchronization after connection.</p>
+<p>Availability is checked again for the actual request. A selectable-looking field means that a request can be prepared; it does not guarantee that the particular exchange will pass its hardware, program and route checks.</p>
+<table><caption>Table 11-3. Pre-exchange preparation</caption><thead><tr><th scope="col">Check</th><th scope="col">What to establish before committing</th></tr></thead><tbody>
+<tr><td>Current tool</td><td>The physical spindle and recorded current tool agree.</td></tr>
+<tr><td>Old tool's station</td><td>The correct return pocket is clear and suitable to receive the assembly.</td></tr>
+<tr><td>Requested tool</td><td>The enabled number identifies the required assembly, actually present at its approved station.</td></tr>
+<tr><td>Magazine setup</td><td>Station positions and approach/departure routes match the installed holders and magazine.</td></tr>
+<tr><td>Full movement envelope</td><td>The old and new tools, spindle, head and other moving equipment clear fixtures, material and surrounding objects.</td></tr>
+<tr><td>Final destination</td><td>The return location remains suitable for the new assembly, including its different length or shape.</td></tr>
+<tr><td>Machine readiness</td><td>Homing, stopped axes, gantry pairing and relevant pressure, spindle and grip conditions are valid.</td></tr>
+<tr><td>People and access</td><td>The magazine and work area are prepared under the machine's guarding and operating procedure.</td></tr>
+<tr><td>Next activity</td><td>You know whether the exchange will finish as a manual operation or can continue into machining.</td></tr>
+</tbody></table>
+<h3>Homing and stopped axes are prerequisites</h3>
+<p>The exchange requires established machine coordinates because its station points are stored in machine coordinates. All configured axes must satisfy the homing requirement, including the second gantry motor. A numerically plausible position after a restart is not a substitute for the required reference procedure.</p>
+<p>The relevant movement paths must be idle, and the axes must be ready, stopped and under the expected control and coupling arrangement. The application rejects an exchange when another motion source still owns or is stopping those axes. Do not use repeated selection attempts to work around an operation that has not finished.</p>
+<h3>The spindle and rollers have their own checks</h3>
+<p>A physical exchange requires the supplied background interlocks and exchange routines to be available, along with the required spindle run, speed and tool-release outputs. Configured pressure, thermal and drive-ready inputs are checked. The recorded tool is compared with applicable grip feedback before starting.</p>
+<p>Enabled rollers must report their free position through the configured physical sensors. The exchange waits for this confirmation before its first movement. An initial wait while rollers release can be normal; a timeout or later loss of confirmation is a fault. Do not reach in to move a roller while the sequence is active.</p>
+<aside class="learning-example"><h3>The destination pocket looks clear, but the new tool is longer</h3><p>The magazine approach may be suitable while the final return to the work area is not. A manual exchange returns to its captured machine starting coordinates. With a longer tool fitted, the tool tip can finish lower in the physical space. Prepare a suitable start/return location before committing.</p></aside>
+<p>Coordinate validation checks configured travel and drive-position limits; it does not inspect the actual magazine, check that a pocket is empty or detect all obstructions. If the physical state or route is uncertain, resolve it through the approved setup procedure before a powered exchange.</p>
+
+</section>
+<section id="commit" aria-labelledby="commit-title"><h2 id="commit-title">11.4 Commit a manual request or discard an uncommitted choice</h2>
+
+<p>The Tool selector is connected to a machine command. Choosing an item from its list commits a request; an accepted Enter commit can also submit the selected value. Do not expect a separate Apply button or a second confirmation dialog before the exchange begins.</p>
+<p>Prepare the complete operation first. If you only want to inspect tool configuration, use the appropriate authorized settings view without submitting a choice in the main-window selector.</p>
+<ol class="journey">
+<li><strong>Confirm the actual current tool and the intended replacement.</strong><p>Read the job's tool list and check the physical magazine arrangement through the approved procedure.</p></li>
+<li><strong>Complete the preparation and establish a suitable return location.</strong><p>The machine must be ready for the entire exchange and the new tool's return.</p></li>
+<li><strong>Open the Tool choices only when ready to issue the request.</strong><p>Identify the exact enabled number. The blank entry requests unloading to an empty spindle.</p></li>
+<li><strong>Choose the intended item once.</strong><p>List selection commits the request. If working with a pending editable value, Enter is also a commit action. Treat either action as permission for powered movement.</p></li>
+<li><strong>Observe whether the request is accepted or rejected.</strong><p>If accepted, the control becomes disabled and presents the recorded current tool. If rejected, read the explanation before trying again.</p></li>
+<li><strong>Stay attentive until the whole operation finishes.</strong><p>Tool-number changes and pauses at the holder are intermediate events, not completion signals.</p></li>
+</ol>
+<table><caption>Table 11-4. Selection actions and their consequences</caption><thead><tr><th scope="col">Action</th><th scope="col">Meaning</th><th scope="col">Operator caution</th></tr></thead><tbody>
+<tr><td>Commit an item from the drop-down list</td><td>Submits the chosen tool-change request.</td><td>Prepare for immediate automatic activity.</td></tr>
+<tr><td>Enter on an uncommitted valid value</td><td>Can commit that request.</td><td>It is not merely a way to finish typing without consequence.</td></tr>
+<tr><td>Escape before commitment</td><td>Discards the uncommitted edit.</td><td>Does not cancel a machine operation already accepted.</td></tr>
+<tr><td>Move focus away</td><td>Does not itself commit a tool change.</td><td>An uncommitted draft may remain; deliberately discard it if no request is intended.</td></tr>
+<tr><td>Choose the blank entry</td><td>Requests tool zero, the empty-spindle state.</td><td>Can initiate unloading and return motion.</td></tr>
+<tr><td>Press the nearby length-measurement control</td><td>Requests a separate measurement operation.</td><td>It is not the confirmation button for the tool selection.</td></tr>
+</tbody></table>
+<h3>A draft is not the recorded tool</h3>
+<p>While idle and editable, an uncommitted draft may be retained in the field. After the request is accepted, the display returns to the recorded current tool rather than showing the requested number as though it had already been loaded. This avoids reporting a successful pickup prematurely.</p>
+<p>For example, you request tool 5 while tool 2 is fitted. The disabled field can still show 2 at first. That is expected; the operation has captured the request for 5, but the old tool has not yet passed its release confirmation. Do not submit the same request again because the visible number did not immediately become 5.</p>
+<h3>If validation or admission refuses the request</h3>
+<p>The selector rejects invalid or disabled tool choices. The exchange can also be refused after selection because machine readiness, a required routine or the route is unsuitable. Read the error text and controller report. A valid number is necessary but does not guarantee an admissible physical exchange.</p>
+<p>Once an operation has started, use the proper stopping procedure if interruption is needed. Closing the list, pressing Escape or clicking another tool is not a substitute for stopping the accepted sequence. Recovery after a stop is covered later in this chapter.</p>
+
+</section>
+<section id="sequence" aria-labelledby="sequence-title"><h2 id="sequence-title">11.5 Follow the exchange from roller release to final withdrawal</h2>
+
+<p>A full exchange has several distinct stages. Understanding them helps you interpret the pauses and tool-number changes without mistaking an intermediate event for completion. The sequence below assumes an old tool is fitted and a different enabled tool is requested. Empty-spindle and same-tool cases are described later.</p>
+<figure class="concept-figure"><img src="assets/images/11-exchange-stages.svg" alt="Six numbered stages of an exchange from tool 2 to tool 5, including empty-tool recording, correction acknowledgement and final withdrawal after the new tool is recorded."><figcaption>Figure 11-2. A tool number is recorded at a confirmed stage boundary. Further movements can remain after the number changes.</figcaption></figure>
+<h3>First, release the rollers and prepare spindle shutdown</h3>
+<p>The first waiting step qualifies the enabled rollers in their free position. Roller outputs are kept off during the active exchange, and enabled roller sensors must confirm their required state. The sequence does not begin its motion before this exchange's roller confirmation.</p>
+<p>The exchange then requests spindle shutdown. Shutdown can run while the head approaches the old tool's station. It waits for the required spindle-stop confirmation at the configured approach point before entering the holder to place the tool. Therefore, early approach movement does not itself mean that spindle rundown has already completed.</p>
+<h3>Store the old tool and record the empty spindle</h3>
+<p>The head approaches the old tool's holder through its configured entry point, moves into the station at the exchange velocity and requests release. The stage ends at the holder, with the axes stopped. The application checks the release result and applicable grip feedback before recording the empty spindle.</p>
+<p>The old tool correction is then cleared and its acceptance is awaited before the route proceeds. This pause is part of the exchange. Do not reach toward the holder because the display has become blank or the axes have stopped temporarily.</p>
+<h3>Pick up the new tool and accept its correction</h3>
+<p>The empty spindle leaves the old station through its configured departure point, reaches the raised traverse coordinate and approaches the requested station. It enters the new holder and requests clamping. After the clamp stage completes with the axes stopped and applicable feedback confirmed, the new tool number is recorded.</p>
+<p>The new tool correction is applied and acknowledged before the withdrawal route proceeds. The tool can therefore be shown as current while the spindle is still at its holder. Wait for the complete route and, where applicable, program continuation.</p>
+<table><caption>Table 11-5. What happens at each important boundary</caption><thead><tr><th scope="col">Boundary</th><th scope="col">Required progress</th><th scope="col">What may remain</th></tr></thead><tbody>
+<tr><td>Rollers confirmed</td><td>The exchange's roller wait has succeeded.</td><td>All spindle and tool movements.</td></tr>
+<tr><td>Old tool released</td><td>Release confirmed, stage complete and axes stopped.</td><td>Empty-tool recording, correction clearing, departure and pickup.</td></tr>
+<tr><td>New tool clamped</td><td>Clamp confirmed, stage complete and axes stopped.</td><td>New-tool recording, correction acceptance and withdrawal.</td></tr>
+<tr><td>New correction acknowledged</td><td>The machining path has accepted the requested correction.</td><td>Withdrawal and return or entry positioning.</td></tr>
+<tr><td>Return route completed</td><td>The generated return movements have finished.</td><td>For a program exchange, a continuation check may still be required.</td></tr>
+</tbody></table>
+<h3>The raised traverse point is a configured coordinate</h3>
+<p>For a station approach that requires an X/Y change at or above the configured axis tolerance, the route first moves Z to its configured MaxCourse coordinate, traverses to the station approach X/Y, then moves Z to the approach height. If X/Y is already within tolerance, that approach can use a direct Z movement without the preliminary lift. MaxCourse is a machine setting; it is not a measured clearance above today's material or clamps.</p>
+<h3>Which parts use the slower exchange velocity?</h3>
+<p>The dedicated ToolChanger Velocity is used when placing the old tool: from its placement-entry point into the station, and from the station to its placement-exit point. Other generated movements use TraverseVelocity, including the reviewed new-tool pickup entry and withdrawal. Do not assume that every movement near a tool pocket uses the dedicated slower setting.</p>
+<p>The application captures the route and relevant values for the request and checks points against configured travel. These checks do not prove obstacle clearance. Every approach, holder movement, lift, traverse and final return must match the actual installation. The staged stops are automatic sequencing points, not operator access windows.</p>
+
+</section>
+<section id="confirmation" aria-labelledby="confirmation-title"><h2 id="confirmation-title">11.6 Interpret release, clamp and current-tool confirmation</h2>
+
+<p>A release or clamp output requests a mechanical action. Confirmation is a later condition reached after the applicable feedback and settling time. This is why an exchange can wait at a holder even though an output has already changed.</p>
+<p>The supplied release routine requests the grip to open. Where the corresponding physical sensors are assigned, it requires the released indication and absence of the tool-clamped indication continuously for the configured release settling time. A brief flash of the expected signal is not enough.</p>
+<p>The clamp routine starts from a confirmed open state and removes the release request. For a nonempty pickup, it requires the applicable clamped, not-released and piston-retracted indications to remain suitable for the clamp settling time. Closing an empty spindle after unloading is a different case and does not require a tool-present clamped indication.</p>
+<table><caption>Table 11-6. Confirmation terms an operator may encounter</caption><thead><tr><th scope="col">Term or indication</th><th scope="col">Meaning in the supplied exchange</th><th scope="col">Limit of the indication</th></tr></thead><tbody>
+<tr><td>Release command</td><td>The mechanism is being asked to open.</td><td>The tool has not necessarily been released successfully.</td></tr>
+<tr><td>Release confirmed</td><td>The applicable release conditions have held for the settling interval.</td><td>The departure route and tool-state recording may still be pending.</td></tr>
+<tr><td>Clamp command</td><td>The release request has been removed to close the grip.</td><td>The new tool is not yet necessarily confirmed.</td></tr>
+<tr><td>Clamp confirmed</td><td>The applicable closing conditions have held for their settling interval.</td><td>Correction and withdrawal can still remain.</td></tr>
+<tr><td>Current tool recorded</td><td>The application has accepted the completed stage and records its tool state.</td><td>The entire exchange need not be complete.</td></tr>
+<tr><td>Tool offset acknowledged</td><td>The machining correction has been accepted.</td><td>A travel route or machining handoff may still follow.</td></tr>
+</tbody></table>
+<h3>Understand the timing settings without adjusting them casually</h3>
+<p>ToolChanger <strong>Release Time</strong> and <strong>Clamp Time</strong> define the required settling intervals in milliseconds. <strong>FeedbackTimeout</strong> provides the additional wait allowance. For example, an illustrative 500 ms settling interval with a 5,000 ms additional allowance gives the relevant routine a 5,500 ms timeout threshold. These values explain the timing relationship; they are not instructions to change the installed settings.</p>
+<p>Where a grip or piston sensor is not physically assigned, the supplied routine omits that sensor's level check but retains its timed sequence. With no assigned grip feedback, the settling delay still occurs after the command. Do not describe such an installation as independently verifying every physical grip condition.</p>
+<p>Air used for taper cleaning is also separate. A taper-blow output can accompany release or clamping, but it is not an input that proves the tool has been released, picked up or retained correctly.</p>
+<h3>Why the display changes before the head leaves</h3>
+<p>After the old-tool release stage has completed and the axes are stopped at the station, the application verifies the applicable feedback and records tool zero. After the new-tool clamp stage, it verifies the corresponding conditions and records the new number. It then applies the appropriate correction before allowing the next route.</p>
+<p>Those recorded state changes are saved immediately. If saving the new physical state fails, the operation halts at that stage rather than knowingly continue with an unsaved record. The in-memory display can already show the new state, so record both the displayed number and the failure message for recovery.</p>
+<aside class="learning-example"><h3>Tool 5 is displayed while the head is still at the magazine</h3><p>The clamp stage has been accepted and tool 5 recorded. The application still has to accept the correction and withdraw through the defined route. The correct response is to keep observing, not to jog the head away or assume the operation has finished.</p></aside>
+<p>If the physical tool and record cannot be reconciled after a fault, do not choose a convenient number to restore normal-looking controls. The record is an input to the next movement sequence. Recovery must establish which assembly is actually held, which pockets are occupied and which stage was last completed.</p>
+
+</section>
+<section id="manual-outcomes" aria-labelledby="manual-outcomes-title"><h2 id="manual-outcomes-title">11.7 Understand manual replacement, pickup, unloading and same-tool requests</h2>
+
+<p>Not every manual selection produces the same physical sequence. The route depends on the recorded current tool and the requested tool. Before committing, identify which of the following cases applies.</p>
+<table><caption>Table 11-7. Manual request types</caption><thead><tr><th scope="col">Starting record</th><th scope="col">Request</th><th scope="col">Expected exchange pattern</th></tr></thead><tbody>
+<tr><td>A nonzero tool is current</td><td>A different enabled tool</td><td>Store the old tool, record empty, pick the new tool, apply its correction, withdraw and return.</td></tr>
+<tr><td>Empty spindle</td><td>An enabled nonzero tool</td><td>Approach the requested station, confirm spindle stop, open the empty grip, pick and clamp the tool, apply its correction and return.</td></tr>
+<tr><td>A nonzero tool is current</td><td>Blank / zero</td><td>Store the old tool, clear its correction, withdraw, close the empty spindle and return.</td></tr>
+<tr><td>The requested tool is already current</td><td>The same number</td><td>No physical magazine exchange is required; the correction handshake can still be performed.</td></tr>
+</tbody></table>
+<h3>A manual exchange returns to its captured machine position</h3>
+<p>For an ordinary physical manual exchange, the application captures the machine coordinates at the beginning and builds the final return to that position. This is a return of the head to the same machine coordinates, not a guarantee that a different tool tip occupies the same point in space.</p>
+<p>Changing the tool correction updates the machining coordinate relationship. It does not make the manual return automatically preserve the previous physical tool-tip clearance. This is why a suitable start/return location must be established before requesting a longer or differently shaped tool.</p>
+<aside class="learning-example"><h3>Same head position, different tool tip</h3><p>Tool 2 projects 40 mm below its holder and tool 5 projects 70 mm in an otherwise comparable assembly. At the same head position, the latter projects 30 mm farther. These are illustrative physical dimensions, not offset settings. A return location that cleared material with tool 2 must be reassessed for tool 5.</p></aside>
+<h3>Unloading includes closing the empty spindle</h3>
+<p>After the old tool is released into its station and the empty state is recorded, the spindle must still withdraw along the configured departure route. An unload-only request also runs the empty-spindle closing sequence after withdrawal from the holder. It then completes the return.</p>
+<p>The blank display during those stages does not mean the unload is finished. Remain clear until the operation has completed and the machine's access conditions have been met. Do not use the blank selector entry as a shortcut to request a manual drawbar release while standing at the spindle.</p>
+<h3>Requesting the same tool is not a fresh physical inspection</h3>
+<p>A same-tool request skips the physical exchange route and proceeds through the correction-handling path. It does not unload and reload the assembly just to prove that it is present. It must not be used to repair uncertainty about tool identity, magazine occupancy or grip condition.</p>
+<p>A control may not create a new request when its value has not changed. Where a same-tool request is submitted through an approved command, understand the behaviour above rather than expecting a complete magazine cycle.</p>
+<h3>Finish the manual task before making another decision</h3>
+<p>A manual exchange does not automatically resume the main machining program. Wait for its completion report, the settled machine state and the correct recorded tool. Then prepare the next task deliberately: measurement, job verification or an approved machining start.</p>
+<p>A physical exchange requests spindle shutdown and does not itself issue a normal spindle-start command at the end of the manual return. That does not remove the need to verify actual standstill and access conditions. A same-tool request is different because it may not run a physical shutdown sequence at all.</p>
+<p>Do not infer completion solely because the selector becomes available, nor assume it is unfinished solely because another machine condition keeps the selector disabled. Read the operation result and the current machine state together.</p>
+
+</section>
+<section id="automatic" aria-labelledby="automatic-title"><h2 id="automatic-title">11.8 Understand program-requested exchange and automatic continuation</h2>
+
+<p>A machining program can select a tool number and request its exchange through <strong>M6</strong>. The operator needs to recognize this instruction because a normal job start or continuation can lead to a magazine movement before cutting resumes. It is not necessary to open or edit the machine-control routines to operate an approved job.</p>
+<p>The program request is associated with the prepared machining state. Once the main path is paused for the exchange and its axes are available, the application runs the required stages. After the new correction has been accepted and the return completed, the supplied M100 handoff can resume the machining program without another press of Run.</p>
+<table><caption>Table 11-8. Manual and program-requested exchange</caption><thead><tr><th scope="col">Point of comparison</th><th scope="col">Manual selector request</th><th scope="col">Program request</th></tr></thead><tbody>
+<tr><td>Who chooses the target?</td><td>The operator commits a tool choice.</td><td>The prepared program supplies its selected tool.</td></tr>
+<tr><td>Physical exchange mechanism</td><td>The configured staged exchange.</td><td>The same staged mechanism, when physical exchange is required and enabled.</td></tr>
+<tr><td>Ordinary return destination</td><td>The captured machine starting position.</td><td>The machining continuation position adjusted for the new correction.</td></tr>
+<tr><td>Machining after the exchange</td><td>Not automatically resumed.</td><td>Can resume automatically through the continuation handoff.</td></tr>
+<tr><td>AutomaticToolChange disabled</td><td>Manual changes remain separately available subject to their checks.</td><td>The physical M6 request is ignored and the current tool is retained.</td></tr>
+</tbody></table>
+<h3>Disabling automatic exchange does not require a manual acknowledgement at every M6</h3>
+<p>The ToolChanger setting <strong>AutomaticToolChange</strong>, presented with the caption <strong>Enabled</strong>, allows physical exchange for program requests. In the supplied implementation, turning it off causes the requested automatic tool change to be reported as ignored and the current tool to be retained. The same-tool correction and continuation handling can still proceed.</p>
+<p>This is not a “stop and ask me to fit the tool” mode. It must not be used casually on a job that requires another cutter. The machine can continue with the retained tool after the applicable checks. Only use this setting under an approved operating arrangement in which the tool requirements have already been resolved.</p>
+<aside class="learning-example"><h3>The file requests tool 5, but automatic exchange is disabled</h3><p>Tool 2 is recorded in the spindle. The application can report that the automatic request for tool 5 was ignored and retain tool 2. It does not silently turn tool 2 into tool 5, and it does not guarantee a prompt for a manual replacement. Verify this setting before running a job that depends on automatic tool changes.</p></aside>
+<h3>Tool preparation can occur before entry positioning</h3>
+<p>When the normal start procedure requires an entry tool, the application can acquire it before positioning the head at the machining entry. For a physical exchange, it confirms the tool, accepts its correction and withdraws to the configured raised Z position. The job-start workflow then resolves the entry route using the accepted new correction.</p>
+<p>Do not interpret the end of that tool preparation as the end of all automatic activity. Entry positioning and machining can follow. Likewise, if the tool was prepared successfully but entry positioning is rejected, the new physical tool remains the current tool; rejection does not put the old one back.</p>
+<h3>Same-tool and final requests</h3>
+<p>A program request for the already current tool does not require a physical magazine exchange. It still uses the correction and continuation handling appropriate to the prepared program. An M6 at the end of the available machining path can complete without a machining handoff because there are no remaining blocks to run.</p>
+<p>For ordinary continuing M6 operation, the return target accounts for the new tool correction. It need not equal the machine coordinates at which the exchange began. Check the job's entry and return clearance for the actual tool; the software's coordinate calculations do not inspect nearby clamps or material.</p>
+<p>Prepare for the full sequence before Run, including the tool movement and any cutting that follows. Never approach the machine during a stopped interval between exchange and handoff. If the continuation is refused, read the result and use the job recovery procedure rather than issuing an unrelated return command to force it onward.</p>
+
+</section>
+<section id="geometry-offset" aria-labelledby="geometry-offset-title"><h2 id="geometry-offset-title">11.9 Keep station coordinates, tool length and machining correction separate</h2>
+
+<p>Tool setup contains several different kinds of information. Station coordinates tell the machine where to store or collect a tool. Approach and departure values define how the spindle enters and leaves the holder. Tool length and correction describe how the fitted tool affects machining coordinates. Changing one is not a reliable way to correct a problem in another.</p>
+<p>The per-tool settings are grouped under <strong>ToolChanger → Tools</strong>, with entries such as <strong>T01</strong> and <strong>T02</strong>. These labels refer to the numbered tool stations. The actual values must come from authorized commissioning and setup, not from the illustrative examples in a manual.</p>
+<table><caption>Table 11-9. Per-tool settings and their purposes</caption><thead><tr><th scope="col">Setting</th><th scope="col">Meaning</th><th scope="col">Operator distinction</th></tr></thead><tbody>
+<tr><td>Enabled</td><td>Whether the configured tool may be selected.</td><td>Availability, not measured pocket occupancy.</td></tr>
+<tr><td>Position</td><td>The holder's configured machine-coordinate station point.</td><td>A magazine location, not work zero.</td></tr>
+<tr><td>PickVector</td><td>Displacement from Position to the old-tool placement entry / new-tool pickup exit point.</td><td>Describes a nearby route point, not the tool's cutting correction.</td></tr>
+<tr><td>PlaceVector</td><td>Displacement from Position to the old-tool placement exit / new-tool pickup entry point.</td><td>The other side of the holder route; its role differs between placing and picking.</td></tr>
+<tr><td>Length</td><td>Measured physical tool length relative to the empty-spindle reference.</td><td>Used in compensation; selecting a tool does not measure this value.</td></tr>
+<tr><td>Offset</td><td>Configured X/Y/Z machining correction.</td><td>The Z correction is added to Length for the machining-path tool correction.</td></tr>
+</tbody></table>
+<h3>Reading a route displacement</h3>
+<p>A vector here simply means a signed displacement in X, Y and Z from the station point. For example, if an imaginary station is at X = 600, Y = 100, Z = 80 mm, and a route vector is X = 0, Y = −30, Z = 0 mm, the corresponding point is X = 600, Y = 70, Z = 80 mm. The vector is not an absolute destination.</p>
+<p>The names can be misleading if read without the route context. When putting away the old tool, the route enters through the point defined by PickVector and leaves through the point defined by PlaceVector. When collecting a new tool, it enters through PlaceVector and leaves through PickVector. Use the approved route drawing for the actual holder; do not reverse values merely because the names seem unexpected.</p>
+<h3>How length affects the machining correction</h3>
+<p>For a nonzero tool, the machining-path correction uses the configured X and Y Offset values. Its Z correction is the measured Length plus the configured Z Offset. For the empty spindle, the tool correction requested by the exchange is zero.</p>
+<aside class="learning-example"><h3>One tool, two unrelated sets of coordinates</h3><p>A tool has a measured Length of 60 mm and a Z Offset of +2 mm. Its Z tool correction is therefore 62 mm. That does not move its magazine station to Z = 62 mm. The station Position and route vectors remain separate machine-setup information.</p></aside>
+<p>After a confirmed release, the application clears the old correction. After a confirmed pickup, it applies the new one. It waits for acceptance before proceeding. This prevents the next stage from being treated as ready merely because a request to change the correction was sent.</p>
+<h3>Selection does not measure the tool</h3>
+<p>The exchange uses the stored length and correction for the chosen tool. It does not automatically prove that those values match a replacement cutter or a changed projection in the holder. Follow the approved measurement procedure whenever the setup requires it; Chapter 12 describes the measurement controls.</p>
+<p>Likewise, changing a work origin does not relocate a magazine station. Do not adjust a work reference to compensate for a tool missing its holder. A holder-route problem requires assessment of the machine reference, station setup and physical arrangement.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 11-3 · STATION-SETUP ILLUSTRATION REQUIRED</p><h3>One holder, its approach points and its tool data</h3><p>Supply an installation-specific photograph or commissioned route drawing identifying Position, the point from PickVector and the point from PlaceVector. Pair it with an English settings view showing the same tool's Enabled, Length and Offset values. Label all example values as installation-specific.</p><p>Suggested image: <code>assets/images/11-station-setup.png</code>. Show placement and pickup directions separately, and identify the configured raised traverse coordinate. Obtain the photograph under the machine's access/isolation procedure.</p><figcaption>Station geometry controls magazine movement; measured length and Offset control the machining correction.</figcaption></figure>
+<p>During ordinary operation, the operator's responsibility is to verify that the approved tool and setup are in use. Do not experiment with station positions, vectors, timing or corrections to make a rejected exchange pass. An accepted numerical value can still describe a physically unsuitable route.</p>
+
+</section>
+<section id="interruption" aria-labelledby="interruption-title"><h2 id="interruption-title">11.10 Stop an exchange and establish the physical state before recovery</h2>
+
+<p>An interrupted exchange is not automatically returned to its starting condition. The old tool may still be clamped, may have been released, or the new tool may already be fitted. The head may be partly engaged with a holder. Recovery must begin with the actual stage and physical condition, not with the tool number you originally requested.</p>
+<p>The application's Pause and Reset routes cancel pending tool-operation continuation and request all-motion stopping. Reset also schedules the main machining program's reset after stopping, while Pause retains its program position. Neither is a promise to resume the interrupted tool-exchange stage with one more click.</p>
+<ol class="journey">
+<li><strong>Use the required stopping response.</strong><p>For an ordinary interruption, use the appropriate motion-stopping control. For immediate danger, use the installed emergency response.</p></li>
+<li><strong>Remain clear while stopping takes effect.</strong><p>A request is not instantaneous physical standstill. Follow the machine's procedure for abnormal or incomplete stopping.</p></li>
+<li><strong>Identify the last reported exchange stage.</strong><p>Read whether it was approaching, placing, clearing correction, picking, applying correction, returning or handing back to the program.</p></li>
+<li><strong>Record the displayed current tool and the physical observations.</strong><p>Determine which tool is actually held and which pockets are occupied through the approved inspection procedure.</p></li>
+<li><strong>Reconcile the grip, position and correction state.</strong><p>If any part is uncertain, obtain authorized assistance before moving or editing the recorded tool.</p></li>
+<li><strong>Prepare a deliberate recovery.</strong><p>Establish a suitable route out of the present situation and the correct job state. Do not assume a fresh selection safely continues the unfinished route.</p></li>
+</ol>
+<table><caption>Table 11-10. What can remain after interruption</caption><thead><tr><th scope="col">Last known stage</th><th scope="col">What must be established</th></tr></thead><tbody>
+<tr><td>Before release of the old tool</td><td>Whether it remains securely held and whether the head is engaged with its station.</td></tr>
+<tr><td>After release, before empty state is recorded</td><td>Whether the record is behind the actual mechanical event.</td></tr>
+<tr><td>After empty state is recorded</td><td>The old tool's location, grip state, correction state and a suitable departure route.</td></tr>
+<tr><td>After pickup/clamping, before new state is recorded</td><td>Whether the new tool is physically held even though its number has not yet been committed.</td></tr>
+<tr><td>After the new tool is recorded</td><td>Whether correction, withdrawal or return remains incomplete.</td></tr>
+<tr><td>During continuation</td><td>Whether machining had already restarted and which program position remains.</td></tr>
+</tbody></table>
+<h3>Cancellation revokes continuation; it does not undo an exchange</h3>
+<p>The supplied cancellation path stops the active exchange movement and relevant routines where possible, and removes the pending continuation. It does not move the old tool back into the spindle or reverse every completed motion. The current-tool record retains the state most recently accepted.</p>
+<p>There can also be a short interval between a physical grip event and the application's acceptance and recording of that stage. A fault during that interval is one reason the displayed number must not be the only evidence used for recovery.</p>
+<aside class="learning-example"><h3>Interrupted immediately after pickup</h3><p>The tool has been clamped at its station, but an interruption occurs before withdrawal. A fresh request based only on the displayed number may construct a route that is unsuitable while the head is still engaged with the holder. First establish the grip and exact physical position, then use the authorized recovery route.</p></aside>
+<h3>Reconnection is not a mechanical reset</h3>
+<p>Losing the connection cancels the pending operation. On reconnecting, the application synchronizes the machining correction from the recorded tool. That synchronization does not inspect the spindle or magazine and does not complete an interrupted mechanical exchange.</p>
+<p>If the tool record or its saving failed, preserve the message before restarting the application. Do not use restart, re-homing or setting edits as a trial-and-error way to remove the fault. In particular, a tool partly engaged with a holder may make an ordinary homing or positioning route unsuitable.</p>
+<p>Only continue when the physical tool, magazine occupancy, machine reference, applied correction and retained or reset job position agree. If they cannot be established from the approved operator procedure, leave the machine stopped and involve the person responsible for recovery.</p>
+
+</section>
+<section id="reports" aria-labelledby="reports-title"><h2 id="reports-title">11.11 Read exchange messages and report a fault with its stage</h2>
+
+<p>Tool-change reports describe both the operation's progress and failures. Read the messages for the current attempt in time order. A message about entering a holder describes a reached route step; a later confirmation or completion message establishes a different boundary. Do not treat a descriptive motion message as proof that every action named in it has succeeded.</p>
+<p>The report prefix <strong>ChangeTool</strong> identifies the exchange. The selector's availability messages may use <strong>R_ToolSelector</strong>. These are names to recognize and quote when seeking assistance, not instructions to open a programming editor.</p>
+<table><caption>Table 11-11. Reading typical progress messages</caption><thead><tr><th scope="col">Message or phrase</th><th scope="col">Meaning for the operator</th><th scope="col">What may still follow</th></tr></thead><tbody>
+<tr><td>Starting T02 to T05, manual or G-code</td><td>The exchange has captured its old and requested tool and its operating mode.</td><td>The complete mechanical sequence.</td></tr>
+<tr><td>Waiting for enabled rollers</td><td>The operation is waiting for the required free-position confirmation.</td><td>Spindle shutdown and all exchange movement.</td></tr>
+<tr><td>Entering holder / Releasing / Clamping</td><td>A described route step has been reached.</td><td>The corresponding result and stage confirmation.</td></tr>
+<tr><td>Previous tool released; CurrentTool=0 recorded</td><td>The release stage was accepted and the empty state recorded.</td><td>Correction clearing, departure, pickup or empty-spindle closing.</td></tr>
+<tr><td>New tool clamped; CurrentTool recorded</td><td>The pickup stage was accepted and the new tool recorded.</td><td>Correction acceptance and withdrawal.</td></tr>
+<tr><td>Tool offset acknowledged</td><td>The requested correction has been accepted.</td><td>Another route or continuation, depending on the stage.</td></tr>
+<tr><td>Starting M100 to resume the work program</td><td>The exchange is requesting the machining handoff.</td><td>Its success/failure result and possible machining.</td></tr>
+<tr><td>Completed, CurrentTool=…</td><td>The exchange completion path has been reached.</td><td>Check the operating mode and current machine state; a program exchange can have resumed machining.</td></tr>
+</tbody></table>
+<h3>Use the fault number together with the message</h3>
+<p>The following numbers describe the supplied exchange fault reporting. They are not universal error meanings across every routine. Read the associated operation name, exit reason and explanatory text as well as the number.</p>
+<table><caption>Table 11-12. Supplied tool-exchange fault meanings</caption><thead><tr><th scope="col">Fault</th><th scope="col">Reported condition</th><th scope="col">What must be assessed</th></tr></thead><tbody>
+<tr><td>2</td><td>A required spindle configuration or applicable health/interlock condition was lost.</td><td>Configured outputs and relevant pressure, thermal and drive-ready indications.</td></tr>
+<tr><td>3</td><td>Spindle stop was not confirmed or its required stopped condition was lost.</td><td>Actual rundown, rotation feedback and the point at which the exchange stopped.</td></tr>
+<tr><td>4</td><td>Release feedback did not settle before timeout.</td><td>The actual grip/tool condition and applicable released/clamped feedback.</td></tr>
+<tr><td>5</td><td>The confirmed released state was lost or clamping did not start from the required open state.</td><td>The grip's physical state before another command.</td></tr>
+<tr><td>6</td><td>Applicable clamp/piston feedback was lost or did not settle.</td><td>Whether the tool is actually held and whether withdrawal is incomplete.</td></tr>
+<tr><td>7</td><td>Enabled roller free-position confirmation timed out or was lost.</td><td>Roller position, configured sensors and the interrupted exchange stage.</td></tr>
+</tbody></table>
+<h3>Not every rejection is a mechanical fault</h3>
+<p>A disabled tool number, incomplete homing, another operation in progress, invalid route point or missing exchange routine can refuse a request before physical exchange starts. Initial correction synchronization can also keep the selector unavailable after connection. Identify the actual message instead of assuming the grip mechanism has failed.</p>
+<p>Other failures can occur after a mechanical stage, such as inability to save the current-tool record or refusal of a tool correction. These can leave the new physical state established while further movement is withheld. The message's stage is essential to recovery.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 11-4 · EXCHANGE-REPORT SCREENSHOT REQUIRED</p><h3>One complete attempt, with its last confirmed state</h3><p>Insert an English report view from an approved recorded exchange. Show timestamps, the initial request, a current-tool recording message, the correction acknowledgement and the final completion or failure. If more than one crop is necessary, keep their time order clear.</p><p>Suggested image: <code>assets/images/11-exchange-report.png</code>. Annotate “requested tool,” “recorded current tool” and “operation result” separately. Do not create a fault or interrupt a live holder movement for this image.</p><figcaption>The last confirmed stage helps explain the machine state; it does not replace physical verification after a fault.</figcaption></figure>
+<h3>Prepare a useful recovery report</h3>
+<p>Record the tool originally fitted, the tool requested, the displayed current tool, the manual or program mode and the last completed stage. Describe the physical tool and pocket observations separately. Include whether spindle shutdown, release, clamping, correction or return had been reported successful.</p>
+<p>Also state whether Pause, Reset, emergency action, connection loss or an application restart occurred. Preserve the surrounding messages instead of quoting only the last line. Do not repeat requests, edit the current tool or disable a sensor to remove the error before the cause and recovery route have been established.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">11.12 Follow an example exchange and check your understanding</h2>
+
+<p>Use the following example as a reading exercise before observing an approved demonstration. The tool numbers are illustrative, and the example does not supply the station geometry or operating authority needed to perform an exchange on a real machine.</p>
+<h3>Example: request tool 5 while tool 2 is fitted</h3>
+<p>The operator confirms that tool 2 is physically held and recorded, its return pocket is suitable, and enabled tool 5 is present at the correct station. The job information identifies tool 5 as the intended assembly. The machine has valid homing, suitable supplies and feedback, and no competing operation.</p>
+<p>Before opening the selector, the operator checks the complete movement envelope and the final return location with tool 5 fitted. This is particularly important if tool 5 is longer. Only then does the operator choose tool 5 and thereby commit the manual request.</p>
+<table><caption>Table 11-13. Reading the example as it progresses</caption><thead><tr><th scope="col">Observed progress</th><th scope="col">Expected recorded tool</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>Request accepted; rollers checked and old-tool approach begins</td><td>2.</td><td>The request for 5 has been captured, but tool 2 has not yet been put away.</td></tr>
+<tr><td>Release of tool 2 confirmed and stage recorded</td><td>Blank / 0.</td><td>The spindle is recorded empty; departure and pickup remain.</td></tr>
+<tr><td>Tool 5 clamped and stage recorded</td><td>5.</td><td>The new assembly is recorded; correction and withdrawal can still remain.</td></tr>
+<tr><td>Correction accepted and manual return completed</td><td>5.</td><td>Verify the final result and machine state. This manual exchange does not resume machining.</td></tr>
+</tbody></table>
+<p>The operator stays at the operating position throughout. A short stop at either holder is expected sequencing, not permission to inspect the grip by hand. If a fault occurs at any stage, the operator uses the prescribed response and preserves the last confirmed state for recovery.</p>
+<h3>Change the request to empty spindle</h3>
+<p>If the same starting setup instead receives a blank/zero request, tool 2 is stored without picking up tool 5. After release and empty-state recording, the spindle withdraws, closes in the empty-spindle mode and completes the return. The blank display appears before all those remaining actions have finished.</p>
+<h3>Change the request source to the program</h3>
+<p>If an approved program requests the tool change with automatic exchange enabled, prepare for machining to follow after the exchange and continuation checks. The ordinary program return destination accounts for the new correction; it is not simply the manual request's captured starting coordinates.</p>
+<p>If this is entry-tool preparation at the beginning of a job, the exchange withdraws and the start workflow then resolves entry positioning with the accepted tool correction. The end of the magazine movement is still not permission to enter the work area.</p>
+<h3>Review questions</h3>
+<dl>
+<dt>Does selecting a tool merely update a number?</dt><dd><p>No. Committing a valid choice requests the powered exchange and can start automatic activity immediately.</p></dd>
+<dt>What does the blank entry request?</dt><dd><p>Tool zero: an empty spindle. With a tool fitted, that can mean unloading it to its station and returning afterward.</p></dd>
+<dt>Does an enabled number prove that its pocket contains the correct tool?</dt><dd><p>No. It is configured availability, not a fresh physical inventory measurement.</p></dd>
+<dt>Why can the old tool number remain after you request a new one?</dt><dd><p>The display reports the current recorded state until the release stage is accepted. It does not prematurely present the requested tool as fitted.</p></dd>
+<dt>Does the new tool number mean that withdrawal has finished?</dt><dd><p>No. The number is recorded after pickup/clamp confirmation; correction acceptance and further movement can remain.</p></dd>
+<dt>Does a manual exchange preserve the same physical tool-tip position?</dt><dd><p>Not necessarily. It returns the head to captured machine coordinates; the new tool's projection may differ.</p></dd>
+<dt>Does automatic exchange disabled mean the program waits for a manual replacement?</dt><dd><p>No. The supplied behaviour retains the current tool and can continue through the same-tool handling. The job must be compatible with that approved configuration.</p></dd>
+<dt>Can you repair an interrupted exchange by editing CurrentTool?</dt><dd><p>Not as an ordinary shortcut. First reconcile the actual grip, tool, pocket occupancy, position and correction through the authorized recovery procedure.</p></dd>
+</dl>
+<p>You are ready to operate the selector independently when you can identify the actual and requested tools, explain the full route and final destination, distinguish confirmation from completion, and describe what to do if any stage is interrupted.</p>
+<aside class="note"><strong>Documentation basis.</strong> This chapter follows the tool selector, staged exchange routes, tool-state recording, compensation handling and supplied roller/spindle/grip routines reviewed on 8 October 2026. The diagram is conceptual. Three marked spaces specify the installation images still required. Customized saved machine-control routines and the actual magazine arrangement need matching installation instructions.</aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZAC+TC · Operator Manual · Chapter 11</span><a href="index.html#chapter-11">Return to the contents</a></footer></main></body></html>

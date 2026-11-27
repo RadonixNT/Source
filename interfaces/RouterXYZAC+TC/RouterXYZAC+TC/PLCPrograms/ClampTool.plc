@@ -1,0 +1,39 @@
+// De-energize release only from a confirmed open state. A picked tool requires
+// S1/S2 agreement, plus S5 when assigned. An unload-only request (NewTool = 0)
+// closes the empty spindle and requires S2 OFF, plus assigned S5 ON, without S1.
+// Start ClampSettled only while all applicable feedback agrees. Absent S5 is
+// omitted, as are absent S1/S2. With no assigned feedback, wait the full delay
+// after the clamp command; the preceding release confirmation is still required.
+TIMER ClampSettled;
+IF NOT TP2.Running OR NOT ToolChangeActive THEN END_FUNCTION(Result := 1); END_IF;
+IF SF.FirstScan THEN
+    IF NOT SpindleReleaseConfirmed
+        OR (ASSIGNED(SpindleToolReleased) AND NOT SpindleToolReleased)
+        OR (ASSIGNED(SpindleToolClamped) AND SpindleToolClamped) THEN
+        ToolChangeFault := 5;
+        TOOLPATH_STOP(TOOLPATH := 2);
+        END_FUNCTION(Result := 5);
+    END_IF;
+    SpindleReleaseConfirmed := FALSE;
+    SpindleClampConfirmed := FALSE;
+END_IF;
+IF NOT SpindleReleasePermitted OR ToolChangeFault <> 0 THEN
+    IF ToolChangeFault = 0 THEN ToolChangeFault := 2; END_IF;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 2);
+END_IF;
+SpindleToolRelease := FALSE;
+ClampSettled(TYPE := TON,
+    IN := NOT SF.FirstScan AND (NOT ASSIGNED(SpindleToolClamped) OR SpindleToolClamped OR NewTool = 0)
+        AND (NOT ASSIGNED(SpindleToolReleased) OR NOT SpindleToolReleased) AND (NOT ASSIGNED(SpindlePistonRetracted) OR SpindlePistonRetracted),
+    PT := ToolClampTime);
+IF ClampSettled.Q THEN
+    SpindleClampConfirmed := TRUE;
+    IF ASSIGNED(SpindleTaperBlow) THEN SpindleTaperBlow := FALSE; END_IF;
+    END_FUNCTION(Result := 0);
+END_IF;
+IF SF.Time >= ToolClampTime + ToolFeedbackTimeout THEN
+    ToolChangeFault := 6;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 6);
+END_IF;

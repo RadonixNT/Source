@@ -1,0 +1,11 @@
+// Vacuum changes only on valid route entry. Cancellation/fault never releases it.
+// Result 1: TP0 active; 2: vacuum unassigned; 4: TP1 interrupted.
+INTEGER Delay := 0;
+IF NOT TP1.Running OR TP1.Stopping OR TP1.StopCommand THEN END_FUNCTION(Result := 4); END_IF;
+IF TP0.ProgramActive THEN END_FUNCTION(Result := 1); END_IF;
+IF NOT ASSIGNED(LoaderVacuum) THEN END_FUNCTION(Result := 2); END_IF;
+IF SF.FirstScan THEN
+    Delay := LoaderReleaseDelay;
+    LoaderVacuum := FALSE;
+END_IF;
+IF SF.Time >= Delay THEN END_FUNCTION(Result := 0); END_IF;

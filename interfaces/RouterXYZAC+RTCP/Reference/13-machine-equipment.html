@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 13 — Machine-specific Equipment | RouterXYZAC+RTCP</title>
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#options">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+RTCP · CHAPTER 13</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Machine-specific Equipment</h1><p class="lead">Identify installed options, their controls and the feedback used to confirm operation.</p>
+
+<nav aria-label="Manual navigation"><a href="index.html#chapter-13">Manual contents</a> · <a href="10-spindle.html">Previous chapter: Spindle operation</a></nav></header>
+<div class="body"><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+
+<li><a href="#options">Identify other options and obtain their operating instructions</a></li>
+</ol></nav>
+<section id="options" aria-labelledby="options-title"><h2 id="options-title">13.1 Identify other options and obtain their operating instructions</h2>
+
+<p>Different routers can share the same application while having different accessories. A machine may have lubrication equipment, a coolant device, an external operator panel or additional spindle equipment. Some names are provided in the standard signal list so that a machine builder can configure an installation. A name in that list is not the same as a finished, commissioned feature.</p>
+<p>For an operator, the useful question is: <strong>what is installed on this machine, what is its approved control, and how is completion confirmed?</strong> Do not infer an operating procedure from a signal name. In particular, an input called RunSwitch does not by itself establish what a physical button will start, whether it must be held or what checks will apply.</p>
+<div class="table-scroll"><table><caption>Table 13-1. Supplied equipment names and the limits of this chapter</caption><thead><tr><th scope="col">Equipment or indication</th><th scope="col">What the supplied application establishes</th><th scope="col">What must come from the delivered machine documentation</th></tr></thead><tbody>
+<tr><td>Coolant and Lubricant</td><td>Output names are provided; this does not establish an automatic operating cycle.</td><td>The installed system, approved use, operating control and checks. Do not assume a program command operates it solely because its name exists.</td></tr>
+<tr><td>RunSwitch, PauseSwitch and StopSwitch</td><td>External input names are available in the signal list.</td><td>The actual physical-button functions and their relationship to the screen controls.</td></tr>
+
+
+<tr><td>Brake</td><td>The supplied Z-brake request depends on the configured axis, mapped drive, servo-on command, drive readiness and absence of drive or coupling faults.</td><td>The actual brake arrangement, holding capability, access and service procedure. It is not a manual lifting or lowering control.</td></tr>
+
+<tr><td>PressureSensor</td><td>If physically assigned, its logical state participates in spindle readiness.</td><td>The required physical pressure, gauge reading and supply checks. A logical HIGH is not a numerical pressure measurement.</td></tr>
+</tbody></table></div>
+<h3>Use a machine-specific option record</h3>
+<p>Before independent operation, obtain a short record for every accessory you are expected to use. It should identify the physical device, its control and its normal indications. If a particular option is absent, mark it “Not fitted”. If it is fitted but not commissioned, mark that explicitly rather than leaving a blank that another operator could interpret as permission to use it.</p>
+<div class="table-scroll"><table><caption>Table 13-2. Information to add to the installation's option record</caption><thead><tr><th scope="col">Record item</th><th scope="col">Information to enter for each installed option</th></tr></thead><tbody>
+<tr><td>Identity and purpose</td><td>Machine label, physical location and the operation it supports.</td></tr>
+<tr><td>Approved use</td><td>Suitable jobs and materials, required setup, workholding and clearances.</td></tr>
+<tr><td>Control</td><td>Exact screen caption or physical-button label, including whether operation is momentary, held or automatic.</td></tr>
+<tr><td>Normal sequence</td><td>What moves first, what follows and what indicates completion.</td></tr>
+<tr><td>Permissions and feedback</td><td>Required conditions, expected input indications and the physical state they represent.</td></tr>
+<tr><td>Stop and recovery</td><td>Approved stopping method, access precautions and response to an incomplete cycle.</td></tr>
+<tr><td>Document control</td><td>Machine identity, applicable configuration revision, verification date and responsible person.</td></tr>
+</tbody></table></div>
+<h3>When the delivered machine differs</h3>
+<p>The machine's saved control programs can contain installation-specific behavior. That is why this chapter identifies the supplied behavior rather than promising that every machine has an identical sequence. If an option has been added or its behavior changed, the corresponding operator instructions must describe the delivered sequence. Operators should not have to read control-program text to discover which button is safe to press.</p>
+<p>Do not use an input/output editor as a substitute control panel for undocumented equipment. A direct output change may omit the sequencing, movement checks or confirmations that an approved operation requires. Report the missing procedure and obtain a demonstration and written instructions from the responsible person.</p>
+
+
+</section>
+
+</div><footer class="page-footer"><a href="index.html#chapter-13">Manual contents</a><span>RouterXYZAC+RTCP · Chapter 13</span></footer></main><p class="note">Updated operational reference (10 November 2026): see the <a href="index.html">RouterXYZAC+RTCP Operator Guide</a> for current command names and Clear Tool Path (Ctrl+Shift+Alt+C).</p></body></html>

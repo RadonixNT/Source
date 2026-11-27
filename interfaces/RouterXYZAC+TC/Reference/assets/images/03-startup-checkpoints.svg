@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="380" viewBox="0 0 1000 380" role="img" aria-labelledby="title desc">
+<title id="title">Application startup has separate checkpoints</title>
+<desc id="desc">Open the application, complete operator access, allow connection in the selected mode, verify the reported result, then prepare the machine. An incomplete checkpoint requires attention before proceeding.</desc>
+<rect width="1000" height="380" fill="#f3f7f7"/>
+<g font-family="Segoe UI, Arial, sans-serif" fill="#22313a">
+<text x="36" y="48" font-size="27" font-weight="700">A successful start is a sequence of checks</text>
+<text x="36" y="82" font-size="18">Mode must match your task; connection does not perform machine preparation.</text>
+<g fill="white" stroke="#9bafb5" stroke-width="2">
+<rect x="36" y="119" width="166" height="153" rx="8"/><rect x="226" y="119" width="166" height="153" rx="8"/>
+<rect x="416" y="119" width="166" height="153" rx="8"/><rect x="606" y="119" width="166" height="153" rx="8"/>
+<rect x="796" y="119" width="168" height="153" rx="8"/>
+</g>
+<g fill="#155765" font-size="20" font-weight="700">
+<text x="51" y="152">1. Open</text><text x="241" y="152">2. Access</text><text x="431" y="152">3. Connect</text><text x="621" y="152">4. Verify</text><text x="811" y="152">5. Prepare</text>
+</g>
+<g font-size="17">
+<text x="51" y="190">Approved</text><text x="51" y="217">application</text>
+<text x="241" y="190">Operator login</text><text x="241" y="217">if required</text>
+<text x="431" y="190">Selected mode</text><text x="431" y="217">Wait for result</text>
+<text x="621" y="190">Connection</text><text x="621" y="217">and messages</text>
+<text x="811" y="190">Machine checks</text><text x="811" y="217">and job setup</text>
+</g>
+<g fill="#155765"><path d="M205 194h9v-7l10 11-10 11v-7h-9z"/><path d="M395 194h9v-7l10 11-10 11v-7h-9z"/><path d="M585 194h9v-7l10 11-10 11v-7h-9z"/><path d="M775 194h9v-7l10 11-10 11v-7h-9z"/></g>
+<text x="36" y="314" font-size="18" font-weight="600">If a check is incomplete, resolve that stage before continuing.</text>
+<text x="36" y="345" font-size="17">Conceptual guide to ordinary startup, not a physical machine power-up procedure.</text>
+</g></svg>

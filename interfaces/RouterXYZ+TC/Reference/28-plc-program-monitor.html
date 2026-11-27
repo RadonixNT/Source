@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 28 — PLC Program Monitor | RouterXYZ+TC</title><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head><body class="chapter-intro"><a class="skip-link" href="#open">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZ+TC · CHAPTER 28</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>PLC Program Monitor</h1><p class="lead">Observe which machine-control programs are loaded or running, read their last reported outcome, and collect useful evidence without changing their operation.</p><p class="review-status"><strong>Expanded draft for review.</strong> The dedicated PLC programs window is read-only. Its observations complement the machine's normal controls and reports.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-28">Manual contents</a> · <a href="27-plc-source.html">Previous chapter: Viewing and Editing PLC Source</a></nav></header><div class="body"><nav aria-label="In this chapter"><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#open">Open the correct monitor and understand its purpose</a></li>
+<li><a href="#columns">Read each column and the footer before interpreting a row</a></li>
+<li><a href="#states">Interpret loaded, running, pending and error states</a></li>
+<li><a href="#outcomes">Read Last result and distinguish completion from success</a></li>
+<li><a href="#refresh">Observe cyclic and command programs within the display limits</a></li>
+<li><a href="#report">Use a repeatable observation and reporting procedure</a></li>
+</ol></nav>
+<section id="open" aria-labelledby="open-title"><h2 id="open-title">28.1 Open the correct monitor and understand its purpose</h2>
+
+<p>The PLC programs monitor shows information about the machine-control programs described in Chapter 27. Use it when a technician asks whether a named program is loaded, whether it is running, or what result it last reported. It does not show the cutting path or the current line of a workpiece's G-code file.</p>
+<p>The dedicated window is titled <strong>PLC programs</strong>. Its application command is <strong>OpenPlcPrograms</strong>, with the supplied keyboard shortcut <code>Ctrl+Shift+Alt+P</code>. Use that combination from the active main window only after checking that keyboard shortcuts are enabled and the saved assignment has not changed. <a href="24-keyboard-shortcuts.html">Chapter 24</a> explains how to inspect the actual assignment.</p>
+<h3>Opening the window does not start a program</h3>
+<p>The application creates this diagnostic window when requested. If it is already open, requesting it again brings the existing window forward and restores it if minimized. It does not create another controller connection, start the selected program or restart a completed function. Ordinary command-access restrictions still apply to opening it.</p>
+<div class="table-scroll"><table><caption>Table 28-1. Choose the right view</caption><thead><tr><th scope="col">View</th><th scope="col">Use it for</th><th scope="col">Recognizing it</th></tr></thead><tbody>
+<tr><td>Dedicated PLC programs window</td><td>Readable program states, scan information and last outcomes.</td><td>Columns include Program, State, Cost, Scans and Last result.</td></tr>
+<tr><td>PLC source in Configuration</td><td>Reading or making authorized changes to instruction text.</td><td>Controller → PLC source groups; see Chapter 27.</td></tr>
+<tr><td>Combined PLC monitor</td><td>A separate diagnostic view with IO, Programs and Memory tabs.</td><td>Its Programs tab has different, more technical columns.</td></tr>
+</tbody></table></div>
+<p>These views are not interchangeable. If a screenshot shows raw command/status numbers or Draft/RT columns, it is the combined monitor, not the dedicated window described by the column tables in this chapter. State which window you are using when reporting a problem.</p>
+<h3>Observe without interfering with operation</h3>
+<p>The dedicated window is a separate, non-blocking window, so the main application can continue working while it is open. This does not mean an operator should take attention away from a machine that requires supervision. Arrange the display so that important operating indications remain visible, or have a second authorized person collect the observation.</p>
+<p>The only action button supplied by this monitor is Close. There is no Run, Stop, Enable, Reset or Apply control in this window. Selecting a row is an inspection action. Closing the monitor stops its observation, not the PLC program or the machine. Use the normal machine controls for any actual operating action.</p>
+<p>Before drawing a conclusion from the table, first read the footer connection state. An offline catalog is still a list of known program names, but it cannot provide current online execution evidence. The next sections explain how to read the columns and avoid that common confusion.</p>
+
+</section>
+<section id="columns" aria-labelledby="columns-title"><h2 id="columns-title">28.2 Read each column and the footer before interpreting a row</h2>
+
+<p>Each row represents one program known to the application's PLC catalog. Read the Program name first and use it as the primary identity in a service report. A number in the first column is useful supporting information, but it is not a tool number, axis number or machining-file line number.</p>
+<div class="table-scroll"><table><caption>Table 28-2. Dedicated monitor columns</caption><thead><tr><th scope="col">Column</th><th scope="col">Meaning</th><th scope="col">Do not confuse it with</th></tr></thead><tbody>
+<tr><td>#</td><td>The program's current catalog index.</td><td>A fixed wiring address or permanent machine-function identifier.</td></tr>
+<tr><td>Program</td><td>The exact program name, such as Background or HomeZ.</td><td>The workpiece file name.</td></tr>
+<tr><td>State</td><td>The reported execution/load condition, with Pending added when appropriate.</td><td>A complete statement of every enable or access condition.</td></tr>
+<tr><td>Cost</td><td>The scan cost accepted and published for the deployed program.</td><td>Measured milliseconds, spindle load or a CPU percentage.</td></tr>
+<tr><td>Scans</td><td>The number of scans executed by the deployed program.</td><td>Completed parts or the number of separate operator starts.</td></tr>
+<tr><td>Last result</td><td>The reported last outcome or fault, sometimes with a numeric result or error.</td><td>An automatic pass/fail certificate for the physical mechanism.</td></tr>
+</tbody></table></div>
+<h3>A scan is a pass through the control logic</h3>
+<p>During one operation a PLC program may need many scans. It may repeatedly check a condition while waiting for a sensor or delay. Therefore, a large Scans value does not mean that a tool was changed that many times. A continuously active program can accumulate scans while the machine is simply monitoring conditions.</p>
+<p>Cost is a software execution-cost value used by the controller's PLC system. It is not a stopwatch reading. If a technician asks for it, report the number together with its column label and program name. Do not describe it as milliseconds or use it to estimate how long a homing move should take.</p>
+<h3>The footer describes the overall view</h3>
+<p>The footer shows the controller connection state, the number of catalog programs and, where applicable, <strong>Pending changes</strong>. The program count is not a count of loaded or running programs. A catalog row can remain present when its executable program is not loaded.</p>
+<p>Likewise, the footer's Pending changes is a whole-configuration indication. It need not correspond one-for-one with a Pending label on every row. A shared change can affect the configuration as a whole. Read the selected row and the footer together, then consult the source/configuration diagnostics if a change is being investigated.</p>
+<p>When live information is unavailable, Cost, Scans and Last result display a dash. A dash is unavailable information, not zero activity or a successful result. The first two columns can still identify the catalog while the controller is offline.</p>
+<p>For a useful screenshot, include the entire selected row and the footer. If the Last result text is clipped, enlarge the window or widen the relevant column before capturing it. Report what the labels actually say rather than inferring information from the row's position.</p>
+<figure class="figure-placeholder"><p class="eyebrow">SCREENSHOT TO INSERT · FIGURE 28-1</p><h3>The dedicated PLC programs table</h3><p>Capture the window with all six column headings and the footer visible. Annotate Program, State, Scans, Last result and connection/pending status. Use normal authorized observations; do not deliberately trigger a machine fault for the picture.</p><p>Suggested asset: <code>assets/images/28-plc-program-monitor.png</code></p><figcaption>A row must be read together with the connection state and any pending-change indication.</figcaption></figure>
+
+</section>
+<section id="states" aria-labelledby="states-title"><h2 id="states-title">28.3 Interpret loaded, running, pending and error states</h2>
+
+<p>The State cell summarizes selected runtime information. It is not a switch you can change. Start by checking whether the controller is online, then read any Pending addition separately from the execution state. A program can be running while a different source draft is waiting to be deployed.</p>
+<div class="table-scroll"><table><caption>Table 28-3. State text and practical meaning</caption><thead><tr><th scope="col">State</th><th scope="col">Interpretation</th></tr></thead><tbody>
+<tr><td>Offline</td><td>Live program information is not currently used by this view. Check the footer for the actual connection state.</td></tr>
+<tr><td>Not loaded</td><td>The online runtime does not report this program as loaded or running and no higher-priority displayed error is present.</td></tr>
+<tr><td>Running</td><td>The runtime reports the program as active.</td></tr>
+<tr><td>Error</td><td>A load, start or runtime error is reported. Read Last result and the report.</td></tr>
+<tr><td>Blank State cell</td><td>The program is reported loaded without running, a displayed fault or a pending source difference.</td></tr>
+<tr><td>Pending</td><td>A configuration/source difference from the deployed version is present; other state text can appear beside it.</td></tr>
+</tbody></table></div>
+<h3>Loaded and enabled are different questions</h3>
+<p>A loaded program has been accepted into the controller's program set. An enabled program is permitted by its program configuration to participate in the appropriate execution. Running means it is actually active. The dedicated monitor does not include an Enabled column or a checkbox, so it cannot be used to toggle enablement.</p>
+<p>A blank State cell is therefore not a universal “ready for every command” indication. It reports the loaded, non-running condition described in the table, while command availability, program enablement and machine readiness can still matter. Use the relevant Configuration status or technician's configuration review to investigate enablement.</p>
+<h3>Pending is not the same as unsaved</h3>
+<p>The monitor compares the program's current configuration with the deployed version. Configuration can have been saved while the runtime still uses the earlier deployed content. Conversely, editing source can introduce a pending difference before that source is retained in settings. <a href="27-plc-source.html">Chapter 27</a> explains the separate editing, saving, validation and deployment stages.</p>
+<p>For example, <strong>Running / Pending</strong> does not mean the program is about to start. It means the monitor reports current activity alongside a difference from the deployed configuration. Do not assume the text most recently seen in the editor is controlling that active operation.</p>
+<p><strong>Offline / Pending</strong> combines lack of live execution information with a pending difference. Reconnecting is a separate operating action, not a harmless display refresh. Follow the normal service procedure and review validation results before changing a controller session.</p>
+<p>Error takes display priority over Running in this summary. If you see Error, preserve the last-result text and relevant report message rather than trying to infer every internal condition from this single cell. A successful network connection does not erase a program fault, and a visible catalog entry does not prove successful loading.</p>
+
+</section>
+<section id="outcomes" aria-labelledby="outcomes-title"><h2 id="outcomes-title">28.4 Read Last result and distinguish completion from success</h2>
+
+<p>Last result explains the most recently reported outcome available to the monitor. It can identify why a program left execution or why a request failed. Read the words before the number. A value shown after “result” and a value shown after a fault message are different kinds of information.</p>
+<div class="table-scroll"><table><caption>Table 28-4. Last-result wording</caption><thead><tr><th scope="col">Text</th><th scope="col">Meaning for the operator</th></tr></thead><tbody>
+<tr><td>Completed</td><td>The program's reported activation completed; inspect any additional result value and the physical outcome.</td></tr>
+<tr><td>Stopped</td><td>The reported activation ended by stopping rather than normal completion.</td></tr>
+<tr><td>Start failed</td><td>The runtime rejected the activation request.</td></tr>
+<tr><td>Runtime fault</td><td>A fault occurred during execution.</td></tr>
+<tr><td>Load failed</td><td>The program image was not accepted for loading.</td></tr>
+<tr><td>Reloaded</td><td>The recorded exit is associated with replacement of the program set.</td></tr>
+<tr><td>Controller shut down</td><td>The recorded exit is associated with controller shutdown, where that information is available.</td></tr>
+<tr><td>Dash</td><td>No exit outcome is reported in the snapshot, or live information is unavailable.</td></tr>
+<tr><td>Unknown outcome followed by a number</td><td>The view cannot translate the reported outcome; preserve the exact text for support.</td></tr>
+</tbody></table></div>
+<h3>Completed does not always mean the mechanism succeeded</h3>
+<p>A program can finish its control sequence and return a nonzero result describing a condition the application must handle. The monitor appends that number, for example <strong>Completed (result: 3)</strong>. This is a format example, not a universal interpretation of result 3.</p>
+<p>The meaning belongs to the named program and its installed source. A number used for a timeout in one sequence can describe a different condition elsewhere. Do not apply a result-code explanation from HomeZ to a spindle or tool-handling program merely because the number matches. Report the name, outcome and number together.</p>
+<p>For faults, the monitor can append an error number in parentheses after Start failed, Runtime fault or Load failed. Copy that wording exactly. Avoid dropping the distinction between an ordinary returned result and a runtime error when passing the information to a technician.</p>
+<h3>The last result is not a full event history</h3>
+<p>This column provides a snapshot of the last available outcome, not a chronological list of every activation. A short function may start and complete between display updates. Another activation can later replace the information. Capture the relevant row and consult the application's report when timing or sequence matters.</p>
+<p>If a program is currently Running, do not use a previous Last result as proof that the current operation has already succeeded. Conversely, a dash is not evidence of a fault simply because no completion has yet been reported. Correlate the state with what operation is actually underway.</p>
+<p>After a fault, make the machine safe through its normal controls. The monitor has no acknowledgement or reset action that repairs the failure. Record the evidence before undertaking the authorized recovery procedure, especially before a reconnect or program replacement changes the available runtime information.</p>
+
+</section>
+<section id="refresh" aria-labelledby="refresh-title"><h2 id="refresh-title">28.5 Observe cyclic and command programs within the display limits</h2>
+
+<p>The supplied catalog contains a cyclic program called Background and command programs used for particular operations. A cyclic program is intended to remain active as repeating control logic when its deployed configuration enables it. A command program becomes active when the relevant operation requests it and normally leaves execution when its task completes or is stopped.</p>
+<p>Background being active while no cutting program is running can therefore be normal. It checks machine conditions rather than representing a workpiece job. Its Scans value can continue increasing while the operator is not making a new command request. Do not interpret this as repeated production starts.</p>
+<h3>Command programs can be brief or remain active while waiting</h3>
+<p>A command program may wait for a delay, sensor or another machine condition. Remaining Running for a period is not, by itself, a fault. Compare the observation with the expected operation, machine indication and report. If a wait is unexpected, record it without forcing a sensor or editing the sequence.</p>
+<div class="table-scroll"><table><caption>Table 28-5. Observations that need context</caption><thead><tr><th scope="col">Observation</th><th scope="col">Possible interpretation</th><th scope="col">Useful check</th></tr></thead><tbody>
+<tr><td>Background remains Running</td><td>Normal cyclic monitoring can be active.</td><td>Check faults and overall machine condition rather than expecting it to finish like a job.</td></tr>
+<tr><td>A command remains Running</td><td>It may still be processing or waiting.</td><td>Record the commanded operation, elapsed observation and relevant sensor/report state.</td></tr>
+<tr><td>No Running state was seen</td><td>The operation may have been shorter than the display interval.</td><td>Read Scans, Last result and the report.</td></tr>
+<tr><td>Values stop changing after minimization</td><td>The window suspends observation while minimized.</td><td>Restore it and allow a fresh update.</td></tr>
+<tr><td>Rows show Offline during a configuration application</td><td>The view temporarily avoids reading live program data during that operation.</td><td>Read the footer and wait for the operation result before diagnosing a lost connection.</td></tr>
+</tbody></table></div>
+<h3>The monitor samples; it does not record every controller cycle</h3>
+<p>The dedicated window requests updates on a nominal 200 ms display timer while visible and not minimized. This is a user-interface interval, not the controller's PLC scan time or a guaranteed maximum delay. A busy display system can update later. The table is not an event recorder capable of proving the exact instant of a short transition.</p>
+<p>Hidden, minimized and closed diagnostic windows stop their polling. Restoring the window resumes observation. Closing this window does not reset a program's scan counter or stop its execution; it only ends this display's observation. Counters and outcomes belong to the deployed runtime and should not be treated as permanent lifetime production totals.</p>
+<p>Online program values are temporarily unavailable in the table during a PLC configuration-application operation. This is one reason to read the footer connection state rather than interpreting every Offline row as a cable disconnection. If the condition persists unexpectedly, preserve the report and controller state for support.</p>
+<p>When detailed timing is needed, ask the responsible technician to use the appropriate diagnostic tool. Do not derive sensor response time, control-loop timing or a guaranteed stop time from how fast the words in this table change.</p>
+
+</section>
+<section id="report" aria-labelledby="report-title"><h2 id="report-title">28.6 Use a repeatable observation and reporting procedure</h2>
+
+<p>Begin with a question the monitor can answer. For example: “Was the intended homing program loaded?”, “Did the requested command become active?” or “What did this program last report?” A focused observation is more useful than watching the entire table and guessing which changing number explains a fault.</p>
+<h3>Collect the observation in order</h3>
+<ol><li>Identify the machine operation being investigated and the expected program name. Use the catalog in Chapter 27 or the technician's instruction.</li><li>Open the dedicated PLC programs window and read the footer connection and pending-change information.</li><li>Locate the named row and note its State, Scans and Last result before the authorized operation, if available.</li><li>Observe the already authorized operation without adding trial commands solely to change the monitor.</li><li>Record the resulting row and any relevant report message, including the exact outcome wording and numbers.</li><li>If behavior is unexpected, use the normal stopping/recovery procedure and give the collected evidence to the responsible person.</li></ol>
+<p>The monitor does not establish that the correct physical sensor changed or that a tool is secure. Combine its program outcome with the operation's normal physical checks and, where appropriate, the I/O diagnostic view. Do not reach into a mechanism to produce an indication while concentrating on this window.</p>
+<div class="table-scroll"><table><caption>Table 28-6. A useful support record</caption><thead><tr><th scope="col">Item</th><th scope="col">What to include</th></tr></thead><tbody>
+<tr><td>Context</td><td>Machine identity, application version, normal or simulation mode and approximate incident time.</td></tr>
+<tr><td>Window identity</td><td>Dedicated PLC programs window, not the combined monitor or source editor.</td></tr>
+<tr><td>Program</td><td>Exact name and the displayed index if requested.</td></tr>
+<tr><td>Connection and configuration</td><td>Footer state, Pending changes and any recent approved source/deployment work.</td></tr>
+<tr><td>Observation</td><td>State, Cost, Scans, complete Last result and the operation requested.</td></tr>
+<tr><td>Physical response</td><td>What the machine actually did and what expected condition did not occur.</td></tr>
+</tbody></table></div>
+<h3>Choose the next investigation from the evidence</h3>
+<p>If the row is Not loaded, review validation and deployment with the responsible person; repeatedly requesting the operation cannot supply a missing program. If Start failed is reported, preserve the start error and the readiness conditions at the time. If Runtime fault appears, retain the exact fault message and the operation sequence before resetting or replacing anything.</p>
+<p>If Running persists unexpectedly, report what condition the machine seems to be waiting for rather than declaring the program frozen solely from this label. If Pending appears after a source change, resolve the saved-versus-deployed version question before drawing conclusions about the new text.</p>
+<p>If the monitor looks normal but the physical operation is wrong, a normal-looking software state does not overrule the observation. Report both. The investigation may involve mapping, hardware, timing or the intended sequence, and belongs to the approved service process.</p>
+<p>Finish by closing the monitor when it is no longer needed. This does not acknowledge errors, stop programs, save source or deploy changes. Ensure that the handover states what was observed and what remains unresolved. A clear record lets the next person continue from evidence instead of recreating a fault unnecessarily.</p>
+
+</section>
+<aside class="source-note"><h2>About this chapter</h2><p>Checked against the dedicated PLC programs form, diagnostic-window lifecycle, application opening commands and controller program snapshots. No machine command or fault was triggered to prepare this manual. The screenshot placeholder gives capture instructions for an authorized installation.</p><details><summary>Implementation reviewed</summary><p>PlcProgramsForm.cs; DiagnosticForm.cs; PLCProgram.cs; MainForm.Diagnostics.cs; KeyboardLinks.cs; GeneralLinks.cs. The combined PLC monitor was inspected only to distinguish its different Programs tab.</p></details></aside></div><footer class="page-footer"><a href="27-plc-source.html">Previous chapter</a> · <a href="index.html#chapter-28">Manual contents</a><span>RouterXYZ+TC · 28</span></footer></main></body></html>

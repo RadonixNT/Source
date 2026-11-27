@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 15 — G-code View and 3D Preview | RouterXYZ+TC</title>
+<meta name="description" content="Operator guide to source lines, linked path selection, preview navigation, standard views, display states, measurement, image export and systematic job inspection.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZ+TC · CHAPTER 15</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>G-code View and 3D Preview</h1><p class="lead">Read the program text and its graphical path together, inspect the job from useful directions, and distinguish a display change from an instruction that affects the next machine operation.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> The preview represents prepared program geometry and reported display state. It does not measure the physical setup or certify collision clearance. Use the actual machine and approved setup information alongside it.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-15">Manual contents</a> · <a href="14-opening-programs.html">Previous chapter: Opening and checking a program</a></nav></header>
+<div class="body"><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Understand the two views and the questions they can answer</a></li>
+<li><a href="#source">Read and navigate the source without editing it</a></li>
+<li><a href="#states">Distinguish selection, current execution and completion</a></li>
+<li><a href="#linked-selection">Locate the same movement in the text and graphical path</a></li>
+<li><a href="#navigation">Pan, orbit and zoom without changing the machine</a></li>
+<li><a href="#fitting">Recover the whole job with the fitting controls</a></li>
+<li><a href="#views">Choose standard views and understand perspective</a></li>
+<li><a href="#display-aids">Read path appearance, markers and display layers</a></li>
+<li><a href="#measurement">Measure between two displayed points and interpret the result</a></li>
+<li><a href="#capture">Save a useful preview image and retain its context</a></li>
+<li><a href="#problems">Investigate a blank, confusing or unexpected preview</a></li>
+<li><a href="#review">Use a repeatable preview review and check your understanding</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">15.1 Understand the two views and the questions they can answer</h2>
+
+<p>After a job has been prepared, the main window gives you two ways to inspect it. The <strong>G-code view</strong> displays the program's text, line by line. The <strong>3D preview</strong> displays the prepared movement geometry. They describe the same accepted source from different viewpoints: one shows instructions and their locations in the file, while the other helps you understand where movements lie in space.</p>
+<p>You do not need to read every instruction as a programmer. Begin with practical questions: is this the expected shape, is it in the right place, are the different cutting depths plausible, and where are the movements between features? When something looks unusual, use the link between the views to locate the relevant text and report it to the person responsible for the job.</p>
+<h3>The preview is a path, not a photograph of the finished part</h3>
+<p>The displayed lines represent prepared movements. They are not a complete solid model of the remaining material, and their visible thickness does not establish the cutter diameter or the width of a machined groove. Several passes can overlap when seen from above. A raised transfer and a cut may also look like the same line until you examine the job from another direction.</p>
+<p>The machine table or travel envelope shown in the scene is based on configured geometry. It is not a live scan of the stock, clamps or accessories. An obstruction can be absent from the preview while being very real on the bed. Keep the physical setup checks from <a href="02-safe-operation.html">Chapter 2</a> and the file checks from <a href="14-opening-programs.html">Chapter 14</a> alongside the visual review.</p>
+<div class="table-scroll"><table><caption>Table 15-1. Use each view for the information it provides</caption><thead><tr><th scope="col">View or indication</th><th scope="col">Useful for</th><th scope="col">Does not establish</th></tr></thead><tbody>
+<tr><td>Program text</td><td>Identifying source lines, comments, instructions and reported problem locations.</td><td>Physical completion or correct workholding.</td></tr>
+<tr><td>Graphical path</td><td>Recognizing the shape, relative position, passes and transfers.</td><td>A complete model of material removal or every collision hazard.</td></tr>
+<tr><td>Selection highlight</td><td>Showing the line or path portion currently being inspected.</td><td>That the machine is executing that portion.</td></tr>
+<tr><td>Position and reference markers</td><td>Relating displayed coordinates and job placement to the scene.</td><td>A physical measurement of the tool tip, stock or fixture.</td></tr>
+<tr><td>Progress coloring</td><td>Understanding the displayed execution or selected-start state.</td><td>Inspection or acceptance of the finished machining.</td></tr>
+</tbody></table></div>
+<h3>Inspect a settled job first</h3>
+<p>For learning and detailed pre-run review, use a successfully prepared job while the machine is in a settled state. Wait until loading and preview preparation have ended. Read the full filename and any diagnostics before studying the picture. An attractive outline does not resolve a rejected file or an ignored equipment action.</p>
+<p>Moving the camera, zooming and changing a standard view alter the picture, not the work origin or machine axes. A simple source-line or path selection is also an inspection action. However, <strong>double-clicking a source line while stopped can select a restart line for the next Run request</strong>. Use single clicks for ordinary inspection and learn the different gestures before relying on them.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 15-1</div><h3>The linked text and graphical views</h3><p>Capture the actual main window with a harmless accepted training job. Label the source-line numbers, text selection, graphical path, file identity, preview toolbar and status area. Show one selected movement in both views; identify it as inspection selection, not an executing movement.</p><p>Suggested file: <code>assets/images/15-linked-views.png</code>.</p><figcaption>Reserved for the delivered application's real layout and theme.</figcaption></figure>
+<p>Your goal in this chapter is to inspect deliberately and recover a useful view when the picture becomes confusing. You should be able to explain what you selected, which direction you are viewing from and what evidence still has to come from the actual machine.</p>
+
+</section>
+<section id="source" aria-labelledby="source-title"><h2 id="source-title">15.2 Read and navigate the source without editing it</h2>
+
+<p>The source view retains the physical lines of the file, including comments and blank lines. The line number beside the text is its position in that file, starting at 1. It is separate from an optional N number written inside a program line. If you report a problem, give the physical line number together with the visible text and filename.</p>
+<p>This main-window view is for reading and selecting. It is not the G-code editor. Typing while it has focus does not provide a normal way to rewrite the program. Use the separate authorized editing procedure when a change is required. A selection can help you identify the relevant text without changing it.</p>
+<h3>Scroll and select are different actions</h3>
+<p>Scrolling changes which lines you can see. Selection identifies one line for inspection and can highlight its corresponding geometry. The mouse wheel and scrollbar scroll the source without deliberately changing the selected line. A single click on a text row selects it. Dragging the scrollbar is useful when you need to move through a long file without repeatedly selecting new instructions.</p>
+<div class="table-scroll"><table><caption>Table 15-2. Source-view controls while the text view has keyboard focus</caption><thead><tr><th scope="col">Action</th><th scope="col">Control</th><th scope="col">Result</th></tr></thead><tbody>
+<tr><td>Read earlier or later lines</td><td>Mouse wheel or scrollbar.</td><td>Moves the visible portion without changing selection.</td></tr>
+<tr><td>Select a line</td><td>Single left click on the row.</td><td>Selects that source line and, where available, its linked path portion.</td></tr>
+<tr><td>Move selection one line</td><td>Up / Down.</td><td>Selects the preceding or following line.</td></tr>
+<tr><td>Move selection by a visible page</td><td>Page Up / Page Down.</td><td>Moves the selection through the document in larger steps.</td></tr>
+<tr><td>Select the first or last line</td><td>Home / End.</td><td>Moves selection to the file boundary.</td></tr>
+<tr><td>Scroll without selecting</td><td>Ctrl+Up / Ctrl+Down.</td><td>Moves the visible text one line at a time.</td></tr>
+<tr><td>Copy a selected nonempty line</td><td>Ctrl+C.</td><td>Copies that one line to the clipboard; it does not copy the whole file.</td></tr>
+<tr><td>Clear text selection</td><td>Escape.</td><td>Clears the selected row without resetting execution progress.</td></tr>
+</tbody></table></div>
+<p>Keyboard focus means the part of the window currently receiving ordinary key input. The same arrow keys have a different role in the 3D view. Make sure you are working in the intended view before using shortcuts, and follow the installed machine's keyboard assignments. If you are unsure where focus is, use the visible controls for the task rather than trying keys at random.</p>
+<h3>Long lines and copied evidence</h3>
+<p>The source display does not wrap one program line into several visible rows. A long line can be shortened on screen with an ellipsis because the available width is limited. This does not shorten the stored source. To report a long instruction accurately, select it and copy the line rather than transcribing only the visible beginning.</p>
+<p>When you paste a line into an approved report or message, include its physical line number separately. A copied line is evidence of text, not an instruction to execute it elsewhere. Keep the source filename and revision with the report so that the recipient can find the same location.</p>
+<h3>Use single clicks for inspection</h3>
+<p>In this application, a valid double-click on a source row while the main program is inactive and stopped can record that row as the requested restart line. Rows before it can then appear completed even though no new machining has occurred. This is a meaningful change to the next start request, not a convenient way to emphasize a row.</p>
+<p>If you intended only to inspect, do not double-click. If you accidentally choose a start line, stop the review before Run and establish the intended start through the dedicated start-line or reset procedure. Clearing the blue selection with Escape is not a way to cancel the recorded restart request. The later start-line chapter explains that workflow in full.</p>
+<p>During execution, the application follows newly active source lines and can bring them back into view. If your reading position changes while the job advances, that can be normal execution tracking rather than a failed scrollbar. Perform detailed source investigation before starting or after bringing the operation to an appropriate settled state.</p>
+
+</section>
+<section id="states" aria-labelledby="states-title"><h2 id="states-title">15.3 Distinguish selection, current execution and completion</h2>
+
+<p>The source and path views use several kinds of emphasis at the same time. A line may be selected for inspection, belong to the displayed completed part of the job, or be the current execution line. These states answer different questions. Read the marker and surrounding operation state before deciding what a color means.</p>
+<p><strong>Selection</strong> answers “what am I looking at?” A single click or a navigation key can move it. <strong>Current execution</strong> answers “which source line is currently reported by the application?” <strong>Completion shading</strong> shows the portion marked as preceding the current point or a deliberately selected start. It does not inspect the finished surface.</p>
+<div class="table-scroll"><table><caption>Table 15-3. Read the states separately</caption><thead><tr><th scope="col">State</th><th scope="col">Typical supplied presentation</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>Selected text row</td><td>A soft blue tint, while the text keeps its category color.</td><td>This row is being inspected. It need not be the current machine operation.</td></tr>
+<tr><td>Current execution line</td><td>A separate marker in the line-number margin.</td><td>The application reports this as the active source location.</td></tr>
+<tr><td>Completed text prefix</td><td>A subdued green background on the preceding rows.</td><td>The display has marked these rows completed or preceding the chosen start.</td></tr>
+<tr><td>Completed graphical path</td><td>The supplied palettes use a bright green path color.</td><td>This is graphical progress state, not a quality inspection.</td></tr>
+<tr><td>Selected path portion</td><td>Selection highlighting takes precedence over normal or completed path color.</td><td>A previously green portion can change color simply because it is selected.</td></tr>
+<tr><td>Error or skipped text category</td><td>Error markings remain distinct; skipped text uses a comment-like presentation.</td><td>Read the diagnostic or program-end context. Appearance alone does not determine file acceptance.</td></tr>
+</tbody></table></div>
+<h3>Colors can overlap without contradicting each other</h3>
+<p>A completed row can also be selected. The selection tint is then drawn over its completed background while the source category remains recognizable. An error-marked line can keep its error indication even when selected. Do not assume that selecting a line has repaired an error or that a changed path color has undone machining.</p>
+<p>Theme and custom appearance settings can alter exact colors. Use the role of the indication and the reported operation state, not an exact shade as a universal rule. When reporting a problem, say “selected line”, “current-line marker” or “completed shading” rather than only “the green line”.</p>
+<h3>Why the selected line can follow the machine</h3>
+<p>As execution reaches a newly active source line, the application selects that line and brings it into view. Repeated updates for the same active line do not continually choose it again, but advancement to another line can replace your inspection selection. This helps an operator follow the job. It also means an inspection highlight observed during motion may not stay where you placed it.</p>
+<p>The current line can represent an equipment action or a wait as well as movement. A line taking noticeable time is not automatically a frozen display. Read the machine status and use the execution and stopping procedures if the behavior is unexpected; do not click later lines to try to make the current action finish.</p>
+<div class="learning-example"><h3>Example: green rows before a selected start</h3><p>The machine is stopped and an operator deliberately chooses physical line 80 as a start location. The application can mark lines 1 through 79 as completed in the display even though it has not just machined those lines. This visual prefix describes the intended entry point. It is not proof that the material already contains the work from those earlier instructions.</p></div>
+<h3>Progress is not a measurement of material removed</h3>
+<p>The execution percentage is based on the completed physical-line fraction. It is not a percentage of cutting distance, removed material or elapsed wall-clock time. One line can describe a long movement, while many other lines can be short comments or equipment instructions. A displayed halfway point therefore does not imply that half the machining time remains.</p>
+<p>Use completion information with the actual program state. A selected-start preview, an interrupted operation and a normally completed job can show similar colored areas for different reasons. Before another Run request, confirm the intended start method and physical work already done instead of relying on the shaded prefix alone.</p>
+
+</section>
+<section id="linked-selection" aria-labelledby="linked-selection-title"><h2 id="linked-selection-title">15.4 Locate the same movement in the text and graphical path</h2>
+
+<p>The two views are linked so that you can investigate a shape without searching the entire file by eye. Selecting a source line highlights its available path portion. Clicking a visible path segment selects its corresponding source line. This is particularly useful when a transfer, depth change or unexpected feature needs to be identified for a report.</p>
+<p>For deliberate inspection, wait until the machine is not busy and preparation has finished. The supplied application disables automatic path picking while the controller is busy. This also affects measurement clicks. You may still be able to navigate the camera, so the ability to rotate a picture does not establish that path selection is currently available.</p>
+<h3>From text to geometry</h3>
+<ol class="journey">
+<li><strong>Find the source line you want to inspect.</strong><p>Use the scrollbar or wheel to bring it into view, then single-click the row. Check its physical line number.</p></li>
+<li><strong>Look for the corresponding highlighted path.</strong><p>One source instruction can produce several visible segments, such as the pieces used to display a curve. The linked highlight can therefore cover more than one small line on screen.</p></li>
+<li><strong>Adjust the view if the highlight is hidden by overlap.</strong><p>Zoom or choose another direction to separate the feature from nearby paths. Do not double-click the source row as a substitute for finding its highlight.</p></li>
+<li><strong>If there is no new geometry, read the kind of line.</strong><p>A comment, blank line, equipment action or other non-motion instruction may have no path segment to highlight. Absence of a highlighted line is not automatically a loading failure.</p></li>
+</ol>
+<h3>From geometry to text</h3>
+<ol class="journey">
+<li><strong>Leave measurement mode before trying to select a path.</strong><p>In measurement mode, accepted clicks collect measurement points instead of selecting the corresponding source line.</p></li>
+<li><strong>Single-click the intended visible path segment.</strong><p>Keep the pointer steady between press and release. A drag pans the view instead of acting as a selection click.</p></li>
+<li><strong>Read the newly selected source row.</strong><p>The application brings the corresponding text line into view and highlights the clicked segment. Record the source location and the feature you intended to inspect.</p></li>
+<li><strong>Confirm the match if paths overlap.</strong><p>Change the view or zoom in and pick again. Several passes can occupy the same screen position, so the first hit may not be the particular pass you meant.</p></li>
+</ol>
+<div class="table-scroll"><table><caption>Table 15-4. Reasons a click may not select the expected source</caption><thead><tr><th scope="col">Situation</th><th scope="col">Explanation and response</th></tr></thead><tbody>
+<tr><td>The controller is busy.</td><td>Automatic path and measurement picking are disabled. Inspect in a settled state.</td></tr>
+<tr><td>Measurement mode is active.</td><td>Clicks are being used as measurement points. Exit the mode before ordinary path selection.</td></tr>
+<tr><td>The pointer moved during the click.</td><td>The action may have become a pan drag. Release and make a deliberate single click.</td></tr>
+<tr><td>You clicked empty space or a displayed model.</td><td>These do not select a source line and do not necessarily clear the previous highlight.</td></tr>
+<tr><td>A visible model covers the path.</td><td>The model can block the path hit. Use another viewing direction to inspect the path.</td></tr>
+<tr><td>Several paths overlap.</td><td>The nearest accepted hit may be a different pass. Separate them visually and verify the source.</td></tr>
+</tbody></table></div>
+<p>The graphical click identifies a segment in the displayed prepared geometry. It is not a command to jog to that point or begin cutting there. The supplied text-linking handler changes selection only. A restart request is a separate action, notably the source-row double-click described earlier.</p>
+<p>To clear the linked inspection range reliably, focus the source view and clear its selection with Escape. In the 3D view, Escape exits measurement and clears the scene's object selection, but do not assume that this also erases every source-linked range or a recorded start request. Re-read the source and start state before Run.</p>
+<p>Keep reports specific: identify the filename, physical source line, view direction and feature. “The raised transfer between these two pockets corresponds to line 240” gives the job preparer a much better starting point than “the picture looks wrong”.</p>
+
+</section>
+<section id="navigation" aria-labelledby="navigation-title"><h2 id="navigation-title">15.5 Pan, orbit and zoom without changing the machine</h2>
+
+<p>Think of the preview as a model on a desk and the camera as your viewing position. <strong>Pan</strong> moves the picture sideways or vertically within the window. <strong>Orbit</strong> changes the direction from which you look at it. <strong>Zoom</strong> makes the picture larger or smaller. These operations help inspection; they do not command the machine to follow the mouse.</p>
+<p>Start with the accepted job in a settled state and move the pointer into the graphical area. Keep navigation gestures away from the floating toolbar. A press on a toolbar button belongs to that button, and the mouse wheel over the toolbar is not the same as zooming over the scene.</p>
+<div class="table-scroll"><table><caption>Table 15-5. Basic navigation in the 3D view</caption><thead><tr><th scope="col">Purpose</th><th scope="col">Mouse action</th><th scope="col">Keyboard alternative with scene focus</th></tr></thead><tbody>
+<tr><td>Pan</td><td>Hold the left or middle button and drag.</td><td>Use the mouse for this operation.</td></tr>
+<tr><td>Orbit</td><td>Hold the right button and drag.</td><td>Arrow keys change the viewing angle.</td></tr>
+<tr><td>Zoom</td><td>Turn the wheel over the area of interest.</td><td>+ or − changes the zoom.</td></tr>
+<tr><td>Inspect a path segment</td><td>Single left click without a drag, outside measurement mode.</td><td>Select its source line in the text view instead.</td></tr>
+<tr><td>Reveal the floating toolbar</td><td>Move the pointer within the view.</td><td>F10 gives the toolbar keyboard focus.</td></tr>
+</tbody></table></div>
+<h3>Practise one gesture at a time</h3>
+<ol class="journey">
+<li><strong>Pan a small distance.</strong><p>Hold the middle button, move the pointer a short distance and release. The picture moves within the window. A middle drag avoids confusing a short left press with a path-selection click.</p></li>
+<li><strong>Orbit gently.</strong><p>Hold the right button and drag a little. Watch how the apparent depth changes. Release before the view becomes unfamiliar; use a standard view later if needed.</p></li>
+<li><strong>Zoom toward a feature.</strong><p>Place the pointer near the feature and turn the wheel in small steps. The wheel zoom is anchored around the cursor region, so pointer placement influences which area stays prominent.</p></li>
+<li><strong>Return to an overview.</strong><p>Use the fitting controls described in the next section. Do not try to recover a lost view by changing machine coordinates or work references.</p></li>
+</ol>
+<h3>Recognize focus inside the graphical area</h3>
+<p>The view contains both the scene and a floating toolbar. With the toolbar in keyboard focus, arrow keys move between toolbar commands rather than orbiting the camera. Enter or Space activates the focused command. F10 toggles toolbar focus; Escape can first dismiss toolbar focus rather than act on the scene.</p>
+<p>With ordinary scene focus, the documented scene shortcuts apply. With source-text focus, arrows select source lines instead. Learn the focus cues and the machine's configured shortcuts before using the keyboard routinely. The toolbar and mouse gestures provide visible alternatives when the current keyboard target is uncertain.</p>
+<h3>A hidden toolbar has not been removed</h3>
+<p>The floating toolbar and status panel can fade after inactivity. Move the pointer in the view to reveal them again. Keeping the pointer still over the scene is not a guarantee that they remain visible. Open menus, toolbar keyboard focus and captured drags hold the controls visible while you are using them.</p>
+<p>On a narrow view, some commands move into an overflow menu. Use the menu rather than assuming the missing icon means a feature has been removed. Hover over an icon to read its command description before clicking an unfamiliar symbol.</p>
+<p>If a gesture produces an unexpected selection, release the mouse and read the highlighted source. If a gesture only moves the view, the job's coordinates remain unchanged. The machine-position readout, work origin and programmed destinations are separate from the camera. Use small deliberate movements until pan, orbit and zoom feel distinct.</p>
+
+</section>
+<section id="fitting" aria-labelledby="fitting-title"><h2 id="fitting-title">15.6 Recover the whole job with the fitting controls</h2>
+
+<p>After several zooms or pans, part of the job may lie outside the window. <strong>Fit</strong> adjusts the camera so that a chosen set of displayed objects fits in the available view. It does not move the job on the machine, change its size or alter the travel limits. Use it whenever you need a dependable overview.</p>
+<p>Different fit targets answer different questions. Fitting the scene helps you compare the job with the displayed machine area. Fitting the toolpaths gives the job more of the window. Fitting a selected object uses that object's displayed bounds, not necessarily the short segment currently highlighted by a source selection.</p>
+<div class="table-scroll"><table><caption>Table 15-6. Choose a fit target for the question</caption><thead><tr><th scope="col">Control</th><th scope="col">Effect</th><th scope="col">Useful when</th></tr></thead><tbody>
+<tr><td>Fit scene toolbar command, or F with ordinary scene focus</td><td>Frames the configured fit target; the supplied default is the full visible scene including the displayed table.</td><td>You need an overall spatial reference.</td></tr>
+<tr><td>Fit visible toolpaths toolbar command</td><td>Frames the visible toolpaths together. The toolbar action is unavailable without usable path geometry.</td><td>The job is too small within a large machine view.</td></tr>
+<tr><td>Shift+F with scene focus</td><td>Frames the selected scene path object; with no usable selection it falls back to the displayed table.</td><td>You want the selected object in view. It is not a “zoom to this one G-code line” command.</td></tr>
+<tr><td>Double-click in the scene</td><td>Alternates fitting the displayed table and visible toolpaths.</td><td>You want to compare the job overview with the machine-area overview.</td></tr>
+</tbody></table></div>
+<h3>Recover an unfamiliar view</h3>
+<ol class="journey">
+<li><strong>Release any held mouse button.</strong><p>Make sure a pan or orbit gesture has ended. Read whether measurement mode or a toolbar menu is active before the next click.</p></li>
+<li><strong>Choose a known viewing direction.</strong><p>Top is useful for the plan outline; Isometric shows three-dimensional relationships. Choosing a direction does not itself guarantee that the job fills the window.</p></li>
+<li><strong>Fit the toolpaths.</strong><p>Use the toolbar command to bring the whole visible job into view. If it is unavailable, or a scene fit shows only the table, check whether the file has usable motion geometry and whether anything has been hidden.</p></li>
+<li><strong>Compare with the scene or table overview.</strong><p>Check where the job lies relative to the displayed machine area. Then zoom toward a specific feature only after the overall orientation is clear.</p></li>
+</ol>
+<h3>Understand the double-click cycle</h3>
+<p>Scene double-click fitting preserves the viewing direction and projection. Choosing a standard view restarts the cycle at the table fit. When no usable visible path exists, both steps may show the table, so repeated double-clicks can appear to do very little.</p>
+<p>A scene double-click can also include a first click that selects a path or supplies a measurement point before the fit action occurs. For an unambiguous fit during careful inspection, use the toolbar command. Do not confuse this gesture with double-clicking the source text, which can record a restart line.</p>
+<div class="learning-example"><h3>Example: a small part on a large bed</h3><p>The scene fit shows the whole bed, but the 100 mm part occupies only a small area. Fit toolpaths makes the part large enough to inspect. The part has not become physically larger and its work origin has not moved. Return to a table or scene fit when you need to judge its placement again.</p></div>
+<h3>Visibility affects what can be fitted</h3>
+<p>Fitting works with displayed objects and their visibility. Hiding a model can change the bounds used to frame the picture. A selected source range and a selected scene object are different: in the normal router preview, the whole machining job is a path object, so selection fitting may still frame the entire job.</p>
+<p>Fit is a viewing aid, not a travel test. A path that looks comfortably contained in a newly fitted window can still exceed configured machine travel, because the camera simply moved back to include it. Read the travel diagnostics and coordinate information from Chapter 14 rather than treating the screen border as the machine limit.</p>
+
+</section>
+<section id="views" aria-labelledby="views-title"><h2 id="views-title">15.7 Choose standard views and understand perspective</h2>
+
+<p>A single picture cannot show every spatial relationship clearly. Looking down from above is good for a part outline, but it can hide differences in height. Looking from the front makes height easier to see, but movements separated along the depth of the bed can overlap. Use several views of the same feature before deciding what it means.</p>
+<p>The preview provides standard directions through <strong>View presets</strong> and direct toolbar controls. With ordinary scene keyboard focus, the keys 0, 1, 2 and 3 select Isometric, Top, Front and Right respectively. These names describe the viewing direction in the scene; they do not move the machine into a corresponding physical position.</p>
+<div class="table-scroll"><table><caption>Table 15-7. Match the view to the inspection</caption><thead><tr><th scope="col">View</th><th scope="col">Shortcut</th><th scope="col">Useful for</th><th scope="col">Watch for</th></tr></thead><tbody>
+<tr><td>Isometric · 3D</td><td>0</td><td>Understanding the overall three-dimensional arrangement.</td><td>Apparent lengths and angles are influenced by the viewing direction.</td></tr>
+<tr><td>Top · XY</td><td>1</td><td>Plan outline, feature positions and travel between areas.</td><td>Different Z heights can overlap.</td></tr>
+<tr><td>Front · XZ</td><td>2</td><td>Height changes along X.</td><td>Features separated along Y can overlap.</td></tr>
+<tr><td>Right · YZ</td><td>3</td><td>Height changes along Y.</td><td>Features separated along X can overlap.</td></tr>
+<tr><td>Bottom, Back, Left or Dimetric</td><td>View presets menu.</td><td>Inspecting a feature obscured in another direction.</td><td>Opposite viewpoints can reverse the apparent left/right relationship.</td></tr>
+</tbody></table></div>
+<figure class="concept-figure"><img src="assets/images/15-top-and-front.svg" alt="The same lower cutting path and higher transfer overlap in a top view but are visibly separated by height in a front view."><figcaption>Figure 15-2. A second viewing direction can reveal a height difference that is invisible from above. This explanatory drawing does not represent a commissioned clearance.</figcaption></figure>
+<h3>Use the axis directions, not your position beside the machine</h3>
+<p>The view names follow the scene's axes. Where you happen to stand beside the bed does not redefine X, Y or Z. If the shape seems mirrored or reversed, return to a known preset and check the axis orientation before concluding that the program coordinates are wrong.</p>
+<p>Choosing a preset changes viewing direction but does not necessarily refit the job. If the result is awkwardly framed, use Fit visible toolpaths after choosing the direction. This two-step habit is more predictable than repeatedly orbiting until the picture happens to look familiar.</p>
+<h3>Perspective and orthographic projection</h3>
+<p><strong>Perspective</strong> makes nearer features appear larger, like a normal camera view. <strong>Orthographic</strong> removes that near/far size effect. With scene focus, P switches between these projections. Orthographic views can make shape and alignment comparisons easier, but neither projection turns pixels on the screen into a calibrated physical ruler.</p>
+<p>A top preset does not by itself mean orthographic projection; viewing direction and projection are separate choices. If a comparison depends on consistent apparent scale across the picture, deliberately select the projection you intend and keep it consistent between images.</p>
+<div class="learning-example"><h3>Example: a line that seems to cross a cut</h3><p>In Top view, a transfer appears to cross a pocket. Switch to Front or Right and inspect the height relationship. The transfer may lie above the cut, or it may reveal an unintended low movement. Either way, verify the actual programmed heights and fixture setup before drawing a clearance conclusion.</p></div>
+<p>Use a known overview, then a view suited to the suspected problem, then return to the overview. This preserves context. A close-up from an unusual direction can be useful evidence, but include its view name and source location so another person can interpret it correctly.</p>
+
+</section>
+<section id="display-aids" aria-labelledby="display-aids-title"><h2 id="display-aids-title">15.8 Read path appearance, markers and display layers</h2>
+
+<p>The preview contains more than the cutting outline. It can show traverse movements, progress colors, selected ranges, a table grid, bounds and position/reference markers. Some installations may also display three-dimensional models. Learn the purpose of each aid so that a display change is not mistaken for a change to the machining program.</p>
+<h3>Cutting, traverse and depth appearance</h3>
+<p>The prepared geometry distinguishes cutting movements from traverse movements. The viewer uses different appearance roles for them. The supplied router presentation can also vary path brightness according to the cutting Z range. A darker or brighter path therefore is not a direct reading of feed, spindle load, cutting force or machine health.</p>
+<p>Selection highlighting can override normal and completed path colors. Theme choices also affect the palette. Use another viewing direction and the linked source line to understand a movement rather than assigning a machining meaning to brightness alone. If a display configuration hides rapid movements, those movements are hidden only from the picture and picking; they remain part of the prepared operation.</p>
+<div class="table-scroll"><table><caption>Table 15-8. Display aids and their limits</caption><thead><tr><th scope="col">Aid or control</th><th scope="col">Meaning</th><th scope="col">Does not do</th></tr></thead><tbody>
+<tr><td>Grid; G with scene focus</td><td>A visual reference plane that can be shown or hidden.</td><td>Measure the board surface or establish work zero.</td></tr>
+<tr><td>Show / hide table and toolpath bounds</td><td>Toggles displayed bounding outlines.</td><td>Change configured travel or validate fixture clearance.</td></tr>
+<tr><td>Show / hide 3D objects</td><td>Controls the model layer when usable model objects are present.</td><td>Remove real objects or add an absent model of the machine.</td></tr>
+<tr><td>Wireframe; W with scene focus</td><td>Changes the presentation of model surfaces.</td><td>Alter the cutting program. A path-only scene may show little difference.</td></tr>
+<tr><td>Position marker</td><td>In this application, follows the displayed commanded X, Y and Z positions.</td><td>Independently measure the physical tool tip.</td></tr>
+<tr><td>Reference marker</td><td>Shows the effective reference placement used for the displayed path, including applied corrections.</td><td>Probe the stock or confirm that the work origin was set correctly.</td></tr>
+</tbody></table></div>
+<h3>Understand a change after homing</h3>
+<p>The supplied view uses the machine's reported homed state to control its table-envelope presentation. Before homing, the envelope is hidden and the grid can be presented differently. When the homed state becomes true, the view fits the configured table. A sudden change of framing at that point can therefore be a display consequence of completed homing.</p>
+<p>Do not infer homing success from a box appearing in the picture alone. Read the actual machine and axis status as described in <a href="06-homing.html">Chapter 6</a>. The grid and envelope are display aids derived from configured information, not physical limit measurements.</p>
+<h3>Keep position and reference markers separate</h3>
+<p>The position marker represents the application's commanded coordinate display. The reference marker represents the placement used to show the job. They have different roles and need not coincide. An applied tool correction can affect the displayed reference placement; rotating the camera cannot change either underlying coordinate.</p>
+<p>When the marker seems unexpected, first identify which marker you are reading and compare it with the coordinate panels. Follow <a href="05-coordinates.html">Chapter 5</a> and <a href="08-work-origins.html">Chapter 8</a> before changing an origin. Do not set a new zero merely to bring two symbols together on screen.</p>
+<h3>A model layer is optional</h3>
+<p>The model-visibility control is useful only when model geometry is present. A disabled model button is not evidence that a machine connection failed. This router's standard program preview should not be treated as a complete installed-machine model or a collision simulation. Even a detailed-looking model can omit fixtures, loose pieces or a recently changed holder.</p>
+<p>Restore a useful overview after experimenting with display layers. If you hide something to inspect a path behind it, remember that the real object is still there. Include the hidden-layer state when sharing an image so that another person does not mistake an uncluttered display for an unobstructed machine.</p>
+
+</section>
+<section id="measurement" aria-labelledby="measurement-title"><h2 id="measurement-title">15.9 Measure between two displayed points and interpret the result</h2>
+
+<p>The two-point measurement tool compares two positions in the displayed scene. It is useful for checking an expected span or understanding a spatial relationship. It does not touch the material, read a physical measuring instrument or establish the actual clearance around a cutter and holder.</p>
+<p>Use it after the job is prepared and while the controller is not busy. The same picking restriction that blocks path selection during machine activity also blocks measurement clicks. Turning measurement mode on does not override that restriction.</p>
+<ol class="journey">
+<li><strong>Choose an appropriate view and zoom.</strong><p>Make both intended positions recognizable. If different heights overlap in Top view, use a side or isometric view before selecting points.</p></li>
+<li><strong>Start measurement.</strong><p>Choose <strong>Measure two points (M)</strong> from the toolbar, or press M with ordinary scene focus. Changing measurement mode clears any previous endpoints.</p></li>
+<li><strong>Single-click the first intended point.</strong><p>A geometry hit supplies a position on the displayed geometry. Do not assume the click snaps to a named corner or a physical feature on the machine.</p></li>
+<li><strong>Single-click the second point.</strong><p>The view draws the measurement and displays Distance and the coordinate differences ΔX, ΔY and ΔZ.</p></li>
+<li><strong>Check both endpoints and read the result in context.</strong><p>Verify the view direction and whether you actually hit the intended geometry. Record the relevant values, source identity and what you measured.</p></li>
+<li><strong>Finish deliberately.</strong><p>With scene focus, Escape exits measurement and clears its endpoints. If a menu or toolbar currently has keyboard focus, dismiss that focus first or use the measurement toggle and check its state.</p></li>
+</ol>
+<h3>Distance and coordinate differences are different quantities</h3>
+<p><strong>Distance</strong> is the straight three-dimensional distance from the first point to the second. It is not the length of a curved path between them. The three delta values are the second point's coordinates minus the first point's coordinates along each axis. Their signs describe direction; the overall distance is nonnegative.</p>
+<div class="table-scroll"><table><caption>Table 15-9. Example measurement results in this millimetre-based scene</caption><thead><tr><th scope="col">Point relationship</th><th scope="col">Displayed differences</th><th scope="col">Straight distance</th></tr></thead><tbody>
+<tr><td>Second point 30 mm along X and 40 mm along Y, at the same height</td><td>ΔX = 30; ΔY = 40; ΔZ = 0.</td><td>50 mm, not 70 mm.</td></tr>
+<tr><td>The same two points selected in reverse order</td><td>ΔX = −30; ΔY = −40; ΔZ = 0.</td><td>Still 50 mm.</td></tr>
+<tr><td>Second point directly 12 mm higher</td><td>ΔX = 0; ΔY = 0; ΔZ = 12.</td><td>12 mm.</td></tr>
+<tr><td>Endpoints of a curved movement</td><td>Differences between the two endpoint coordinates.</td><td>The straight chord, not the distance travelled around the curve.</td></tr>
+</tbody></table></div>
+<h3>A missed geometry click can still produce a number</h3>
+<p>If the click does not hit geometry, the measurement tool can use an intersection with the displayed table/grid plane instead. The plane is not necessarily a fixed Z = 0 plane; its placement follows the current display arrangement. If no suitable intersection exists, the click may not produce a usable point.</p>
+<p>This means a plausible measurement is not proof that both clicks landed on the path. A click near a line, on empty space or on a model in front of the path can give a different position from the one you intended. Zoom, inspect the endpoint locations and repeat if uncertain. Do not report a clearance to a fixture when the second point was actually on the background plane.</p>
+<p>After a completed measurement, another accepted click begins a new pair. This is useful for a series of checks, but it also means that a casual extra click can replace the previous result. Record the values before starting another measurement. While measurement mode remains active, clicks are not ordinary source-linking selections.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 15-3</div><h3>A two-point measurement with visible endpoints</h3><p>Capture an actual measurement on a known training path. Show both endpoints, the view direction and the full Distance / ΔX / ΔY / ΔZ readout. Explain what each endpoint lies on. Use a screen capture that retains the readout; the built-in image export omits the floating status panel.</p><p>Suggested file: <code>assets/images/15-measurement.png</code>.</p><figcaption>Reserved for a genuine preview measurement, not a physical inspection result.</figcaption></figure>
+<p>Use measured scene values as review evidence. Final acceptance of stock dimensions, tool clearance and machined quality still requires the approved physical checks and instruments.</p>
+
+</section>
+<section id="capture" aria-labelledby="capture-title"><h2 id="capture-title">15.10 Save a useful preview image and retain its context</h2>
+
+<p>A preview image can help explain a suspected route problem, document a setup discussion or record the view used for a review. The supplied image command saves the scene as a PNG image. It does not save a new machining program, change the file or preserve the whole application's operating state.</p>
+<p>Before exporting, decide what the image needs to explain. A full-job overview and a close-up with a source location often communicate more than a tightly zoomed picture without context. Choose a standard direction where possible and retain the approved filename and revision in the accompanying record.</p>
+<ol class="journey">
+<li><strong>Prepare the view.</strong><p>Wait for loading to finish. Choose the intended direction and projection, fit the relevant geometry and make any inspection selection deliberately.</p></li>
+<li><strong>Check display layers.</strong><p>Know whether models, bounds or other aids are hidden. Restore any layer needed to explain the issue, or state clearly in the report that it was hidden.</p></li>
+<li><strong>Choose Save viewport as PNG.</strong><p>Use the image toolbar command, or its entry under More commands if it is in the overflow menu.</p></li>
+<li><strong>Choose the destination and a descriptive filename.</strong><p>The supplied dialog offers PNG and an initial name of <code>s3DView.png</code>. Replace that generic name with one that identifies the job and purpose under your site's file-handling practice.</p></li>
+<li><strong>Save and check the result.</strong><p>Open the saved image with the normal approved image viewer and confirm that the intended geometry is visible. If saving reports an error, read it and choose an accessible destination without changing the machining file.</p></li>
+<li><strong>Attach the missing context separately.</strong><p>Record file revision, source line, view direction, coordinate/reference context and the question the image illustrates.</p></li>
+</ol>
+<h3>The exported image is not a full-window screenshot</h3>
+<p>The toolbar export captures the rectangular graphical scene at the viewport size. The supplied command uses a capture that omits the floating toolbar and status overlays. The file path, source text, main-window messages and measurement readout are therefore not automatically included as a complete operator record.</p>
+<p>If a report requires the exact diagnostic message or Distance and delta values, record them separately or provide a normal screen capture that includes those controls. Do not assume that a measurement line in the exported scene also preserves its numerical readout. Check the actual saved image before sending it.</p>
+<div class="table-scroll"><table><caption>Table 15-10. Information to keep with a preview image</caption><thead><tr><th scope="col">Record item</th><th scope="col">Why it matters</th></tr></thead><tbody>
+<tr><td>Full source identity and revision</td><td>Identifies the job that generated the view.</td></tr>
+<tr><td>Physical source line or feature</td><td>Lets another person locate the same movement.</td></tr>
+<tr><td>View and projection</td><td>Explains overlap, apparent orientation and size relationships.</td></tr>
+<tr><td>Reference and setup context</td><td>Relates displayed placement to the approved work setup.</td></tr>
+<tr><td>Hidden layers or selected ranges</td><td>Explains absent objects and unusual highlight colors.</td></tr>
+<tr><td>Exact measurements or messages</td><td>Preserves information omitted from the floating overlays in the PNG export.</td></tr>
+<tr><td>Question or observation</td><td>States what should be checked, without presenting a visual suspicion as a confirmed cause.</td></tr>
+</tbody></table></div>
+<h3>Do not expect a saved picture to restore the view or the job</h3>
+<p>A PNG is an image. Opening it later does not reload the program, restore the selected start line or establish the machine's current state. It also does not update when the source file or work origin changes. Keep it associated with the reviewed version and replace it when it no longer describes the current job.</p>
+<p>The export requests full detail from the geometry held by the viewer. Large-job previews can still be based on a prepared display representation rather than every execution point. Treat the image as review evidence, not a substitute for the accepted source, complete path checks or physical measurements.</p>
+<p>When documenting a concern, preserve both an overview and a focused view if necessary. A person reading the report should be able to tell where the feature is, what is selected and what still needs verification without having to guess from the color or shape alone.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">15.11 Investigate a blank, confusing or unexpected preview</h2>
+
+<p>When the display is confusing, begin with the simplest distinction: did the job fail to prepare, or did the camera and display state make a prepared job difficult to see? Read the file result and messages first. A preview problem is not a reason to change a work origin, force an axis movement or reload machine control programs.</p>
+<p>For inspection, keep the machine in an appropriate settled state. Record the current filename and any message before trying a viewing change. Then choose a known preset and a suitable fit target. These actions are reversible display changes that can reveal whether the geometry is simply outside the current picture.</p>
+<div class="table-scroll"><table><caption>Table 15-11. Start with the observation, then choose a check</caption><thead><tr><th scope="col">Observation</th><th scope="col">Possible explanation</th><th scope="col">Next check</th></tr></thead><tbody>
+<tr><td>Text is shown but no cutting shape appears.</td><td>The file may be rejected, contain no motion, contain only traverse motion or lack visible cutting geometry.</td><td>Read the preparation result and diagnostics; inspect the intended content.</td></tr>
+<tr><td>The shape disappeared after navigation.</td><td>It may be outside the current camera frame.</td><td>Choose a standard view and fit visible toolpaths.</td></tr>
+<tr><td>Fit visible toolpaths is unavailable.</td><td>No usable visible path is available to that command.</td><td>Check loading, file content and visibility rather than repeatedly clicking the control.</td></tr>
+<tr><td>Clicking the path does nothing.</td><td>The machine may be busy, measurement may be active, or the click may miss or become a drag.</td><td>Check the mode and state, then make a deliberate single click on a visible segment.</td></tr>
+<tr><td>Selection stays after clicking empty space.</td><td>Empty-space clicks do not necessarily clear the old range.</td><td>Clear the source selection explicitly if that is your intent.</td></tr>
+<tr><td>Text moves back to another line during operation.</td><td>The display follows a newly active execution line.</td><td>Use the execution status; perform detailed reading before or after the operation.</td></tr>
+<tr><td>A measurement gives a surprising value.</td><td>One point may lie on another overlapping feature, a model or the fallback grid plane.</td><td>Check endpoints from another direction and repeat deliberately.</td></tr>
+<tr><td>The table box disappears or the scene refits after homing.</td><td>The display's homed-state presentation changed.</td><td>Read actual homing status and restore a useful camera view.</td></tr>
+<tr><td>The scene reports a graphics initialization or rendering problem.</td><td>The preview cannot currently be displayed reliably.</td><td>Preserve the message and obtain application/graphics support before relying on the view.</td></tr>
+</tbody></table></div>
+<h3>Large jobs may use reduced display detail</h3>
+<p>The prepared execution path and its graphical representation are related but are not always identical in point count. A large job can use a simplified display snapshot, and the viewer can adjust its drawing detail to the current scale. These measures keep the picture usable without changing the complete prepared machining path.</p>
+<p>Zooming can reveal more of the viewer's retained detail, but it is not a promise to reconstruct every omitted source point in a simplified snapshot. A source line may therefore have no separately visible segment even though it contributes to the complete execution. Use the source and diagnostic information for an exact investigation, and ask for a suitable detailed review when the image cannot answer the question.</p>
+<h3>Do not confuse missing detail with a changed program</h3>
+<p>A curve drawn as many small segments, two passes that overlap or a faint traverse line can be normal display behavior. Conversely, a plausible smooth image does not certify every movement. Report the exact concern: which feature, which line, which view and which expected dimension differ?</p>
+<p>If the path appears displaced, compare the accepted reference and tool-correction information with the coordinate panels before changing anything. A camera pan changes the picture's location in the window; a work-origin change changes the job's placement on the machine. Diagnose which kind of change occurred.</p>
+<h3>Build a useful report</h3>
+<p>Include the full job identity, physical source location if known, view direction, projection and current machine state. For a selection problem, state whether measurement mode was on and whether the controller was busy. For a graphics failure, keep the exact error text and when it appeared, such as immediately after opening a file or after restoring the window.</p>
+<p>If a display recovery does not explain the concern, leave the job unapproved for execution and obtain the required review. Do not use a real cutting run to discover what an unreadable or uncertain preview was trying to show.</p>
+
+</section>
+<section id="review" aria-labelledby="review-title"><h2 id="review-title">15.12 Use a repeatable preview review and check your understanding</h2>
+
+<p>A consistent inspection sequence is easier to trust than a series of random clicks. Begin with the accepted job identity, obtain a clear overview, examine important movements from suitable directions and connect anything unusual to the source. Finish by recording the result and confirming the intended start state.</p>
+<p>This review is best completed before machine execution. Image export can require additional graphics work, especially for a large job, so prepare review images while the operation is settled. During machining, keep your attention on the operating procedure and machine behavior rather than exploring unfamiliar display tools.</p>
+<ol class="journey">
+<li><strong>Confirm the prepared job.</strong><p>Read the full file path and load result. Resolve diagnostics under Chapter 14 before treating the view as the intended production program.</p></li>
+<li><strong>Establish an overview.</strong><p>Choose Top or Isometric and fit visible toolpaths. Identify the expected outline, feature groups and transfers between them.</p></li>
+<li><strong>Check placement in context.</strong><p>Compare the job with the displayed machine area and reference information. Use the actual setup sheet and stock arrangement for the physical check.</p></li>
+<li><strong>Examine height where it matters.</strong><p>Use Front and Right views to inspect approaches, retracts and transfers that overlap in the top view. Relate them to actual fixtures and tool-holder clearance.</p></li>
+<li><strong>Link an unusual feature to its source.</strong><p>Single-click the path or source row. Record its physical line number. Avoid source double-clicks unless deliberately using the restart-selection procedure.</p></li>
+<li><strong>Measure only when the endpoints are clear.</strong><p>Read Distance separately from the coordinate differences and verify that both points belong to the intended geometry. Exit measurement when finished.</p></li>
+<li><strong>Record the review.</strong><p>Save useful images and write down the context or exact readouts that the export omits. Report uncertainty rather than turning a visual guess into an accepted setup value.</p></li>
+<li><strong>Restore an understandable operator view.</strong><p>Return to a useful overview, clear unnecessary inspection selections and confirm the intended start method. A cleared highlight does not cancel a previously recorded restart request.</p></li>
+</ol>
+<div class="table-scroll"><table><caption>Table 15-12. Quick reference: similar actions with different consequences</caption><thead><tr><th scope="col">Action</th><th scope="col">Effect</th><th scope="col">Key distinction</th></tr></thead><tbody>
+<tr><td>Wheel over source text</td><td>Scrolls text.</td><td>Does not deliberately choose a new line.</td></tr>
+<tr><td>Wheel over the graphical scene</td><td>Zooms the camera.</td><td>Does not scale the machining program.</td></tr>
+<tr><td>Single-click a source row</td><td>Selects it for inspection.</td><td>Does not itself request execution.</td></tr>
+<tr><td>Double-click a source row while stopped</td><td>Can record a start-line request.</td><td>May affect the next Run.</td></tr>
+<tr><td>Double-click the scene</td><td>Cycles table/path fitting.</td><td>Does not choose a source restart line.</td></tr>
+<tr><td>Click the scene in measurement mode</td><td>Chooses a measurement point.</td><td>Is not ordinary source-linked path selection.</td></tr>
+<tr><td>Clear a selection</td><td>Changes inspection emphasis.</td><td>Does not reset machine progress or necessarily cancel a start request.</td></tr>
+</tbody></table></div>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 15-4</div><h3>Preview toolbar and the same job in two views</h3><p>Capture the actual toolbar with readable tooltips or numbered annotations for Fit visible geometry, Fit visible toolpaths, View presets, bounds, measurement and PNG export. Show the same accepted training job in Top and Isometric views. Include More commands when the viewport is narrow.</p><p>Suggested file: <code>assets/images/15-preview-toolbar.png</code>. Label unavailable model controls as installation-dependent rather than implying that a complete machine model is provided.</p><figcaption>Reserved for real toolbar and view examples from the delivered application.</figcaption></figure>
+<h3>Check your understanding before using the preview independently</h3>
+<ol class="journey">
+<li><strong>Does panning the picture change the work zero?</strong><p>No. It changes the camera framing only.</p></li>
+<li><strong>Can two movements overlap in Top view but have different heights?</strong><p>Yes. Use another viewing direction and inspect the actual coordinates.</p></li>
+<li><strong>Does a green source prefix prove that those operations were just machined?</strong><p>No. It can also represent the prefix before a deliberately chosen start line.</p></li>
+<li><strong>Why can a comment select without highlighting geometry?</strong><p>It may create no movement segment. Not every physical source line draws a path.</p></li>
+<li><strong>Can a missed measurement click still yield a point?</strong><p>Yes. The tool can use the displayed grid plane instead of geometry.</p></li>
+<li><strong>Does the image toolbar automatically preserve the measurement readout?</strong><p>No. Its supplied export omits floating overlays. Record the values or capture the screen separately.</p></li>
+<li><strong>Is hiding a model a solution to a clearance problem?</strong><p>No. It changes visibility only; the physical object remains.</p></li>
+</ol>
+<p>You are ready to continue when you can recover a known view, identify the source corresponding to a feature, distinguish inspection state from execution state and explain the limits of a scene measurement. The next chapter addresses the deliberate start and supervision of the prepared machining program.</p>
+
+</section>
+<details class="source-note"><summary>Documentation basis</summary><p>Reviewed against the supplied source on 8 October 2026. Screen colors and captions can vary with theme, language and installed customization. Figures marked for insertion require genuine application captures.</p><ul><li>RouterXYZ+TC: <code>MainForm.Machining.cs</code>, <code>MainForm.Runtime.cs</code>, <code>Machining/GCodeInterpreter.cs</code></li><li>NT-Interpreter: <code>WinForms/RouterProgramPresenter.cs</code> and <code>WinForms/RouterDocumentSource.cs</code></li><li>NT-ToolsWF: <code>Tools/SGCodeView</code> source and README; <code>Tools/S3D</code> interaction, overlay, scene and navigation sources</li></ul></details>
+</div><footer class="page-footer"><a href="index.html#chapter-15">Manual contents</a><span>RouterXYZ+TC · Chapter 15</span></footer></main></body></html>

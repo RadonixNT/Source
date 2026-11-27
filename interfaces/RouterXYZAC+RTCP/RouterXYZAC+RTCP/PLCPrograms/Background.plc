@@ -1,0 +1,60 @@
+// Cyclic machine interlocks. This PLC is not a safety-rated stop device.
+// This program must remain enabled during ordinary operation. It qualifies
+// spindle health and owns continuous spindle and brake interlocks.
+// The embedded source is a factory default. Saved PLC source is authoritative.
+LOGIC PreviousRotation;
+LOGIC RotationChanged;
+LOGIC RunRequested;
+LOGIC EmergencyClosed;
+LOGIC StopSpindleRequest;
+TIMER SpindleDecelerationTimer;
+TIMER SpindleQuietTimer;
+
+// Capture the raw request before this scan can suppress an unsafe start.
+RunRequested := SpindleCW OR SpindleCCW;
+EmergencyClosed := EmergencySwitch;
+// OperatorInterlocks combines Emergency and NC Pause into one Hold write.
+// Release never restarts interrupted motion. Emergency spindle shutdown stays below.
+RotationChanged := ASSIGNED(SpindleRotationSensor) AND (SpindleRotationSensor <> PreviousRotation);
+PreviousRotation := SpindleRotationSensor;
+// Native expiry cannot be cleared by OperatorInterlocks' ordinary Hold assignment.
+StopSpindleRequest := NOT EmergencyClosed OR CONTROLLER.EVALUATIONEXPIRED;
+
+// First allow the configured deceleration time, then demand a complete second
+// without either S3 edge. Static HIGH and static LOW are treated identically.
+// Without an assigned rotation sensor, only the deceleration and quiet delays qualify stop.
+// A configured sensor still restarts the quiet delay on every edge.
+SpindleDecelerationTimer(TYPE := TON,
+    IN := NOT SF.FirstScan AND SpindleFeedbackConfigured AND NOT RunRequested,
+    PT := SpindleOffTime);
+SpindleQuietTimer(TYPE := TON,
+    IN := NOT SF.FirstScan AND SpindleDecelerationTimer.Q AND NOT RotationChanged,
+    PT := 1000);
+SpindleStopped := SpindleFeedbackConfigured AND NOT RunRequested
+    AND SpindleDecelerationTimer.Q AND SpindleQuietTimer.Q;
+
+SpindleReady := EmergencyClosed AND SpindleFeedbackConfigured AND (NOT ASSIGNED(SpindleThermalOK) OR SpindleThermalOK)
+    AND (NOT ASSIGNED(PressureSensor) OR PressureSensor) AND (NOT ASSIGNED(SpindleDriveReady) OR SpindleDriveReady)
+    AND (NOT ASSIGNED(SpindleToolClamped) OR SpindleToolClamped)
+    AND (NOT ASSIGNED(SpindleToolReleased) OR NOT SpindleToolReleased)
+    AND (NOT ASSIGNED(SpindlePistonRetracted) OR SpindlePistonRetracted);
+
+// Z brake: only actual drive enable feedback permits release.
+Brake := Z.Existing AND Z.PdoMapped AND Z.ServoOnCommand AND Z.ReadyToMove
+    AND NOT Z.Fault AND NOT Z.CouplingFault;
+
+// EmergencySwitch is normally closed. This software interlock complements,
+// but cannot replace, the machine's hardwired emergency-stop circuit.
+IF EmergencyClosed THEN
+    IF RunRequested AND (NOT SpindleReady OR (SpindleCW AND SpindleCCW)
+        OR (SpindleCCW AND NOT SpindleReverseConfigured)) THEN
+        StopSpindleRequest := TRUE;
+        TOOLPATH_STOP(TOOLPATH := 0);
+    END_IF;
+
+END_IF;
+
+IF StopSpindleRequest THEN
+    SpindleCW := FALSE;
+    SpindleCCW := FALSE;
+END_IF;

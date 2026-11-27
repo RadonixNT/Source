@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-labelledby="title desc">
+<title id="title">Consider the whole operation, including travel outside the cutting shape</title>
+<desc id="desc">Four connected boxes represent preparation, approach, cutting and departure. Each box names an area to inspect. This is a conceptual sequence, not a physical machine plan.</desc>
+<rect width="1000" height="430" fill="#f3f7f7"/>
+<g font-family="Segoe UI, Arial, sans-serif" fill="#22313a">
+<text x="42" y="52" font-size="26" font-weight="700">The cutting shape is only part of the job</text>
+<text x="42" y="87" font-size="18">Check every route that the selected operation may use.</text>
+<g fill="#fff" stroke="#9bafb5" stroke-width="2">
+<rect x="42" y="130" width="208" height="190" rx="9"/><rect x="278" y="130" width="208" height="190" rx="9"/>
+<rect x="514" y="130" width="208" height="190" rx="9"/><rect x="750" y="130" width="208" height="190" rx="9"/>
+</g>
+<g fill="#155765" font-size="21" font-weight="700">
+<text x="60" y="168">1. Preparation</text><text x="296" y="168">2. Approach</text><text x="532" y="168">3. Cutting</text><text x="768" y="168">4. Departure</text>
+</g>
+<g font-size="18">
+<text x="60" y="208">Park position</text><text x="60" y="237">Positioning area</text><text x="60" y="276">Beyond the workpiece</text>
+<text x="296" y="208">Travel to the job</text><text x="296" y="237">First descent</text><text x="296" y="276">Check the full route</text>
+<text x="532" y="208">Workpiece</text><text x="532" y="237">Fixtures and clamps</text><text x="532" y="276">Check tool clearance</text>
+<text x="768" y="208">Retraction</text><text x="768" y="237">Parking, if enabled</text><text x="768" y="276">Still an operation</text>
+</g>
+<g fill="#155765"><path d="M256 221h10v-8l10 12-10 12v-8h-10z"/><path d="M492 221h10v-8l10 12-10 12v-8h-10z"/><path d="M728 221h10v-8l10 12-10 12v-8h-10z"/></g>
+<text x="42" y="371" font-size="18" font-weight="600">Concept only: no dimensions, safe distances or collision protection are implied.</text>
+<text x="42" y="401" font-size="17">Homing is a separate preparation movement with its own route and procedure.</text>
+</g></svg>

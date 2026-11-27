@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 29 — PLC Memory and Variables | RouterXYZAC+TC</title><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head><body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+TC · CHAPTER 29</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>PLC Memory and Variables</h1><p class="lead">Inspect a requested memory range, recognize the different value types and report live values without changing the machine's internal data.</p><p class="review-status"><strong>Expanded draft for review.</strong> The dedicated PLC memory window is read-only. Raw memory indices need the correct deployed configuration to acquire a machine meaning.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-29">Manual contents</a> · <a href="28-plc-program-monitor.html">Previous chapter: PLC Program Monitor</a></nav></header><div class="body"><nav aria-label="In this chapter"><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Understand what a memory view can tell you</a></li>
+<li><a href="#range">Select the requested range without changing memory</a></li>
+<li><a href="#types">Interpret INTEGER, REAL and packed LOGIC values</a></li>
+<li><a href="#names">Relate a raw index to a named variable and the correct version</a></li>
+<li><a href="#live">Understand live updates, unavailable values and timing limits</a></li>
+<li><a href="#report">Collect a reliable observation and report unexpected values</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">29.1 Understand what a memory view can tell you</h2>
+
+<p>A variable is a named value used by the machine-control logic. It can represent a count, a calculated number or an On/Off condition. Memory is where those values are held while the control system works. The PLC memory window shows numbered storage locations rather than a list of friendly machine-function names.</p>
+<p>An operator usually opens this view at the request of a technician who knows which type and index to inspect. You do not need to read PLC instructions to record a specified value accurately. You do need to know that an index alone is not enough: the value type, deployed program configuration and current machine condition also matter.</p>
+<h3>Open the dedicated window</h3>
+<p>The command is <strong>OpenPlcMemory</strong>, with the supplied shortcut <code>Ctrl+Shift+Alt+M</code>. Use it from the active main window after checking the saved assignment and keyboard-enabled setting described in Chapter 24. The resulting window is titled <strong>PLC memory</strong>. Opening it does not connect the controller, initialize memory or run a program.</p>
+<div class="table-scroll"><table><caption>Table 29-1. Choose the view that matches the question</caption><thead><tr><th scope="col">Question</th><th scope="col">Appropriate view</th></tr></thead><tbody>
+<tr><td>What is stored at a specified typed index?</td><td>The dedicated PLC memory window.</td></tr>
+<tr><td>What does a named signal mean and where is it connected?</td><td>The mapping settings described in Chapter 23.</td></tr>
+<tr><td>Which program is loaded or running?</td><td>The PLC programs monitor described in Chapter 28.</td></tr>
+<tr><td>What instruction text defines a sequence?</td><td>The source editor described in Chapter 27.</td></tr>
+</tbody></table></div>
+<p>A separate combined PLC monitor also has a Memory tab. Its arrangement is different from the selectable-range table in this chapter. Identify the dedicated window by its Start index and Cells controls and the four columns Index, INTEGER, REAL and LOGIC word (hex). Include the window name when sending a screenshot.</p>
+<h3>Observe rather than repair through raw numbers</h3>
+<p>The dedicated memory window has no action for writing a cell, forcing a condition or clearing a stored value. Selecting a row is not a machine command. Start index and Cells affect only what is displayed. Close ends this window's observation; it does not erase variables or stop the controller.</p>
+<p>Do not infer that a suspicious value should be changed to zero. Zero can mean a valid position, a false condition, an empty count or something else entirely, depending on the named variable. A raw value is evidence to interpret in context, not an instruction to alter machine state.</p>
+<p>Before inspecting an active operation, keep normal machine supervision in place. The window can remain open while the main application works, but it does not replace the normal status display or operating controls. Start with a specific question and the exact range requested by the responsible person.</p>
+
+</section>
+<section id="range" aria-labelledby="range-title"><h2 id="range-title">29.2 Select the requested range without changing memory</h2>
+
+<p>The two controls above the table choose which storage indices you see. <strong>Start index</strong> is the first index displayed. <strong>Cells</strong> is the requested number of consecutive rows. Changing either control rebuilds the table for that range; it does not write to any of the displayed storage locations.</p>
+<p>The default selection starts at index 0 and shows 16 cells. If window-layout saving is enabled, a previous range can be restored when the window is reopened. Always read the actual controls before reporting values. Do not assume that the top row is index 0 simply because you have just opened the window.</p>
+<h3>Follow a specific range request</h3>
+<ol><li>Confirm the requested value type, start index and number of cells.</li><li>Enter the Start index and commit the entry through the normal field interaction.</li><li>Select Cells from the list of 1 through 64.</li><li>Check the Index column to confirm the actual first and last displayed rows.</li><li>Read the footer to establish whether live memory is available.</li></ol>
+<div class="table-scroll"><table><caption>Table 29-2. Range examples — display selection only</caption><thead><tr><th scope="col">Start index</th><th scope="col">Cells</th><th scope="col">Displayed indices</th></tr></thead><tbody>
+<tr><td>0</td><td>16</td><td>0 through 15.</td></tr>
+<tr><td>32</td><td>8</td><td>32 through 39.</td></tr>
+<tr><td>60</td><td>8</td><td>60 through 67; LOGIC words exist only through index 63.</td></tr>
+<tr><td>4090</td><td>16</td><td>4090 through 4095; the end of numeric storage limits the row count.</td></tr>
+</tbody></table></div>
+<h3>The value families do not have identical row ranges</h3>
+<p>The current controller provides 4,096 INTEGER cells and 4,096 REAL cells, numbered 0 through 4095. LOGIC storage is packed into 64 words, numbered 0 through 63. Each word contains 64 individual logical values. Consequently, an index that is valid for INTEGER or REAL can be beyond the LOGIC word range.</p>
+<p>For example, at row 100 the INTEGER and REAL columns can show values, but the LOGIC word column has no word 100 to show. Its dash is not a false logical value. If a technician asks about logical value 100, that does not mean selecting LOGIC word index 100. The next section explains the distinction.</p>
+<p>The table displays at most 64 rows per selection. Near the end of numeric storage, fewer rows can appear than the requested Cells value. This boundary behavior is not evidence of a communication failure. Check the final Index before reporting missing rows.</p>
+<p>A saved display range is only a viewing preference. It is not a saved copy of the memory values and does not freeze them. Reopening the same range later reads the currently available runtime values, which may have changed with machine operation or a new controller session.</p>
+<figure class="figure-placeholder"><p class="eyebrow">SCREENSHOT TO INSERT · FIGURE 29-1</p><h3>Memory range controls and typed columns</h3><p>Capture the dedicated PLC memory window with Start index, Cells, all column headings and the footer visible. Use an authorized observation and annotate the first and last displayed indices. Include no claim that arbitrary indices correspond to named machine functions.</p><p>Suggested asset: <code>assets/images/29-plc-memory-range.png</code></p><figcaption>The range controls select what to observe; they do not edit the displayed values.</figcaption></figure>
+
+</section>
+<section id="types" aria-labelledby="types-title"><h2 id="types-title">29.3 Interpret INTEGER, REAL and packed LOGIC values</h2>
+
+<p>The three value columns represent separate storage families. The INTEGER and REAL values beside index 12 are not two different ways of displaying the same number. They are the contents of integer cell 12 and real-number cell 12. LOGIC word 12 is another separate storage location containing multiple true/false values.</p>
+<div class="table-scroll"><table><caption>Table 29-3. Value types in operator language</caption><thead><tr><th scope="col">Column</th><th scope="col">What it contains</th><th scope="col">How to report it</th></tr></thead><tbody>
+<tr><td>INTEGER</td><td>A whole-number value, which can be positive, negative or zero.</td><td>Include the sign, full number and integer index.</td></tr>
+<tr><td>REAL</td><td>A numeric value that can contain a fractional part.</td><td>Copy the displayed precision and any exponent; include the real index and known unit.</td></tr>
+<tr><td>LOGIC word (hex)</td><td>A group of 64 true/false values displayed as one hexadecimal word.</td><td>Copy the full value beginning with 0x and identify the word index.</td></tr>
+</tbody></table></div>
+<h3>A REAL value does not supply its own unit</h3>
+<p>A real number may represent a distance, time, speed, ratio or another quantity depending on its definition. The memory table does not attach a unit or descriptive name. A displayed 0.5 is not automatically half a millimetre or half speed. Obtain the variable meaning from the deployed configuration or the responsible technician.</p>
+<p>The display preserves substantial numeric precision. A long decimal tail is not, by itself, evidence of an error, and a compact value containing E uses exponent notation. For instance, 1E-3 represents 0.001. Do not round a value in a technical report unless the recipient asks for a rounded measurement; copy the displayed text or provide a clear screenshot.</p>
+<h3>One LOGIC word contains many conditions</h3>
+<p>The prefix 0x identifies hexadecimal notation. It is a compact way to show a set of bits, where each bit holds one false/true condition. A word of <code>0x0000000000000000</code> has all 64 bits clear. A word of <code>0x0000000000000001</code> has its lowest bit set. These examples explain the notation, not the machine meaning of those bits.</p>
+<p>The relationship between a word index and an individual logical index is:</p>
+<pre><code>Logical index = (word index × 64) + bit position
+Bit positions within a word: 0 through 63
+Example: word 1, bit 0 → logical index 64</code></pre>
+<p>The first word therefore covers logical indices 0 through 63, and the second covers 64 through 127. A nonzero word means at least one bit is set, not that every condition in that word is true. Unless trained and specifically asked to interpret a bit, report the whole word and let the responsible person decode the relevant condition.</p>
+<p>None of these values is automatically a physical input or output channel. Logical memory and raw I/O channels are separate concepts. Use the mapping and I/O views when the question concerns a named switch, valve or drive channel, and use this typed memory view when the requested observation is an internal storage value.</p>
+
+</section>
+<section id="names" aria-labelledby="names-title"><h2 id="names-title">29.4 Relate a raw index to a named variable and the correct version</h2>
+
+<p>A name gives a value meaning; an index gives it a storage location. The memory window provides the location and value, but not the full relationship to the source document. Before using a row to diagnose a machine function, the responsible person must identify the named variable, its type and its location in the deployed configuration.</p>
+<p>Do not use a remembered index from another machine as proof of what a row means here. Shared definitions, program content and prepared program sets can differ. After source changes, validation or deployment, an earlier address reference needs to be checked again against the version that actually runs.</p>
+<div class="table-scroll"><table><caption>Table 29-4. Information needed to identify a value</caption><thead><tr><th scope="col">Item</th><th scope="col">Why it is needed</th></tr></thead><tbody>
+<tr><td>Variable name and document/context</td><td>Identifies the intended machine quantity or condition.</td></tr>
+<tr><td>Type</td><td>Distinguishes INTEGER, REAL and individual LOGIC values.</td></tr>
+<tr><td>Index</td><td>Identifies the storage location within that type.</td></tr>
+<tr><td>For LOGIC: word and bit</td><td>Locates an individual condition within the packed word.</td></tr>
+<tr><td>Deployed configuration</td><td>Connects the address reference to the program set actually using memory.</td></tr>
+<tr><td>Unit and expected condition</td><td>Allows the value to be interpreted in relation to the machine operation.</td></tr>
+</tbody></table></div>
+<h3>Configuration and live memory answer different questions</h3>
+<p>A Configuration field can hold a retained machine parameter, while a PLC variable can be a changing runtime value or a value supplied to the PLC by the application. Some application-owned parameters are read-only to the control logic, even though an authorized operator may edit their original Configuration field. Other live values have their own explicit editing rules.</p>
+<p>It is therefore unsafe to infer edit permission from the fact that a value appears in memory. This window is read-only regardless of the underlying variable's purpose. If an approved change is needed, use the named field or operating control specified by the procedure, with its normal limits and availability checks.</p>
+<h3>A source declaration is not a live reading</h3>
+<p>The text in Shared or another source document describes definitions and instructions. It is not a constantly updated display of each variable's present value. Changing a number in source is a source change, not the same thing as entering a live value in a diagnostic table. Chapter 27 covers the separate validation, saving and deployment steps.</p>
+<p>Likewise, pending source changes can coexist with the older deployed program set. The raw memory you observe belongs to the runtime being read, not automatically to the newest text in the editor. If Pending changes is reported by the program monitor, resolve the version question before attaching a newly calculated address meaning to a memory row.</p>
+<p>A useful request from a technician is specific: which named variable, which type, which current index and what machine condition to observe. If those details are missing, gather the visible range and connection information first, then ask for the precise location. Searching random values for a number that looks familiar is not a dependable diagnosis.</p>
+
+</section>
+<section id="live" aria-labelledby="live-title"><h2 id="live-title">29.5 Understand live updates, unavailable values and timing limits</h2>
+
+<p>The dedicated window reads memory on a nominal 500 ms display timer while visible and not minimized. This is an observation rate for the user interface, not the PLC's control-cycle time. A value may change many times between two screen updates, and display scheduling can delay an update further.</p>
+<p>The footer explicitly describes <strong>Independent live reads</strong>. The cells are read separately rather than frozen together at one exact PLC scan. Two related values appearing on the same screen may therefore have been read on opposite sides of a change. Do not use one screenshot to prove the exact order of a fast internal sequence.</p>
+<div class="table-scroll"><table><caption>Table 29-5. Display conditions and their limits</caption><thead><tr><th scope="col">Observation</th><th scope="col">Interpretation</th></tr></thead><tbody>
+<tr><td>Online, live values visible</td><td>Current available observations; not an atomic snapshot of one control scan.</td></tr>
+<tr><td>Memory unavailable</td><td>The controller is not available for these reads, including during a PLC configuration-application operation.</td></tr>
+<tr><td>Dashes in all value columns</td><td>No usable live values are being displayed; not proof of zero or false.</td></tr>
+<tr><td>Dash only in LOGIC beyond word 63</td><td>The selected numeric index is outside packed LOGIC-word storage.</td></tr>
+<tr><td>Values unchanged while visible</td><td>They may be stable, or a brief change may have occurred between samples.</td></tr>
+<tr><td>Window minimized or hidden</td><td>Observation polling stops until the window is restored.</td></tr>
+</tbody></table></div>
+<h3>Unavailable is not a memory reset</h3>
+<p>If the controller disconnects, the form replaces displayed values with dashes. It does not command the controller to set those cells to zero. During a configuration-application operation, memory can also be marked unavailable while the footer still names an online connection. Read the full message before diagnosing a cable or board fault.</p>
+<p>After restoring availability, allow a fresh display update before recording the values. An earlier screenshot remains a historical observation, not a statement about the current machine. Include whether the application was in simulation or normal operation, because simulated values cannot prove a physical sensor or mechanism responded.</p>
+<h3>Choose an appropriate observation task</h3>
+<p>This view is useful for checking a requested stable value or a condition that lasts long enough to observe. It is not an oscilloscope, a trace recorder or a history of every value written. If the issue concerns a short pulse, intermittent transition or precise ordering, ask the responsible technician to select a suitable capture method.</p>
+<p>Do not repeatedly trigger a machine operation solely to catch a value changing on this screen. Each operating action needs its normal authorization and preparation. A missed display transition is not evidence that the PLC failed to process the event.</p>
+<p>When collecting a comparison, record the range, value type, operating condition and approximate time for each observation. Describe it as a before/after observation rather than asserting simultaneous changes. This makes the evidence useful without claiming timing accuracy the memory window does not provide.</p>
+
+</section>
+<section id="report" aria-labelledby="report-title"><h2 id="report-title">29.6 Collect a reliable observation and report unexpected values</h2>
+
+<p>Use a repeatable process when a technician requests memory information. The objective is to supply the right typed value under known conditions, not to change the value until it looks plausible. A careful observation can help separate a program-state issue from a display, connection or address-selection mistake.</p>
+<h3>Observation procedure</h3>
+<ol><li>Confirm the requested variable or memory family, index and range against the current deployed configuration.</li><li>Open PLC memory and check the actual Start index and Cells settings.</li><li>Read the footer. If memory is unavailable, record that condition instead of interpreting dashes as values.</li><li>Locate the requested Index and read only the intended type column.</li><li>Observe the machine condition specified by the authorized procedure. Do not initiate additional motion merely to populate a report.</li><li>Capture the full displayed value, range controls and footer, or transcribe the value with its type and index.</li><li>Record the physical observation and any related report message separately from the memory reading.</li></ol>
+<div class="table-scroll"><table><caption>Table 29-6. What to include in a memory observation</caption><thead><tr><th scope="col">Information</th><th scope="col">Example of the detail required</th></tr></thead><tbody>
+<tr><td>Machine and mode</td><td>Identify the installation and whether normal or simulation operation was used.</td></tr>
+<tr><td>Configuration context</td><td>Known deployed version and any pending source changes.</td></tr>
+<tr><td>Range</td><td>Actual Start index, Cells and selected row.</td></tr>
+<tr><td>Type and value</td><td>INTEGER, REAL or LOGIC word; preserve signs, precision and hexadecimal digits.</td></tr>
+<tr><td>Meaning, if verified</td><td>Variable name, unit and the source of the address identification.</td></tr>
+<tr><td>Operating condition</td><td>What operation was underway and when the observation was taken.</td></tr>
+</tbody></table></div>
+<h3>Check simple interpretation errors first</h3>
+<p>If the reported value looks wrong, verify the column before drawing a machine conclusion. Reading a REAL value from the INTEGER column at the same index is a different observation. For a logical condition, confirm the word and bit rather than treating the whole hexadecimal word as a single true/false switch.</p>
+<p>If a row is missing near index 4095, check the storage boundary. If a LOGIC cell shows a dash at a high numeric index, check the smaller word range. If every value is unavailable, investigate the connection or ongoing configuration operation before assuming memory corruption.</p>
+<p>If the value still differs from the approved expectation, preserve it and refer it to the responsible person. Do not change source definitions, mapping targets, sensor states or machine parameters as a trial correction. Those changes can alter the conditions being investigated and make the original evidence harder to interpret.</p>
+<h3>End the observation without implying a machine action</h3>
+<p>Close the window when it is no longer needed. Closing stops this display's polling but does not reset counters, clear logical conditions or stop a running program. Any required machine stop, fault recovery or approved parameter change must use its own normal procedure.</p>
+<p>At handover, state what was observed, what meaning has been verified and what remains uncertain. “REAL index 32 showed this value while waiting for the sensor” is more useful than “memory was wrong,” provided the index reference is current. Accurate labels and known conditions turn a technical-looking table into useful operator evidence.</p>
+
+</section>
+<aside class="source-note"><h2>About this chapter</h2><p>Checked against PlcMemoryForm, the controller memory snapshot, memory capacities, diagnostic-window behavior and the application command catalog. No memory values were written or machine tests performed to prepare this manual. Real-screen captures are identified by placeholders.</p></aside></div><footer class="page-footer"><a href="28-plc-program-monitor.html">Previous chapter</a> · <a href="index.html#chapter-29">Manual contents</a><span>RouterXYZAC+TC · 29</span></footer></main></body></html>

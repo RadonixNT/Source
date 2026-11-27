@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="400" viewBox="0 0 900 400" role="img" aria-labelledby="title desc">
+<title id="title">Commands go to the machine; feedback reports conditions</title><desc id="desc">The operator and job file provide requests to RouterXYZAC+RTCP. The controller coordinates physical devices. Sensors and device status report conditions back to the control system and operator display.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#155765"/></marker></defs>
+<rect width="900" height="400" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#22313a">
+<text x="34" y="40" font-size="22" font-weight="600">From a request to a physical result</text>
+<text x="34" y="70" font-size="15" fill="#596871">Conceptual flow — not a wiring or timing diagram</text>
+<g stroke="#b8cbd0" stroke-width="1.5" fill="white"><rect x="30" y="115" width="175" height="130" rx="8"/><rect x="250" y="115" width="175" height="130" rx="8"/><rect x="470" y="115" width="175" height="130" rx="8"/><rect x="690" y="115" width="180" height="130" rx="8"/></g>
+<g text-anchor="middle"><text x="117" y="148" font-size="17" font-weight="600">Operator + job</text><text x="117" y="180" font-size="14">Choose, prepare</text><text x="117" y="202" font-size="14">and request</text>
+<text x="337" y="148" font-size="17" font-weight="600">RouterXYZAC+RTCP</text><text x="337" y="180" font-size="14">Controls, settings</text><text x="337" y="202" font-size="14">and information</text>
+<text x="557" y="148" font-size="17" font-weight="600">Controller</text><text x="557" y="180" font-size="14">Motion and</text><text x="557" y="202" font-size="14">machine logic</text>
+<text x="780" y="148" font-size="17" font-weight="600">Physical devices</text><text x="780" y="180" font-size="14">Drives, motors</text><text x="780" y="202" font-size="14">and equipment</text></g>
+<g stroke="#155765" stroke-width="2" fill="none" marker-end="url(#arrow)"><path d="M208 180H245"/><path d="M428 180H465"/><path d="M648 180H685"/><path d="M780 248V300H557V250"/><path d="M554 318H338V250"/></g>
+<text x="650" y="280" text-anchor="middle" font-size="14">Sensors / device status</text>
+<text x="447" y="345" text-anchor="middle" font-size="14">Reported conditions reach the display</text>
+<text x="34" y="379" font-size="15" font-weight="600">Requested → accepted → in progress → confirmed result</text>
+</g></svg>

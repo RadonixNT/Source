@@ -1,0 +1,18 @@
+// First TP2 block: no motion may precede this exchange's roller confirmation.
+// Background alone owns the roller outputs and evaluates enabled physical sensors.
+// Skip the activation scan so readiness/output feedback belongs to the active exchange.
+IF NOT TP2.Running OR NOT ToolChangeActive THEN END_FUNCTION(Result := 1); END_IF;
+IF SF.FirstScan THEN ToolChangeRollersConfirmed := FALSE; END_IF;
+IF ToolChangeFault <> 0 THEN
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 7);
+END_IF;
+IF NOT SF.FirstScan AND NOT Roller1 AND NOT Roller2 AND RollersReady THEN
+    ToolChangeRollersConfirmed := TRUE;
+    END_FUNCTION(Result := 0);
+END_IF;
+IF SF.Time >= RollerReleaseTimeout THEN
+    ToolChangeFault := 7;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 7);
+END_IF;

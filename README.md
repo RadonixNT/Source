@@ -1,7 +1,19 @@
-# Radonix NT CNC Router Interfaces
+# Radonix NT CNC Interfaces
 
-This repository is being prepared for the following Radonix NT CNC router interfaces:
+Editable CNC operator interfaces for Radonix NT on Windows x64. Browse the C# WinForms applications, machine simulation, PLC programs, tests, and Inno Setup sources.
 
-- `RouterXYZ+TC`
-- `RouterXYZAC+TC`
-- `RouterXYZBC+TC`
+| Interface | Machine configuration | Source |
+| --- | --- | --- |
+| CutterXYZ | 3-axis XYZ cutter | [Browse](interfaces/CutterXYZ) |
+| RouterXYZ+TC | 3-axis XYZ router with tool change | [Browse](interfaces/RouterXYZ%2BTC) |
+| RouterXYZAC+TC | 5-axis XYZAC router with tool change | [Browse](interfaces/RouterXYZAC%2BTC) |
+| RouterXYZBC+TC | 5-axis XYZBC router with tool change | [Browse](interfaces/RouterXYZBC%2BTC) |
+| RouterXYZAC+RTCP | 5-axis XYZAC router with RTCP | [Browse](interfaces/RouterXYZAC%2BRTCP) |
+
+## Download and build
+
+1. Open [Releases](https://github.com/RadonixNT/Source/releases) and choose the ZIP for your machine model.
+2. Extract the complete ZIP. Open the included solution with Visual Studio and the .NET 8 Windows Desktop SDK. The included local NuGet feed supports offline restore.
+3. Build the interface in Release x64. To compile an installer from your changes, use PowerShell 7 and Inno Setup 6 to run `Setup/BuildSetup.ps1`. Read the development guide in the ZIP for commands and prerequisites.
+
+The release archives carry the matching Radonix binaries and dependencies. For physical machine operation, obtain the compatible Acontis EC-Master/RTACC runtime through a licensed Radonix delivery or an authorized Acontis source and place its Windows x64 DLLs under `Runtime` before publishing or compiling the installer. Physical operation requires the applicable Radonix and Acontis licenses and machine commissioning. Third-party components retain their respective license terms.

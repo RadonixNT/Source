@@ -1,0 +1,36 @@
+<Project>
+  <ItemGroup>
+    <Reference Include="NT-Helper">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-Helper.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="NT-Controller">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-Controller.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="NT-Wrapper">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-Wrapper.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="NT-LinkManager">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-LinkManager.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="NT-ToolsWF">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-ToolsWF.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="NT-Diag">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-Diag.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="NT-ConfigurationManager">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-ConfigurationManager.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="NT-Interpreter">
+      <HintPath>$(MSBuildThisFileDirectory)Runtime\NT-Interpreter.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 6 — Homing the Machine | RouterXYZAC+RTCP</title>
+<meta name="description" content="An operator's guide to preparing, starting, observing and checking machine homing.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+RTCP · CHAPTER 6</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Homing the Machine</h1>
+<p class="lead">Establish the machine reference deliberately: prepare the whole travel area, understand the movement sequence, and distinguish a completed Home from a request, a partial result or an interruption.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> This chapter describes the supplied RouterXYZAC+RTCP homing sequence. The installed machine's directions, sensor locations and approved operating procedure must be confirmed before physical use.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-06">Manual contents</a> · <a href="05-coordinates.html">Previous chapter: Coordinates and units</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZAC update — 10 November 2026.</strong> Full Home defaults to Z&gt;A,C&gt;X,Y. In Hard Simulation, each activation places a virtual sensor 5 mm or 2 degrees from its starting position; physical Home settings are unchanged. See the <a href="XYZAC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Understand what Home establishes</a></li>
+<li><a href="#when">Know when the machine reference needs attention</a></li>
+<li><a href="#preparation">Prepare the machine and the whole homing route</a></li>
+<li><a href="#controls">Identify the Home control and understand why it may be unavailable</a></li>
+<li><a href="#request">Start one complete Home operation deliberately</a></li>
+<li><a href="#z-stage">Follow the first stage: establish the Z reference</a></li>
+<li><a href="#gantry-stage">Follow X and the two sides of the gantry</a></li>
+<li><a href="#completion">Confirm completion without expecting every number to be zero</a></li>
+<li><a href="#individual">Use individual-axis homing only for its intended scope</a></li>
+<li><a href="#interruption">Stop an attempt and treat the result as incomplete</a></li>
+<li><a href="#problems">Read unsuccessful results and collect useful evidence</a></li>
+<li><a href="#practice">Build a repeatable routine and check your understanding</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">6.1 Understand what Home establishes</h2>
+
+<p>Before the machine can use a destination reliably, it needs an established reference for its own travel. <strong>Homing</strong> is the operation used to establish that reference. In the supplied RouterXYZAC+RTCP sequence, the machine moves in configured directions, detects its home sensors, moves away until those sensors release, and assigns the configured machine coordinates. It may then make a further configured displacement before completing.</p>
+<p>A home sensor is a device that changes its signal when the relevant moving part reaches its sensing area. Think of it as a recognizable landmark along the axis. The machine uses a defined approach and release sequence to relate that landmark to its coordinate system. A sensor is not a mark on the workpiece, and finding it does not tell the machine where the corner or surface of your material is.</p>
+
+<table><caption>Table 6-1. Four operations that must not be confused</caption><thead><tr><th scope="col">Operation</th><th scope="col">Purpose</th><th scope="col">What it does not establish</th></tr></thead><tbody>
+
+<tr><td><strong>Go Home</strong></td><td>Request positioning to machine zero using the established reference.</td><td>A new sensor-based reference.</td></tr>
+<tr><td><strong>Go Ref</strong></td><td>Request positioning associated with the work reference and applicable corrections.</td><td>Successful homing or a newly measured work origin.</td></tr>
+<tr><td>Zero setting</td><td>Change a work-reference value through the relevant setup command.</td><td>Physical movement to a home sensor.</td></tr>
+</tbody></table>
+<p>The similar names are easy to mix up. In this manual, <strong>Home</strong> means establishing the reference, while <strong>Go Home</strong> is a positioning command. If the machine needs homing, moving to a position that looks like home is not a substitute.</p>
+<aside class="learning-example"><h3>A familiar-looking position</h3><p>You open the application and the head appears to be in the corner where it normally finishes homing. That appearance alone does not establish the controller's current reference. Read the current homing state and follow the approved startup procedure. Do not infer a valid reference from the head's location or a zero on the display.</p></aside>
+<p>Homing is real machine movement in Normal mode. It can take the head and bridge beyond the outline of the next machining job. Read this chapter together with <a href="02-safe-operation.html">Safe Operation and Pre-start Checks</a>; understanding the button is only one part of preparing the operation.</p>
+
+</section>
+<section id="when" aria-labelledby="when-title"><h2 id="when-title">6.2 Know when the machine reference needs attention</h2>
+
+<p>At the start of a working session, read the <strong>Homed</strong> indication as part of the startup checks. Do not assume that a reference from an earlier session is still available. The application checks the current controller state, not your memory of the last successful Home.</p>
+<p>The Homed indication combines the state of every configured motor, including any enabled XG, YG or ZG companion. All must report homed while the machine is online for this indication to be on. This is deliberately different from the individual X, Y, Z, A and C readiness indications. A motor can be ready to accept homing movement without already having an established reference.</p>
+<p>Some operations depend on that complete reference. The reviewed application requires all configured motors to be homed for normal machining and absolute-position jogging. A command may therefore remain unavailable even when the connection and individual axis indications look satisfactory.</p>
+<table><caption>Table 6-2. Situations that call for a reference check</caption><thead><tr><th scope="col">Situation</th><th scope="col">Operator response</th></tr></thead><tbody>
+<tr><td>Starting work or reconnecting</td><td>Check the actual mode, current Homed state and the installed startup procedure. Do not infer the result from saved values.</td></tr>
+<tr><td>Homed is off</td><td>Establish why the complete reference is unavailable. Prepare and perform Home when required and permitted.</td></tr>
+<tr><td>A previous Home was interrupted or unsuccessful</td><td>Treat the result as incomplete. Resolve the cause and follow the recovery procedure before a new attempt.</td></tr>
+<tr><td>The machine was serviced, moved unexpectedly or involved in a collision</td><td>Have the physical condition and reference validity assessed. A retained indication cannot establish that the mechanics are correct.</td></tr>
+<tr><td>Changing between Simulation and Normal mode</td><td>Recheck the state in the newly connected mode. A simulated reference is not evidence that the physical machine has been homed.</td></tr>
+</tbody></table>
+<h3>When the indication is already on</h3>
+<p>An on indication reports the controller's current homing state. It does not by itself tell you whether a new Home is required by your workshop's startup or recovery procedure. Follow that procedure and consider what has happened since the reference was established. Avoid pressing Home repeatedly as a habit: each accepted request is another automatic movement.</p>
+<p>Likewise, do not repeatedly reconnect just to obtain a different indication. A reconnection is not a homing procedure. After any connection change, let startup complete, read the current state and then decide the next authorized action.</p>
+<aside class="learning-example"><h3>Ready, but not referenced</h3><p>The connection is online and the axis readiness lights are on, but Homed is off. This is not necessarily a contradiction. The motors may be ready to carry out Home, while normal reference-dependent work is still unavailable. The missing step is not to change the work zero; it is to establish and check the machine reference.</p></aside>
+<p>If the Homed indication disappears unexpectedly during a working session, stop advancing the job. Record what happened immediately beforehand and inspect the associated messages. The indication alone does not identify the cause. Do not change reference values to make the coordinates look familiar or try a different command to bypass the missing state.</p>
+<p>Detailed recovery after mechanical work is outside an ordinary operator's homing routine. If you cannot establish that the machine is physically ready for the expected sequence, obtain assistance before issuing movement.</p>
+
+</section>
+<section id="preparation" aria-labelledby="preparation-title"><h2 id="preparation-title">6.3 Prepare the machine and the whole homing route</h2>
+
+<p>Prepare for the complete sequence before you press Home. Do not plan to clear an obstruction between the Z stage and the horizontal stage: the supplied operation advances automatically. Once the request starts, later movements do not wait for you to press Home again.</p>
+<p>First confirm that you are at the correct machine and that the application is connected in the intended mode. Simulation is useful for learning the sequence, but it cannot demonstrate clearance around the physical cutter, clamps or bridge. In Normal mode, treat the request as permission for the entire homing sequence to move the real machine.</p>
+<p>Know the installed homing directions and sensor locations before the first physical attempt. This chapter cannot identify a universal left, right, front, rear, up or down for your installation. Those depend on the machine arrangement and approved configuration. If a direction is unfamiliar, have it explained at the machine before starting.</p>
+<table><caption>Table 6-3. Pre-Home checks</caption><thead><tr><th scope="col">Check</th><th scope="col">What you need to establish</th></tr></thead><tbody>
+<tr><td>People and access</td><td>The movement area is clear and the installed guarding/access procedure has been followed. You can observe from the designated operating position.</td></tr>
+<tr><td>Tool and head</td><td>The fitted tool is secure and identified; its projection, holder and surrounding equipment permit the expected movement. Follow the machine's required spindle condition.</td></tr>
+<tr><td>Material and fixtures</td><td>The workpiece, clamps, stops and other fittings permit the full homing travel, including reversal and final displacement.</td></tr>
+<tr><td>Bridge and services</td><td>The bridge route and associated hoses, cables and accessories are clear according to the installed inspection procedure.</td></tr>
+<tr><td>Controller state</td><td>The intended connection is operational, axes are ready, and relevant alarms or emergency indications have been resolved.</td></tr>
+
+<tr><td>Stopping response</td><td>You know the ordinary stop control and the installed emergency response, and can reach the required controls from your operating position.</td></tr>
+</tbody></table>
+<p>The supplied sequence starts with Z, but that does not prove that Z has clearance from its present position. A tool may already be within material or beneath an obstruction. Do not use Home as an improvised escape movement. If the current position requires recovery, use the approved recovery procedure with the necessary assistance first.</p>
+<aside class="learning-example"><h3>A clamp outside the part outline</h3><p>The cutting preview lies inside the material, while a tall clamp stands beyond that outline. The next job may avoid the clamp, but homing can travel outside the cutting area. Check the clamp against the homing route, not only against the picture of the part.</p></aside>
+<p>Read the screen after the physical preparation. A permitted command means that the application has accepted certain machine-state conditions; it does not mean the application has inspected your fixtures. Conversely, an unavailable command is a reason to investigate the state, not a reason to search for a keyboard shortcut that might bypass it.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 6-1 · INSTALLED-MACHINE IMAGE REQUIRED</p><h3>The installed homing directions and observation position</h3><p>Supply a photograph or approved machine drawing showing the actual Z, X and Y/YG homing directions, the home-sensor regions, the whole bridge travel area and the designated operator position. Label any fixture restrictions specific to this machine.</p><p>Suggested image: <code>assets/images/06-installed-homing-route.png</code>. Have the machine supplier or responsible technician confirm the arrows; do not copy generic axis directions.</p></figure>
+<p>If every check is satisfactory, remain in the operating position and continue to the request procedure. If any route, tool condition or machine state is uncertain, resolve that specific uncertainty before pressing Home.</p>
+
+</section>
+<section id="controls" aria-labelledby="controls-title"><h2 id="controls-title">6.4 Identify the Home control and understand why it may be unavailable</h2>
+
+<p>The main-window <strong>Home</strong> control requests the complete supplied machine-homing sequence. Locate it before preparing the first movement, and distinguish it from the separate <strong>Go Home</strong> control. Review the <a href="04-main-window.html#references">main-window command comparison</a> if the two controls are unfamiliar.</p>
+<p>You need operator access and an operational connection for machine interaction. Complete any required login described in <a href="03-startup.html#operator-login">Chapter 3</a>. Opening an engineering window is not part of the ordinary Home procedure. If the application has no operator access, resolve the access issue through the normal login route.</p>
+<p>Home also requires the selected homing operation and relevant axes to be ready. A button can be unavailable for several reasons; its appearance alone does not identify which one applies. Read the current indications and any related messages rather than repeatedly clicking.</p>
+<table><caption>Table 6-4. Conditions that can prevent a Home request</caption><thead><tr><th scope="col">Condition to check</th><th scope="col">What it means for the operator</th></tr></thead><tbody>
+<tr><td>Connection or access is unavailable</td><td>Complete startup or the authorized login/reconnection procedure. A visible main window alone is insufficient.</td></tr>
+<tr><td>An axis is moving, stopping or otherwise occupied</td><td>Wait for the current operation to finish, or stop it deliberately using its approved procedure. Do not issue competing movements.</td></tr>
+<tr><td>A machining or auxiliary movement remains active</td><td>Home requires exclusive use of motion. A paused job is not automatically equivalent to a fully idle machine.</td></tr>
+<tr><td>An axis is not ready or has a coupling fault</td><td>Record and resolve the reported condition. Do not alter configuration to force the control available.</td></tr>
+<tr><td>The normal gantry relationship is not established</td><td>Complete-machine and Y homing require the expected paired-axis state at admission. Obtain assistance if it has not recovered.</td></tr>
+<tr><td>The installed Home routine is unavailable</td><td>The machine-control routine must be enabled, loaded and deployed. Missing or rejected routines need authorized investigation.</td></tr>
+</tbody></table>
+<p>The last row refers to the machine's internal operating routine, not to the cutting file you open for a job. You do not need to load a part program just to perform Home. Conversely, changing the part file cannot repair a missing homing routine.</p>
+<h3>Do not use shortcuts to work around a condition</h3>
+<p>A keyboard command, where configured, asks for the same operation; it is not an alternative readiness procedure. Use only the shortcut documented for your installation, and do not experiment with unfamiliar keys while the machine is connected. Shortcut assignments can differ, so this chapter does not invent a universal Home key.</p>
+<p>The application rechecks readiness when dispatching the request. It is therefore possible for a control to have looked available just before a changing machine state causes rejection. In that case, use the reported result, not the button's earlier appearance, to decide what happened.</p>
+<aside class="learning-example"><h3>Stopped on screen, still occupied</h3><p>A machining operation has stopped moving but remains paused with retained program state. Home may still be unavailable. The correct response is to deal with that operation through the approved stop/recovery procedure, not to assume that every stationary-looking machine is idle.</p></aside>
+<p>Once access, connection, operation state and the physical prechecks are satisfactory, use the single deliberate request described next. If a condition cannot be explained from the indications and messages, leave the operation unstarted and record the details for support.</p>
+
+</section>
+<section id="request" aria-labelledby="request-title"><h2 id="request-title">6.5 Start one complete Home operation deliberately</h2>
+
+<p>This procedure is for the main-window <strong>Home</strong> command, which requests the complete machine sequence. It assumes that the physical checks in <a href="#preparation">Section 6.3</a> are complete and that you are authorized to operate this installation. Do not use the procedure to diagnose an unknown mechanical condition by trial movement.</p>
+<ol class="journey">
+<li><strong>Confirm the intended runtime mode and connection.</strong><p>Read the connection indication. Establish whether you are practising in Simulation or operating the real machine in Normal mode. Complete any required operator login and wait for startup to settle.</p></li>
+<li><strong>Check that the machine is available for Home.</strong><p>Read the axis readiness, alarm and emergency indications. Confirm that other operations have ended and that no jog control is being held. Investigate an unavailable Home control before proceeding.</p></li>
+<li><strong>Make the final physical check from the designated operating position.</strong><p>Confirm that the full route remains clear, including the tool, bridge and reversal/displacement travel. Ensure that everyone affected knows automatic movement is about to begin according to the workshop procedure.</p></li>
+<li><strong>Press Home once.</strong><p>This requests the whole sequence. Do not press Go Home, Run or an individual-axis command as an additional start instruction. Home is not a hold-to-jog control; releasing your click does not mean the sequence has been cancelled.</p></li>
+<li><strong>Observe the response and the machine.</strong><p>Expect the Z stage first, followed by X and the Y/YG gantry stage in the supplied routine. Remain attentive to the physical movement and messages. If there is no movement, establish whether the request was rejected or is still being processed; do not repeatedly press the control.</p></li>
+<li><strong>Wait for the complete result.</strong><p>A sensor being reached, one motor stopping or a changed readout is an intermediate event. Wait for all stages to finish, then carry out the completion checks in Section 6.8.</p></li>
+</ol>
+<h3>Understand the difference between request and result</h3>
+<p>The application reports a Home request separately from activation and completion. This helps distinguish “I pressed the button” from “the controller started the routine” and from “the operation ended successfully.” Those are three different events.</p>
+<table><caption>Table 6-5. Reading the stages of a Home report</caption><thead><tr><th scope="col">Report wording you may encounter</th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td>Home requested</td><td>The application received the operator's request. This is not completion.</td></tr>
+<tr><td>Home request accepted</td><td>The activation request was accepted. The application is still awaiting activation and completion.</td></tr>
+<tr><td>Home PLC activated</td><td>The machine-control homing routine has activated. The word PLC identifies that internal routine.</td></tr>
+<tr><td>Home PLC ended</td><td>The routine has ended; read its exit reason, result and success indication together.</td></tr>
+<tr><td>Request rejected</td><td>The requested start was not accepted. Read the accompanying reason before another attempt.</td></tr>
+</tbody></table>
+<p>These are operation-report entries, not a promise that a separate dialog will appear at each stage. In the reviewed main window, double-clicking the program progress control opens the report. Keep your attention on the moving machine; inspect detailed records when it is appropriate to do so.</p>
+<p>An old successful entry belongs to an old attempt. When reviewing records, identify the request you just made and the matching subsequent result. A current failure must not be dismissed because a previous Home succeeded earlier in the day.</p>
+<p>If movement is unexpected, use the appropriate stopping response immediately. Do not wait for a timeout or a completion message to intervene. The next two sections explain normal sequence details so that expected reversals and short waits are easier to recognize.</p>
+
+</section>
+<section id="configured-sequence"><h2>Configured sequence and optional gantries</h2><p>Controller &gt; Axes &gt; Home Sequence defaults to <code>Z&gt;A,C&gt;X,Y</code>. Include each sensor primary once. Include an absolute primary to move it to its Home Position at Home Velocity, or omit it to keep its current machine coordinate. Full Home requires valid absolute references in either case. On an all-absolute machine an empty sequence checks references without movement. A single-axis Home explicitly selects that axis.</p><p>Use &gt; between stages and a comma within a stage. Absolute motors in a stage must finish stopped within one encoder step of their destinations before its sensor searches begin. Sensor searches run concurrently, followed by sequential displacement moves. Set Z Home Position to the machine's verified clearance height when horizontal motion requires clearance, and include Z in the first stage.</p><p>Select matching methods for both motors of a gantry. An absolute pair stays coupled and its Home Positions must agree with the coupling offset. A sensor pair uses independent sensors when the companion sensor is enabled and otherwise follows its master. Untouched generated programs update automatically. Engineer-edited programs require separate review.</p></section>
+<section id="z-stage" aria-labelledby="z-stage-title"><h2 id="z-stage-title">6.6 Follow the first stage: establish the Z reference</h2>
+
+<p>In the supplied complete Home sequence, Z is referenced before the horizontal homing stage begins. Z is the axis associated with the head's vertical travel on the usual machine arrangement. The physical search direction is defined by the installed configuration; learn that actual direction rather than assuming that a particular screen arrow or positive sign always means “up.”</p>
+<p>Before the Z search, the generated routine prepares any enabled gantry for its homing stage. You do not need to operate separate gantry controls. This preparation is part of the complete sequence and is one reason not to issue unrelated commands while Home is active.</p>
+<h3>Search, release, stop and final displacement</h3>
+<p>If the Z home sensor is not active at the start of its search, Z moves in its configured search direction until the sensor becomes active. It then reverses and moves until the sensor releases. “Releases” means that the sensor signal becomes inactive as the axis moves out of the sensing condition; it does not mean releasing a tool or pressing a release button.</p>
+<p>When the sensor releases, the routine requests Z to stop and waits for stopped feedback before assigning the reference coordinate. If a final homing displacement is configured, Z then makes that movement. Only after this stage does the supplied complete sequence advance to the horizontal axes.</p>
+<table><caption>Table 6-6. What to expect during the Z stage</caption><thead><tr><th scope="col">Part of the stage</th><th scope="col">What it means</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>Search</td><td>Find the configured sensor condition.</td><td>Observe the actual direction and route; this is not a move to the work surface.</td></tr>
+<tr><td>Reverse and release</td><td>Leave the sensing condition in the opposite direction.</td><td>A reversal is part of the normal sequence, not automatically an error.</td></tr>
+<tr><td>Stop and assign reference</td><td>Wait for stopped feedback and establish the coordinate.</td><td>A coordinate change is not, by itself, completion of the whole machine.</td></tr>
+<tr><td>Configured displacement</td><td>Make the additional signed movement if its value is nonzero.</td><td>Keep observing; the sensor event need not be the last Z movement.</td></tr>
+<tr><td>Advance to X and gantry</td><td>Continue automatically with the next stage.</td><td>No second Home click is required.</td></tr>
+</tbody></table>
+<h3>If the sensor is already active</h3>
+<p>The first visible Z movement can be the release movement if the sensor is already active when the stage begins. The routine does not need to search farther into an already active sensor condition. This can make two legitimate starts look different when they begin at different positions.</p>
+<p>However, an active signal does not prove that the physical sensor is functioning correctly or that the axis is at the expected location. If the behaviour does not fit the known starting position, stop and investigate rather than using this explanation to dismiss an abnormal movement.</p>
+<aside class="learning-example"><h3>A pause before the next axis moves</h3><p>You see Z reverse, stop and then make a short final movement. The horizontal stage follows. These are separate parts of the supplied sequence; stopping briefly does not mean Home has finished. Wait for the complete result rather than reaching toward the machine at the first pause.</p></aside>
+<p>The search and release speeds are separate configured homing values. Their visible speeds may differ. The routine captures its homing settings at the start; changing a field during an attempt is not a way to steer that attempt. Ordinary operators should observe the approved behaviour and report a mismatch, not tune directions or speeds during motion.</p>
+<p>Do not use the jog percentage or machining-feed percentage as your stopping method for Home. They serve other movement controls and are not the homing procedure's stop command. Use the stopping response described in Section 6.10 when intervention is needed.</p>
+
+</section>
+<section id="gantry-stage" aria-labelledby="gantry-stage-title"><h2 id="gantry-stage-title">6.7 Follow X and the two sides of the gantry</h2>
+
+<p>After the Z stage, X and the Y/YG gantry perform their sensor sequences concurrently. “Concurrently” means their movements can overlap in time. It does not mean every motor starts, reaches its sensor or stops at exactly the same instant.</p>
+<p>The gantry is the bridge-like assembly driven on two sides. For an enabled Y gantry, those drives are identified as Y and YG. With a separate enabled physical home sensor for YG, the generated routine lets both motors find their own sensors, then restores coupling. Without that sensor, the companion stays coupled throughout homing. The same rule applies to XG and ZG. The following independent-side description applies only to the separate-sensor case. YG is not a fourth workpiece coordinate that the operator should adjust independently.</p>
+<figure class="concept-figure"><img src="assets/images/06-homing-sequence.svg" alt="Sequence: prepare the gantry; home Z; home X and Y/YG concurrently; apply configured X and gantry displacements; restore coupling; verify completion."><figcaption>Figure 6-2. The supplied complete Home sequence. Arrows show the order of operations, not physical directions. This is an explanatory diagram, not an application screen.</figcaption></figure>
+<h3>Why one side can stop before the other</h3>
+<p>Each gantry side searches for its own sensor and is told to stop when that sensor is found. One side can therefore reach its sensor and stop while the other is still completing its search. The routine waits until both sensor conditions have been found and both sides report stopped before starting the reverse release stage.</p>
+<p>During release, each side again responds to its own sensor. A side is told to stop once its sensor releases. The routine waits for both sides to finish releasing and stop before assigning their reference coordinates. These waits are intentional parts of the sequence.</p>
+<p>This explains a limited difference in movement between the sides; it is not permission to accept visible racking, strain, abnormal noise or travel outside the known installed behaviour. If either side behaves unexpectedly, use the appropriate stop response. Do not wait for the other side to “catch up” against a suspected obstruction.</p>
+<h3>How X fits into the same stage</h3>
+<p>X follows its own search, reverse-release and stop sequence while the gantry is being referenced. It can finish its sensor sequence before or after the gantry. Once both X and the gantry sensor sequences have finished, the routine applies any configured X displacement. It then applies any configured Y/YG displacement as one coordinated movement.</p>
+<p>For a separate-sensor gantry, the final step restores its normal coupling. Reaching the sensors is therefore not the final event. Even if the head appears stationary, allow the operation to finish and verify its outcome before requesting another motion.</p>
+<table><caption>Table 6-7. Interpreting horizontal-stage observations</caption><thead><tr><th scope="col">Observation</th><th scope="col">Normal sequence detail to understand</th></tr></thead><tbody>
+<tr><td>X and the bridge move during the same period</td><td>Their sensor sequences run concurrently after Z.</td></tr>
+<tr><td>One gantry side stops first</td><td>Each side detects its own sensor; both must stop before release begins.</td></tr>
+<tr><td>X stops while the gantry is still completing its sequence</td><td>They need not finish together. Completion still requires the later stages.</td></tr>
+<tr><td>Another movement occurs after sensor release</td><td>A configured displacement may still be required.</td></tr>
+<tr><td>All visible movement stops</td><td>Check the operation result and restored readiness; appearance alone does not confirm success.</td></tr>
+</tbody></table>
+<p>Never try to help the sequence by pushing the bridge, operating a sensor by hand or jogging YG separately. If the two-side behaviour differs from the approved machine procedure, record the stage and obtain assistance. Sensor placement, pairing and gantry adjustment belong to authorized machine setup, not routine operator trial and error.</p>
+
+</section>
+<section id="completion" aria-labelledby="completion-title"><h2 id="completion-title">6.8 Confirm completion without expecting every number to be zero</h2>
+
+<p>Completion is a combination of the operation result, the current machine state and what you observed. Do not reduce it to one event such as “the head stopped” or “a light came on.” Individual axes can acquire their homed state before final displacement and gantry restoration have finished. In addition, a machine that was already homed before another attempt may have had its indication on at the start.</p>
+<p>For the supplied complete routine, a successful normal result means the homing movements and gantry coupling step have completed. The report's success information must be read with its exit reason and result, especially after an interruption. A numeric result of zero on its own is not sufficient evidence if the routine was cancelled or faulted.</p>
+<ol class="journey">
+<li><strong>Establish that the current Home attempt has ended successfully.</strong><p>Read relevant messages and the current operation report when necessary. Match the result to the attempt you just observed, not to an earlier successful entry.</p></li>
+<li><strong>Wait for movement and stopping to finish.</strong><p>Do not request another operation while final displacement, stopping or gantry recovery is still in progress. Physical observation and controller indications must be consistent.</p></li>
+<li><strong>Check Homed and the axis/alarm indications.</strong><p>The aggregate Homed indication must cover every configured motor. Individual axis readiness alone does not replace this check. Investigate an alarm or coupling problem even if some coordinates look plausible.</p></li>
+<li><strong>Compare the finishing position with the approved machine expectation.</strong><p>Use the documented final homing positions for this installation. Do not assume that all three displayed coordinates must read zero.</p></li>
+
+</ol>
+<h3>Why the final coordinate may be nonzero</h3>
+<p>The final homing coordinate is configured for each axis. It can be zero, positive or negative according to the installed setup. A further signed displacement can also be part of homing. The supplied sequence assigns the coordinate before that displacement so that the final coordinate equals the configured final home position.</p>
+<aside class="learning-example"><h3>A nonzero finishing position</h3><p>Imagine an approved axis setup whose final home coordinate is 10 mm and whose final displacement is 2 mm. The sequence assigns 8 mm before that displacement, then moves 2 mm to finish at 10 mm. This example explains the relationship only; neither value is a recommendation or an instruction to edit settings.</p></aside>
+<p>Changing a work origin to make a nonzero machine-home reading appear as work zero would mix two different tasks. If the final machine coordinate is unexpected, compare it with the installed homing specification and investigate. Do not “correct” it through the work-reference panel.</p>
+<table><caption>Table 6-8. What a completed Home does and does not tell you</caption><thead><tr><th scope="col">Observation</th><th scope="col">Valid conclusion</th><th scope="col">Still requires its own check</th></tr></thead><tbody>
+<tr><td>Current Home succeeds and all motors are homed</td><td>The controller has established the machine reference through this sequence.</td><td>Work origin, tool information, fixture clearance and job correctness.</td></tr>
+<tr><td>Final coordinates match the installed specification</td><td>The readouts are consistent with the expected homing finish.</td><td>Physical accuracy and machine condition where separate verification is required.</td></tr>
+<tr><td>The machine is stationary</td><td>No movement is apparent at that moment.</td><td>The actual result, readiness and required access procedure.</td></tr>
+</tbody></table>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 6-3 · APPLICATION SCREENSHOT REQUIRED</p><h3>A completed Home and its matching report entry</h3><p>Supply a labelled main-window screenshot after a successful, idle Home. Include the connection/mode, Homed, axis readiness, alarm indications and Machine position panel. Pair it with the corresponding report entry showing the operation name, exit reason, result and success state.</p><p>Suggested image: <code>assets/images/06-home-completion.png</code>. Label any nonzero final coordinates as the approved values for the illustrated setup; a Simulation example must be identified as Simulation.</p><figcaption>A single axis lamp or cropped zero readout is not a sufficient illustration of complete-machine homing.</figcaption></figure>
+
+</section>
+<section id="individual" aria-labelledby="individual-title"><h2 id="individual-title">6.9 Use individual-axis homing only for its intended scope</h2>
+
+<p>The application also provides <strong>Home X</strong>, <strong>Home Y</strong> and <strong>Home Z</strong> commands in its command/shortcut catalog. These are separate requests from the main-window complete <strong>Home</strong>. Their existence does not mean that an ordinary startup should be divided into three improvised operations.</p>
+<p>Use an individual command only when the installed operating or recovery procedure calls for it and you understand which parts will move. If your ordinary procedure specifies complete-machine Home, use that procedure. Do not substitute individual homing simply because a full attempt has failed.</p>
+<table><caption>Table 6-9. Scope of the supplied Home commands</caption><thead><tr><th scope="col">Command</th><th scope="col">Axes involved</th><th scope="col">Important difference</th></tr></thead><tbody>
+<tr><td>Home</td><td>Z first, then X and Y/YG, followed by final displacement and gantry restoration.</td><td>Complete-machine sequence.</td></tr>
+<tr><td>Home X</td><td>X.</td><td>Does not first carry out the complete sequence's Z homing stage.</td></tr>
+<tr><td>Home Y</td><td>Y and its companion YG, if enabled.</td><td>References the paired gantry; it is not a request to move just one side.</td></tr>
+<tr><td>Home Z</td><td>Z.</td><td>Does not establish X or either gantry motor's reference.</td></tr>
+</tbody></table>
+<p>The individual X and Z routines use their own search, release, stop and configured displacement sequence. Home Y performs the two-sensor gantry sequence and restores the pairing afterward. All of them involve automatic movement; none is merely a way to turn on a status light.</p>
+<h3>Recheck clearance for the specific request</h3>
+<p>With complete Home, the supplied sequence performs Z first. With Home X or Home Y, that preceding Z stage is absent. You must not assume that the head will first rise or move to a clear height. The present tool height and complete horizontal route need to satisfy the approved procedure before requesting horizontal-only homing.</p>
+<aside class="learning-example"><h3>Only X appears to need attention</h3><p>You notice that X is not homed and consider Home X. The cutter is currently low beside a clamp. The command's limited axis scope does not solve that clearance issue. Follow the approved recovery and positioning procedure before any horizontal homing attempt; do not assume the application will perform the full sequence's Z preparation for you.</p></aside>
+<p>After an individual operation, check its own result and then the aggregate Homed indication. A successful Home Z does not establish the rest of the machine. The aggregate becomes on only when every configured motor reports homed. If it was already on, use the new operation result to confirm the new attempt rather than expecting the lamp to prove it by changing.</p>
+<h3>Keep the command name with the result</h3>
+<p>The individual routines and the complete routine use different result-code meanings in some cases. A result number without the routine name can therefore be misleading. When reporting a problem, record whether you requested Home, Home X, Home Y or Home Z, together with the full message and the stage you observed.</p>
+<p>If an individual command is not exposed by your configured controls or shortcuts, do not invent a key sequence or edit the command configuration solely to try it. Have the authorized person show the intended access and procedure. Shortcut configuration and engineering access are covered in their later chapters.</p>
+
+
+</section>
+<section id="interruption" aria-labelledby="interruption-title"><h2 id="interruption-title">6.10 Stop an attempt and treat the result as incomplete</h2>
+
+<p>Intervene when the movement is unexpected, clearance is in doubt or the operation must be interrupted. Do not wait for the software's timeout to act on a problem you can already see. For immediate danger, use the installed emergency response described in <a href="02-safe-operation.html#emergency">Chapter 2</a>. The ordinary software stopping controls do not replace that response.</p>
+<p>For an ordinary controlled interruption, <strong>Reset</strong> requests stopping of all motion. <strong>Pause</strong> also requests stopping of all motion in the reviewed application, but differs in how it treats the main machining program's retained position. That difference does not make Pause a “resume this Home stage later” control.</p>
+<table><caption>Table 6-10. Controls and their meaning during an interrupted Home</caption><thead><tr><th scope="col">Control or action</th><th scope="col">Relevant meaning</th></tr></thead><tbody>
+<tr><td>Reset</td><td>Requests all motion to stop and schedules a fresh-start reset of the main machining program after stopping.</td></tr>
+<tr><td>Pause</td><td>Requests all motion to stop while preserving the main machining program cursor. This is not a guarantee of resumable homing.</td></tr>
+<tr><td>Run</td><td>Belongs to machining-program execution. Do not use it to continue an interrupted homing stage.</td></tr>
+<tr><td>Jog or program-feed percentage</td><td>Not the Home stop command. Use the appropriate stopping control.</td></tr>
+<tr><td>Emergency response</td><td>Use the installed machine procedure for immediate danger; afterward, follow its recovery requirements.</td></tr>
+</tbody></table>
+<h3>After requesting a stop</h3>
+<ol class="journey">
+<li><strong>Observe the stopping response.</strong><p>A request is not instantaneous standstill. Let controlled stopping finish and verify the physical condition from the operating position. If the expected response does not occur or danger develops, follow the emergency procedure.</p></li>
+<li><strong>Do not enter merely because the display looks stationary.</strong><p>Use the installed access and isolation procedure if hands-on inspection is needed. A stopped software operation does not itself authorize access to the movement area.</p></li>
+<li><strong>Read the result and record the interrupted stage.</strong><p>Note whether Z was searching, the gantry was approaching sensors, a release movement was occurring or final displacement had begun. Record the messages without treating partial axis homing as complete-machine success.</p></li>
+<li><strong>Resolve the reason for interruption.</strong><p>Clearance concerns, abnormal motion, alarms and pairing problems need an identified resolution. Do not retry immediately merely because the control becomes available again.</p></li>
+<li><strong>Prepare a new attempt only when permitted.</strong><p>Recheck the changed starting position and the full route. Then follow the approved Home procedure as a new operation, with its own completion checks.</p></li>
+</ol>
+<p>A newly requested Home starts its sequence again; it is not a continuation from the visual point where you last saw movement. Its first visible motion may differ because the axes and sensors are now in different starting conditions. For example, an axis stopped inside an active sensor region may begin with release movement on the next valid attempt.</p>
+<p>The supplied routine includes recovery handling for its own failures, and the controller manages stopping and motion ownership. Do not infer from this that every interruption, power loss or connection failure must leave the gantry ready for an immediate retry. If the machine does not return to the expected ready state, obtain authorized assistance before moving it again.</p>
+<aside class="learning-example"><h3>Z finished, horizontal homing did not</h3><p>You interrupt after the Z stage because an unexpected object is noticed near the bridge route. Z may already report homed, but the complete operation is not a success. Resolve the obstruction using the proper access procedure, reassess the whole route and follow the approved recovery process. Do not treat the completed Z stage as permission to run the job.</p></aside>
+<p>After an emergency, collision, unexpected loss of position or power interruption, a fresh Home alone may not be enough to restore readiness. The machine, tool and setup may require inspection before any further automatic movement. Follow the installed recovery procedure rather than using this chapter as a repair procedure.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">6.11 Read unsuccessful results and collect useful evidence</h2>
+
+<p>Begin by distinguishing a request that never started from an operation that started and then failed or was interrupted. A rejected request points first to access, connection, readiness or availability. An unsuccessful running attempt needs the observed stage and final message as well. “Home did not work” is too broad to identify either situation.</p>
+<p>The operation report may refer to the complete routine as <strong>Home Z-XYY</strong> and to the individual routines as <strong>HomeX</strong>, <strong>HomeY</strong> or <strong>HomeZ</strong>. These names identify which machine-control operation produced the result. You do not need to read or edit its program to record that information accurately.</p>
+<h3>Results from the supplied routines</h3>
+<p>The following tables describe the numeric results assigned by the supplied homing routines. They are not a complete list of controller faults or rejection messages. Always read the exit reason and success state too; a cancelled or faulted operation is not made successful by a zero result field.</p>
+<table><caption>Table 6-11. Supplied complete Home results</caption><thead><tr><th scope="col">Result</th><th scope="col">Meaning for Home Z-XYY</th><th scope="col">Useful observation to report</th></tr></thead><tbody>
+<tr><td>0</td><td>Normal successful completion, including gantry coupling, when accompanied by a successful completed exit.</td><td>The current Homed, readiness and alarm indications.</td></tr>
+<tr><td>1</td><td>A sensor-search, sensor-release or stopping wait timed out in the selected sequence.</td><td>Which movement was last seen and whether the sensor indication changed.</td></tr>
+<tr><td>2</td><td>A configured homing direction was invalid.</td><td>The configured direction and complete diagnostic message.</td></tr>
+<tr><td>3</td><td>The initial gantry arrangement was invalid or the coupling stage timed out.</td><td>The pairing/alarm messages and whether ordinary readiness returned.</td></tr>
+
+</tbody></table>
+<table><caption>Table 6-12. Supplied individual Home results</caption><thead><tr><th scope="col">Routine</th><th scope="col">0, with successful completed exit</th><th scope="col">Other assigned results</th></tr></thead><tbody>
+<tr><td>HomeX</td><td>X homing and its configured displacement completed.</td><td>1: search/release/stop timeout. 2: invalid direction. 3: coupling failure when a companion is enabled.</td></tr>
+<tr><td>HomeZ</td><td>Z homing and its configured displacement completed.</td><td>1: search/release/stop timeout. 2: invalid direction. 3: coupling failure when a companion is enabled.</td></tr>
+<tr><td>HomeY</td><td>Y and any enabled companion homed, with coupling restored when required.</td><td>1: search/release/stop timeout. 2: invalid direction. 3: gantry arrangement or coupling problem.</td></tr>
+</tbody></table>
+<p>For example, result 2 from complete Home does not mean the same thing as result 2 from Home X. Keep the routine name with the number. Also distinguish the routine's assigned result from a separate controller error code in an adjacent message.</p>
+<h3>A timeout describes a missing expected event</h3>
+<p>A timeout means the expected condition was not obtained within the configured waiting period. It does not prove which component caused the problem. A sensor not being detected, a signal that does not release, a motion problem or an unsuitable configuration can require different investigation. The operator should report the observed sequence rather than selecting a cause by guesswork.</p>
+<p>There is no universal number of seconds to wait for the complete operation: travel from the starting position, configured speeds, displacement and recovery affect the duration. The search/release waiting limit is a machine setting. Do not increase it as an ordinary response to failure, and do not wait for it when movement is already abnormal.</p>
+<p>The supplied failure path requests stopping and, where applicable, attempts to restore the ordinary gantry pairing. Recovery is still an operation to observe. If it remains unresolved, leave the machine out of service for the affected operation and obtain assistance. Do not declare the machine ready merely because a fault number has appeared.</p>
+<h3>What to collect before contacting support</h3>
+<ul>
+<li>The command requested and whether this was a full or individual Home.</li>
+<li>The actual mode and connection state, and whether the request was rejected before movement.</li>
+<li>The full report entry: routine name, exit reason, result and success state.</li>
+<li>The last movement observed, including which gantry side stopped first if relevant.</li>
+<li>The current Homed, axis readiness, emergency and alarm indications.</li>
+<li>Any recent tool, fixture, maintenance, connection or configuration change relevant to the attempt.</li>
+</ul>
+<p>If authorized personnel need sensor information, they can use the input display covered later in <a href="index.html#chapter-23">I/O Configuration and Signal Mapping</a> and the diagnostic chapters. Viewing a signal is different from changing its mapping or forcing a state. Do not simulate a sensor signal on the real machine to manufacture a successful Home.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 6-4 · REPORT EXAMPLE REQUIRED</p><h3>An unsuccessful Home report, fully labelled</h3><p>Supply a report example from a controlled Simulation test or an existing approved diagnostic record. Annotate the request name, activation, exit reason, result and success field. Explain which table applies.</p><p>Suggested image: <code>assets/images/06-home-unsuccessful-report.png</code>. Do not create an obstruction or interfere with a real sensor to obtain this image.</p><figcaption>Use a complete event entry so that a routine result is not confused with an unrelated error number.</figcaption></figure>
+<p>An installed machine may use approved saved machine-control routines that differ from the supplied defaults. If the observed sequence or result definition differs, have the responsible person confirm the installed version and its procedure. Do not overwrite the saved routine to make the machine match this illustration.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">6.12 Build a repeatable routine and check your understanding</h2>
+
+<p>A useful homing routine has three parts: prepare, observe and verify. Practise explaining all three before operating independently. Memorizing where Home is located is not enough; you should also be able to explain the expected movement, the evidence of completion and your response to an interruption.</p>
+<h3>Walk through an ordinary start</h3>
+<p>Imagine the application has completed startup in the intended mode. The relevant axes are ready, there is no unresolved alarm, and the approved startup procedure calls for Home. The Homed indication is currently off.</p>
+<p>You inspect the complete route using the actual fitted tool and fixtures. You confirm the installed search directions, remain at the operating position and press Home once. Z completes its sensor sequence and any configured displacement. X and the gantry then perform their sensor sequences during the same stage. One side of the gantry reaches its sensor before the other, as allowed by the approved sequence. Both sides stop before the release stage begins.</p>
+<p>You continue watching through the later displacements and restoration of the gantry pairing. You do not treat the first stationary moment or individual homed state as the finish. When the current attempt has ended successfully, you check the aggregate Homed and readiness indications and compare the final machine position with the installed expectation.</p>
+<p>Only then do you move on to the next preparation task. The workpiece origin and tool information still need verification. Completing Home has established the machine reference; it has not supplied missing job setup information.</p>
+<table><caption>Table 6-13. A short routine to use after learning the full procedure</caption><thead><tr><th scope="col">Before Home</th><th scope="col">During Home</th><th scope="col">After Home</th></tr></thead><tbody>
+<tr><td>Correct mode, access and connection.</td><td>Observe Z first, then the horizontal stage.</td><td>Check the result of this attempt.</td></tr>
+<tr><td>Machine ready and other operations settled.</td><td>Expect sensor search, release, stopping and configured displacement.</td><td>Confirm complete Homed and readiness state.</td></tr>
+<tr><td>Whole route clear for the actual setup.</td><td>Stay at the operating position and intervene if behaviour is abnormal.</td><td>Compare finishing position with the installed specification.</td></tr>
+<tr><td>Stopping response understood.</td><td>Do not issue competing commands or enter during a pause in movement.</td><td>Proceed with work-origin and tool checks, or follow recovery if incomplete.</td></tr>
+</tbody></table>
+<h3>Questions to discuss with the person training you</h3>
+<ol class="journey">
+<li><strong>Home and Go Home both sound like returning to a familiar place. Are they interchangeable?</strong><p>No. Home establishes the machine reference from the sensors. Go Home requests positioning to machine zero using an established reference.</p></li>
+<li><strong>The X, Y, Z, A and C readiness indications are on. Does that prove that Home is complete?</strong><p>No. Readiness and homing are separate states. The complete homing indication also includes the second gantry motor.</p></li>
+<li><strong>What moves first in the supplied complete routine?</strong><p>After gantry preparation, Z performs its homing stage before X and Y/YG begin their sensor stage. Physical directions must still be confirmed for the installation.</p></li>
+<li><strong>Why might the first Z movement be away from the sensor region?</strong><p>The sensor may already be active, so the sequence begins releasing it. Check that the behaviour matches the known starting condition.</p></li>
+<li><strong>One side of the gantry stops at its sensor before the other. Is that alone a failure?</strong><p>No. Each side detects its own sensor. Both must reach their sensor condition and stop before release begins. Abnormal mechanical behaviour still requires intervention.</p></li>
+<li><strong>A final machine coordinate is nonzero. Must you zero it?</strong><p>No. Compare it with the approved final homing coordinate. Do not change a work reference simply to alter the appearance of a machine-home reading.</p></li>
+<li><strong>Can Pause followed by Run be used to continue an interrupted Home?</strong><p>Do not use that as a homing recovery method. Run belongs to machining execution. Resolve the interruption and follow the approved procedure for a new Home attempt.</p></li>
+<li><strong>What information must accompany a reported result number?</strong><p>The routine name, exit reason, success state and observed stage. Individual and complete Home routines can assign different meanings to the same number.</p></li>
+<li><strong>Does a successful simulated Home establish the physical machine reference?</strong><p>No. Check and prepare the actual connected mode separately.</p></li>
+</ol>
+<p>For supervised familiarization, identify the controls and follow an approved Simulation example before physical practice. Use existing report examples to learn success and failure wording. Do not deliberately obstruct movement or interfere with real sensors to practise fault recognition.</p>
+
+<h2>Absolute encoder axes and mixed Home sequences</h2>
+<p>On connection, an absolute axis uses its saved machine-zero calibration when the configured signed Step matches. The controller aligns the drive target to live encoder feedback when it restores the reference. Full Home checks the reference of every absolute axis, including axes omitted from the Home sequence.</p>
+<p>Include an absolute axis in a stage to move it to its configured HomePosition at HomeVelocity. In a mixed stage, the generated routine confirms absolute positioning before starting sensor searches. A sensor axis searches, stops, reverses to release the switch, stops again and establishes its coordinate. Its final displacement uses the configured HomeDisplace.</p>
+<p>A drive fault clears the absolute Homed indication. In-session recovery uses healthy, stable feedback after the fault clears. The controller cannot determine from a stable count alone whether a drive retained its multi-turn origin. Verify the physical reference after encoder, battery or drive service before resuming a job. Engineer-edited Home routines can implement a different sequence.</p><aside class="source-note"><p><strong>Scope of this chapter.</strong> Reviewed against RouterXYZAC+RTCP command admission, runtime indications, operation reporting, stopping controls and the supplied complete and individual homing routines on 8 October 2026. The sequence diagram is explanatory. Three installation/application images remain to be supplied. Saved approved routines, physical directions and final coordinates must be confirmed for the installed machine.</p></aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZAC+RTCP · Operator Manual · Chapter 6</span><a href="index.html#chapter-06">Return to the contents</a></footer></main></body></html>

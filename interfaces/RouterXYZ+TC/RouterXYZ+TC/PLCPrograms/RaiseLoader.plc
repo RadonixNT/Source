@@ -1,0 +1,20 @@
+// Raise the loader. Result 0: confirmed/delay elapsed; 1: TP0 active;
+// 2: output unassigned; 3: up-sensor timeout. 4: TP1 inactive/stopping. Sensor feedback replaces delay.
+INTEGER Delay := 0;
+LoaderDown := FALSE;
+IF NOT TP1.Running OR TP1.Stopping OR TP1.StopCommand THEN END_FUNCTION(Result := 4); END_IF;
+IF TP0.ProgramActive THEN
+    END_FUNCTION(Result := 1);
+END_IF;
+IF NOT ASSIGNED(LoaderDown) THEN
+    END_FUNCTION(Result := 2);
+END_IF;
+IF SF.FirstScan THEN Delay := LoaderUpTime; END_IF;
+IF ASSIGNED(LoaderUpSensor) THEN
+    IF LoaderUpSensor THEN END_FUNCTION(Result := 0); END_IF;
+    IF SF.Time >= 3 * Delay THEN
+        END_FUNCTION(Result := 3);
+    END_IF;
+ELSIF SF.Time >= Delay THEN
+    END_FUNCTION(Result := 0);
+END_IF;

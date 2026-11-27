@@ -1,0 +1,7 @@
+// Program end clears spindle run commands and completes in the same scan.
+// No deceleration timer or stopped-feedback wait; this is not a standstill confirmation.
+// Managed M30 invokes M2 before resetting its completed source path.
+// The speed setpoint remains owned by S/manual edits.
+SpindleCW := FALSE;
+SpindleCCW := FALSE;
+END_FUNCTION(Result := 0);

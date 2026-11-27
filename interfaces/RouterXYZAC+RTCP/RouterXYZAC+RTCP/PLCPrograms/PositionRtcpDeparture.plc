@@ -1,0 +1,25 @@
+// Retract on the current tool axis before any vertical lift or reorientation.
+PARAMETER REAL ExitX;
+PARAMETER REAL ExitY;
+PARAMETER REAL ExitZ;
+PARAMETER REAL ClearanceZ;
+PARAMETER REAL TargetX;
+PARAMETER REAL TargetY;
+PARAMETER REAL TargetZ;
+PARAMETER REAL TargetA;
+PARAMETER REAL TargetC;
+PARAMETER REAL ExitSpeed;
+PARAMETER REAL TraverseSpeed;
+PARAMETER REAL MixedTraverseSpeed;
+
+IF SF.FirstScan THEN
+    IF NOT TP0.Idle OR NOT TP0.AxesIdle OR NOT TP0.AxesReady OR NOT TP0.Homed THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+END_IF;
+
+TOOLPATH_SYNC_RUN(X := ExitX, Y := ExitY, Z := ExitZ, Velocity := ExitSpeed);
+TOOLPATH_SYNC_RUN(Z := ClearanceZ, Velocity := TraverseSpeed);
+TOOLPATH_SYNC_RUN(X := TargetX, Y := TargetY, A := TargetA, C := TargetC, Velocity := MixedTraverseSpeed);
+TOOLPATH_SYNC_RUN(Z := TargetZ, Velocity := TraverseSpeed);
+END_FUNCTION(Result := 0);

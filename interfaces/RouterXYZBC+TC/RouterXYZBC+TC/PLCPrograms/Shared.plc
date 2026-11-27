@@ -1,0 +1,16 @@
+// Application settings are registered by RouterXYZBCTC.
+// Semantic I/O signals such as SpindleCW are direct compile-time mappings
+// and therefore require no shared PLC storage declaration here.
+// These declarations are session state, not persisted operator settings.
+// SpindleSpeed is the persistent-in-session S/manual setpoint; these
+// flags are scan-owned confirmation/interlock state. Add persisted
+// machine parameters through PLCVariableBridge instead of duplicating them here.
+// Background and the exchange commands own these live, non-persisted scan results.
+LOGIC SpindleStopped;
+LOGIC SpindleReady;
+LOGIC SpindleReleasePermitted;
+LOGIC SpindleReleaseConfirmed;
+LOGIC SpindleClampConfirmed;
+LOGIC SpindleGripCycleActive;
+// Background owns live readiness; WaitRollers confirms the current exchange only.
+LOGIC RollersReady;

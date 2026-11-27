@@ -1,0 +1,30 @@
+// Machine-space points supplied by the interface. The final leg holds both rotary axes.
+PARAMETER REAL EntryX;
+PARAMETER REAL EntryY;
+PARAMETER REAL EntryZ;
+PARAMETER REAL TargetX;
+PARAMETER REAL TargetY;
+PARAMETER REAL TargetZ;
+PARAMETER REAL TargetA;
+PARAMETER REAL TargetC;
+PARAMETER REAL SafeZ;
+PARAMETER REAL ZSpeed;
+PARAMETER REAL TraverseSpeed;
+PARAMETER REAL AxialSpeed;
+PARAMETER LOGIC UseSafeZ;
+
+IF SF.FirstScan THEN
+    IF NOT TP0.Idle OR NOT TP0.AxesIdle OR NOT TP0.AxesReady OR NOT TP0.Homed THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+END_IF;
+
+IF UseSafeZ THEN
+    TOOLPATH_SYNC_RUN(Z := SafeZ, Velocity := ZSpeed);
+    TOOLPATH_SYNC_RUN(X := EntryX, Y := EntryY, A := TargetA, C := TargetC, Velocity := TraverseSpeed);
+    TOOLPATH_SYNC_RUN(Z := EntryZ, Velocity := ZSpeed);
+ELSE
+    TOOLPATH_SYNC_RUN(X := EntryX, Y := EntryY, Z := EntryZ, Velocity := AxialSpeed);
+END_IF;
+TOOLPATH_SYNC_RUN(X := TargetX, Y := TargetY, Z := TargetZ, Velocity := AxialSpeed);
+END_FUNCTION(Result := 0);

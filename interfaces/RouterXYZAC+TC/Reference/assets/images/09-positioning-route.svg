@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500" role="img" aria-labelledby="t d">
+<title id="t">Three-stage positioning when horizontal travel is needed</title><desc id="d">From the current point, Z moves to configured MaxCourse. X and Y traverse at that height, then Z goes to the final destination height. This diagram is schematic and does not detect obstacles.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#316f7c"/></marker></defs>
+<rect width="1000" height="500" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#173e4b">
+<text x="500" y="40" text-anchor="middle" font-size="25" font-weight="700">When meaningful X/Y travel is needed</text>
+<path d="M130 149H884" stroke="#abc0c7" stroke-width="2" stroke-dasharray="7 6"/>
+<path d="M230 350V153" stroke="#316f7c" stroke-width="5" marker-end="url(#a)"/><path d="M235 149H766" stroke="#316f7c" stroke-width="5" marker-end="url(#a)"/><path d="M770 154V301" stroke="#316f7c" stroke-width="5" marker-end="url(#a)"/>
+<circle cx="230" cy="356" r="8" fill="#173e4b"/><circle cx="770" cy="309" r="8" fill="#ad7320"/>
+<text x="500" y="106" text-anchor="middle" font-size="22" font-weight="700">2 · X/Y traverse</text>
+<text x="500" y="133" text-anchor="middle" font-size="18">At the configured Z MaxCourse coordinate</text>
+<text x="60" y="225" font-size="21" font-weight="700">1 · Z first</text><text x="60" y="255" font-size="18">Move to the</text><text x="60" y="281" font-size="18">traverse height</text>
+<text x="800" y="225" font-size="21" font-weight="700">3 · Final Z</text><text x="800" y="255" font-size="18">Move to the</text><text x="800" y="281" font-size="18">destination height</text>
+<text x="230" y="389" text-anchor="middle" font-size="20">Current position</text><text x="770" y="343" text-anchor="middle" font-size="20">Destination</text>
+<text x="500" y="438" text-anchor="middle" font-size="18">The actual tool and every route segment require a clearance check.</text>
+<text x="500" y="473" text-anchor="middle" font-size="17" fill="#576e77">Schematic side view; X/Y travel is combined for illustration. No distances or obstacle sensing are implied.</text>
+</g></svg>

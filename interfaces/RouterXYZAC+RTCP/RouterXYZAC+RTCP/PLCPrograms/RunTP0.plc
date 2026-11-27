@@ -1,0 +1,75 @@
+// TP1 embedded handoff to TP0.
+// Waiting on this program from an active source path would deadlock synchronous Stop.
+// Result 0: TP0 started; 1: busy/stopped/invalid paths; 2: axes unavailable;
+// Result 3: TP0 is no longer aligned with the returned head position.
+REAL Tolerance := 0.0;
+REAL StepY := 0.0;
+REAL StepZ := 0.0;
+REAL StepA := 0.0;
+REAL StepC := 0.0;
+REAL Delta3 := 0.0;
+REAL Delta4 := 0.0;
+REAL Delta0 := 0.0;
+REAL Delta1 := 0.0;
+REAL Delta2 := 0.0;
+
+IF SF.FirstScan THEN
+    IF TP0.Running OR TP0.Stopping OR TP0.RunCommand OR TP0.StopCommand
+        OR TP1.Stopping OR TP1.StopCommand
+        OR TP2.Stopping OR TP2.StopCommand
+        OR NOT TP0.Ended OR TP0.BlockCount = 0
+        OR TP0.AxisCount <> 5 THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+    IF TP1.AxisCount <> 5 OR TP0.ToolPathAxes <> TP1.ToolPathAxes THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+END_IF;
+
+// Core releases the source path's axis commands after the stopped acknowledgement.
+// Do not reset either path, disable servos, or decouple the Y/YG gantry.
+TOOLPATH_SYNC_STOP(TOOLPATH := 1);
+
+IF NOT TP0.AxesReady THEN
+    END_FUNCTION(Result := 2);
+END_IF;
+
+// Wait for the normal axis smoothing tail and the path-command release.
+IF TP1.Idle AND TP2.Idle AND TP0.AxesIdle THEN
+    IF TP0.RunCommand OR TP0.StopCommand OR TP0.Running OR TP0.Stopping THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+
+    // Compare positions in TP0's compact order, independently of axis order.
+    // Use the smallest XYZ step as a conservative common tolerance.
+    Tolerance := X.Step;
+    StepY := Y.Step;
+    StepZ := Z.Step;
+    IF Tolerance < 0.0 THEN Tolerance := -Tolerance; END_IF;
+    IF StepY < 0.0 THEN StepY := -StepY; END_IF;
+    IF StepZ < 0.0 THEN StepZ := -StepZ; END_IF;
+    IF StepY < Tolerance THEN Tolerance := StepY; END_IF;
+    IF StepZ < Tolerance THEN Tolerance := StepZ; END_IF;
+    StepA := A.Step;
+    StepC := C.Step;
+    IF StepA < 0.0 THEN StepA := -StepA; END_IF;
+    IF StepC < 0.0 THEN StepC := -StepC; END_IF;
+    Delta3 := TP0.CommandPosition[3] - TP0.LastPosition[3];
+    Delta4 := TP0.CommandPosition[4] - TP0.LastPosition[4];
+    IF Delta3 < 0.0 THEN Delta3 := -Delta3; END_IF;
+    IF Delta4 < 0.0 THEN Delta4 := -Delta4; END_IF;
+    Delta0 := TP0.CommandPosition[0] - TP0.LastPosition[0];
+    Delta1 := TP0.CommandPosition[1] - TP0.LastPosition[1];
+    Delta2 := TP0.CommandPosition[2] - TP0.LastPosition[2];
+    IF Delta0 < 0.0 THEN Delta0 := -Delta0; END_IF;
+    IF Delta1 < 0.0 THEN Delta1 := -Delta1; END_IF;
+    IF Delta2 < 0.0 THEN Delta2 := -Delta2; END_IF;
+    IF NOT (Tolerance > 0.0 AND Delta0 <= Tolerance
+        AND Delta1 <= Tolerance AND Delta2 <= Tolerance
+        AND StepA > 0.0 AND StepC > 0.0 AND Delta3 <= StepA AND Delta4 <= StepC) THEN
+        END_FUNCTION(Result := 3);
+    END_IF;
+
+    TOOLPATH_RUN(TOOLPATH := 0);
+    END_FUNCTION(Result := 0);
+END_IF;

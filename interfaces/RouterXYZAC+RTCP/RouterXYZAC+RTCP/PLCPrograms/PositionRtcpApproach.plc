@@ -1,0 +1,36 @@
+// The interface validates and supplies machine-space points. The last two
+// moves are collinear with the tool and leave both rotary axes fixed.
+PARAMETER REAL EntryX;
+PARAMETER REAL EntryY;
+PARAMETER REAL EntryZ;
+PARAMETER REAL TargetX;
+PARAMETER REAL TargetY;
+PARAMETER REAL TargetZ;
+PARAMETER REAL TargetA;
+PARAMETER REAL TargetC;
+PARAMETER REAL ClearanceZ;
+PARAMETER REAL TraverseSpeed;
+PARAMETER REAL MixedTraverseSpeed;
+PARAMETER REAL ApproachSpeed;
+PARAMETER LOGIC UseClearance;
+PARAMETER REAL ApproachX;
+PARAMETER REAL ApproachY;
+PARAMETER REAL ApproachZ;
+
+IF SF.FirstScan THEN
+    IF NOT TP0.Idle OR NOT TP0.AxesIdle OR NOT TP0.AxesReady OR NOT TP0.Homed THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+END_IF;
+
+IF UseClearance THEN
+    TOOLPATH_SYNC_RUN(Z := ClearanceZ, Velocity := TraverseSpeed);
+    TOOLPATH_SYNC_RUN(X := EntryX, Y := EntryY, A := TargetA, C := TargetC, Velocity := MixedTraverseSpeed);
+    TOOLPATH_SYNC_RUN(Z := EntryZ, Velocity := TraverseSpeed);
+ELSE
+    // The already aligned tool stays on the axis while reaching the entry.
+    TOOLPATH_SYNC_RUN(X := EntryX, Y := EntryY, Z := EntryZ, Velocity := ApproachSpeed);
+END_IF;
+TOOLPATH_SYNC_RUN(X := ApproachX, Y := ApproachY, Z := ApproachZ, Velocity := TraverseSpeed);
+TOOLPATH_SYNC_RUN(X := TargetX, Y := TargetY, Z := TargetZ, Velocity := ApproachSpeed);
+END_FUNCTION(Result := 0);

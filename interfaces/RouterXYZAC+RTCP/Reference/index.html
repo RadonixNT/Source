@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RouterXYZAC+RTCP — Operator Manual | Contents</title><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/contents.css"></head>
+<body><a class="skip-link" href="#contents">Skip to contents</a>
+<main class="book">
+<p class="document-status"><strong>XYZAC variant:</strong> Read the <a href="XYZAC.html">five-axis supplement</a> first. The chapters below cover common workflows; the linked current contract defines the XYZAC interface, short Home simulation and startup behavior.</p>
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+RTCP</p><p class="edition">Operator manual · Chapters 1–32 expanded · 9 October 2026</p>
+<h1>Operator Manual</h1><p class="subtitle">Operation, settings, PLC tools and diagnostics</p>
+<p class="cover-note">A practical reference for machine operators and authorized engineering personnel.</p>
+<div class="document-status"><strong>Chapters 1–32 — expanded operator editions</strong><p>The first thirty-two chapters explain machine preparation and operation, including program inspection, running, recovery, deliberate selected-line starts, controlled source-file editing, simulation practice, use of the Configuration window the main parameter groups, signal mapping, keyboard shortcuts, password access, board time locks, PLC source editing, program monitoring, memory inspection, input/output observation, diagnostic graphs, messages, reports and troubleshooting, from an operator’s point of view with no programming background assumed. Chapter 32 is ready for review. Later chapters retain their planned scope; earlier short drafts await redevelopment and review.</p></div></header>
+<div class="body">
+<section aria-labelledby="reading-title"><p class="eyebrow">ABOUT THIS EDITION</p><h2 id="reading-title">Using this manual</h2>
+<p>The manual follows a working day: start the application, prepare the machine, run a program, then use settings and diagnostic tools when needed. Engineering procedures will be identified by their required access level.</p>
+<p>Each chapter has its own HTML file and a link back to these contents. Chapters 1–32 open their expanded texts; expand their section lists below to go directly to a topic. The remaining contents links open chapter plans; their detailed texts will be developed and reviewed individually.</p>
+<p>Each operating procedure will state its purpose, access requirements, preconditions, numbered steps, expected result and response to an interrupted or rejected operation. Exact control captions will be shown alongside their explanations.</p>
+</section>
+<nav id="contents" aria-label="Table of contents"><p class="eyebrow">CONTENTS</p><h2>Table of contents</h2>
+<section class="toc-part"><h3><span class="part-number">Part 1</span>Getting started</h3><ol class="toc-list"><li><a href="01-introduction.html"><span class="chapter-number">01</span><span>Introduction and How to Use This Manual</span><span class="toc-status">Expanded draft</span></a><details class="toc-subsections"><summary>Chapter 1 sections</summary><ol><li><a href="01-introduction.html#welcome">1.1 Before you begin</a></li>
+<li><a href="01-introduction.html#cnc">1.2 What a CNC router does</a></li>
+<li><a href="01-introduction.html#parts">1.3 Meet the main parts of the machine</a></li>
+<li><a href="01-introduction.html#axes">1.4 Understanding axes and coordinated movement</a></li>
+<li><a href="01-introduction.html#system">1.5 The operator, application, controller and machine</a></li>
+<li><a href="01-introduction.html#programs">1.6 The different meanings of “program”</a></li>
+<li><a href="01-introduction.html#positions">1.7 Position, distance and the point called zero</a></li>
+<li><a href="01-introduction.html#units">1.8 Units and values you will encounter</a></li>
+<li><a href="01-introduction.html#states">1.9 Why machine state matters</a></li>
+<li><a href="01-introduction.html#responsibility">1.10 Your role and the limits of software information</a></li>
+<li><a href="01-introduction.html#journey">1.11 How a job progresses through the application</a></li>
+<li><a href="01-introduction.html#reading">1.12 How to use this book</a></li>
+<li><a href="01-introduction.html#procedure">1.13 How to follow an operating procedure</a></li>
+<li><a href="01-introduction.html#presentation">1.14 Labels, messages, figures and examples</a></li>
+<li><a href="01-introduction.html#specific">1.15 What must match your installation</a></li>
+<li><a href="01-introduction.html#review">1.16 Check your understanding before moving on</a></li></ol></details></li>
+<li><a href="02-safe-operation.html"><span class="chapter-number">02</span><span>Safe Operation and Pre-start Checks</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 2 sections</summary><ol><li><a href="02-safe-operation.html#ready">2.1 What “ready to start” really means</a></li>
+<li><a href="02-safe-operation.html#work-area">2.2 Know the machine and prepare the work area</a></li>
+<li><a href="02-safe-operation.html#job-setup">2.3 Match the workpiece, job and work zero</a></li>
+<li><a href="02-safe-operation.html#tools">2.4 Check tools and understand actions that can start motion</a></li>
+<li><a href="02-safe-operation.html#routes">2.5 Check the whole movement, not just the cutting shape</a></li>
+<li><a href="02-safe-operation.html#screen-readiness">2.6 Read the screen without assuming more than it tells you</a></li>
+<li><a href="02-safe-operation.html#stopping">2.7 Understand Pause, Reset and feed override</a></li>
+<li><a href="02-safe-operation.html#emergency">2.8 Respond to immediate danger and understand the emergency indication</a></li>
+<li><a href="02-safe-operation.html#access">2.9 Distinguish a stopped machine from permission to enter</a></li>
+<li><a href="02-safe-operation.html#first-motion">2.10 Make the first movement a deliberate operation</a></li>
+<li><a href="02-safe-operation.html#before-cutting">2.11 Complete the final pre-run check and watch the start</a></li>
+<li><a href="02-safe-operation.html#unexpected">2.12 Respond when the result is different from what you expected</a></li>
+<li><a href="02-safe-operation.html#restart">2.13 Recheck the setup before restarting or handing over</a></li>
+<li><a href="02-safe-operation.html#understanding">2.14 Check your understanding before operating independently</a></li></ol></details></li>
+<li><a href="03-startup.html"><span class="chapter-number">03</span><span>Startup, Login, Connection and Shutdown</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 3 sections</summary><ol><li><a href="03-startup.html#stages">3.1 Understand the stages of starting work</a></li>
+<li><a href="03-startup.html#launch">3.2 Open the correct application and recognize the first screen</a></li>
+<li><a href="03-startup.html#operator-login">3.3 Enter the operator password when requested</a></li>
+<li><a href="03-startup.html#access-retry">3.4 Understand read-only access and retrying login</a></li>
+<li><a href="03-startup.html#mode">3.5 Confirm whether you are using Simulation or the real machine</a></li>
+<li><a href="03-startup.html#connection">3.6 Wait for connection and read its result</a></li>
+<li><a href="03-startup.html#startup-complete">3.7 Decide whether startup is complete</a></li>
+<li><a href="03-startup.html#startup-problems">3.8 Deal with an incomplete start or failed connection</a></li>
+<li><a href="03-startup.html#reconnection">3.9 Reconnect or change mode deliberately</a></li>
+<li><a href="03-startup.html#shutdown">3.10 Close the application in an orderly way</a></li>
+<li><a href="03-startup.html#saved-information">3.11 Understand saved settings and respond to a save failure</a></li>
+<li><a href="03-startup.html#practice">3.12 Follow a complete example and check your understanding</a></li></ol></details></li>
+<li><a href="04-main-window.html"><span class="chapter-number">04</span><span>Main Window and Status Indicators</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 4 sections</summary><ol><li><a href="04-main-window.html#reading">4.1 Read the screen before using its controls</a></li>
+<li><a href="04-main-window.html#screen-map">4.2 Find the main screen areas</a></li>
+<li><a href="04-main-window.html#indicators">4.3 Interpret the connection, axis and warning indicators</a></li>
+<li><a href="04-main-window.html#positions">4.4 Read Machine position and Work position correctly</a></li>
+<li><a href="04-main-window.html#references">4.5 Distinguish Home, Go Home, Go Ref and zero setting</a></li>
+<li><a href="04-main-window.html#manual-motion">4.6 Identify the manual-motion controls and their values</a></li>
+<li><a href="04-main-window.html#program-view">4.7 Identify the job, its text and the preview</a></li>
+<li><a href="04-main-window.html#run-controls">4.8 Recognize Run, Pause, Reset and program feed override</a></li>
+<li><a href="04-main-window.html#spindle-tool">4.9 Read the spindle area without confusing commands with confirmation</a></li>
+<li><a href="04-main-window.html#speed-progress">4.10 Understand speed, percentage and time displays</a></li>
+<li><a href="04-main-window.html#messages">4.11 Read messages and understand unavailable controls</a></li>
+<li><a href="04-main-window.html#window-actions">4.12 Use Configuration and window controls for their intended purpose</a></li>
+<li><a href="04-main-window.html#review">4.13 Build a reliable screen-reading routine</a></li></ol></details></li>
+<li><a href="05-coordinates.html"><span class="chapter-number">05</span><span>Coordinates, Units and Position Displays</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 5 sections</summary><ol><li><a href="05-coordinates.html#meaning">5.1 Give every position number a meaning</a></li>
+<li><a href="05-coordinates.html#axes">5.2 Understand axes, positive directions and negative positions</a></li>
+<li><a href="05-coordinates.html#machine-frame">5.3 Understand machine coordinates and what homing establishes</a></li>
+<li><a href="05-coordinates.html#work-origin">5.4 Locate the job with a work origin</a></li>
+<li><a href="05-coordinates.html#readout-relationship">5.5 Relate the two position panels and the applied corrections</a></li>
+<li><a href="05-coordinates.html#multiple-origins">5.6 Recognize G54–G59 and references selected by the job</a></li>
+<li><a href="05-coordinates.html#position-distance">5.7 Keep a destination separate from a distance to move</a></li>
+
+<li><a href="05-coordinates.html#length-units">5.9 Read millimetres, inches and decimal places carefully</a></li>
+<li><a href="05-coordinates.html#speed-units">5.10 Compare feed, jog speed and spindle speed using the right units</a></li>
+<li><a href="05-coordinates.html#unexpected-readings">5.11 Investigate an unexpected reading before changing a value</a></li>
+<li><a href="05-coordinates.html#worked-example">5.12 Work through an example and check your understanding</a></li></ol></details></li></ol></section>
+<section class="toc-part"><h3><span class="part-number">Part 2</span>Preparing the machine</h3><ol class="toc-list"><li><a href="06-homing.html"><span class="chapter-number">06</span><span>Homing the Machine</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 6 sections</summary><ol><li><a href="06-homing.html#purpose">6.1 Understand what Home establishes</a></li>
+<li><a href="06-homing.html#when">6.2 Know when the machine reference needs attention</a></li>
+<li><a href="06-homing.html#preparation">6.3 Prepare the machine and the whole homing route</a></li>
+<li><a href="06-homing.html#controls">6.4 Identify the Home control and understand why it may be unavailable</a></li>
+<li><a href="06-homing.html#request">6.5 Start one complete Home operation deliberately</a></li>
+<li><a href="06-homing.html#z-stage">6.6 Follow the first stage: establish the Z reference</a></li>
+<li><a href="06-homing.html#gantry-stage">6.7 Follow X and the two sides of the gantry</a></li>
+<li><a href="06-homing.html#completion">6.8 Confirm completion without expecting every number to be zero</a></li>
+<li><a href="06-homing.html#individual">6.9 Use individual-axis homing only for its intended scope</a></li>
+<li><a href="06-homing.html#interruption">6.10 Stop an attempt and treat the result as incomplete</a></li>
+<li><a href="06-homing.html#problems">6.11 Read unsuccessful results and collect useful evidence</a></li>
+<li><a href="06-homing.html#practice">6.12 Build a repeatable routine and check your understanding</a></li></ol></details></li>
+<li><a href="07-manual-motion.html"><span class="chapter-number">07</span><span>Manual Motion and Position Jog</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 7 sections</summary><ol><li><a href="07-manual-motion.html#purpose">7.1 Choose the kind of movement before touching a control</a></li>
+<li><a href="07-manual-motion.html#panel">7.2 Find the axis rows, direction controls and mode</a></li>
+<li><a href="07-manual-motion.html#readiness">7.3 Prepare for a deliberate manual movement</a></li>
+<li><a href="07-manual-motion.html#editing">7.4 Enter and confirm a value before requesting movement</a></li>
+<li><a href="07-manual-motion.html#continuous">7.5 Use Continuous Jog as a held direction command</a></li>
+<li><a href="07-manual-motion.html#step">7.6 Use Step Jog for one known displacement</a></li>
+<li><a href="07-manual-motion.html#speed">7.7 Combine axis speed and jog percentage correctly</a></li>
+<li><a href="07-manual-motion.html#diagonal">7.8 Treat a diagonal command as two axis movements</a></li>
+<li><a href="07-manual-motion.html#destination">7.9 Move one axis to an absolute machine coordinate</a></li>
+<li><a href="07-manual-motion.html#keyboard">7.10 Use keyboard movement with the same care as screen controls</a></li>
+<li><a href="07-manual-motion.html#stopping">7.11 Stop the movement and verify the resulting state</a></li>
+<li><a href="07-manual-motion.html#problems">7.12 Investigate an unavailable control or an unexpected result</a></li>
+<li><a href="07-manual-motion.html#practice">7.13 Practise the decisions and check your understanding</a></li></ol></details></li>
+<li><a href="08-work-origins.html"><span class="chapter-number">08</span><span>Work Origins and Zero Setting</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 8 sections</summary><ol><li><a href="08-work-origins.html#purpose">8.1 Understand what the work origin tells the machine</a></li>
+<li><a href="08-work-origins.html#controls">8.2 Find the available reference controls</a></li>
+<li><a href="08-work-origins.html#preparation">8.3 Establish the physical meaning before changing a number</a></li>
+<li><a href="08-work-origins.html#selection">8.4 Select and identify the intended G54–G59 row</a></li>
+<li><a href="08-work-origins.html#zero-xy">8.5 Set X or Y zero from an established position</a></li>
+
+<li><a href="08-work-origins.html#numeric-edit">8.7 Edit a known reference value carefully</a></li>
+<li><a href="08-work-origins.html#accept-cancel">8.8 Finish Configuration and distinguish acceptance from cancellation</a></li>
+<li><a href="08-work-origins.html#program-origins">8.9 Understand which origins the machining file actually uses</a></li>
+<li><a href="08-work-origins.html#verification">8.10 Verify the origin change before any machining start</a></li>
+<li><a href="08-work-origins.html#problems">8.11 Resolve unexpected values without hiding the original problem</a></li>
+<li><a href="08-work-origins.html#practice">8.12 Work through a setup example and check your understanding</a></li></ol></details></li>
+<li><a href="09-positioning.html"><span class="chapter-number">09</span><span>Positioning, Return to Work and Parking</span><span class="toc-status">Expanded draft</span></a><details class="toc-subsections"><summary>Chapter 9 sections</summary><ol><li><a href="09-positioning.html#destinations">9.1 Choose the destination and what should happen afterward</a></li>
+<li><a href="09-positioning.html#preparation">9.2 Prepare the whole route and the operation that may follow</a></li>
+<li><a href="09-positioning.html#route">9.3 Understand the Z-first route and its limits</a></li>
+<li><a href="09-positioning.html#speed">9.4 Check the positioning speed and issue one request</a></li>
+<li><a href="09-positioning.html#go-home">9.5 Use Go Home to request machine zero</a></li>
+<li><a href="09-positioning.html#go-reference">9.6 Use Go Ref with the applied work reference and tool correction</a></li>
+<li><a href="09-positioning.html#return-to-work">9.7 Treat ReturnToWork as a program start or continuation</a></li>
+<li><a href="09-positioning.html#manual-parking">9.8 Set up and request manual parking</a></li>
+<li><a href="09-positioning.html#automatic-parking">9.9 Understand parking after normal program completion</a></li>
+<li><a href="09-positioning.html#interruption">9.10 Stop positioning and reassess before another request</a></li>
+<li><a href="09-positioning.html#problems">9.11 Read positioning messages and resolve a refused or incomplete move</a></li>
+<li><a href="09-positioning.html#practice">9.12 Work through a positioning example and check your understanding</a></li></ol></details></li>
+<li><a href="10-spindle.html"><span class="chapter-number">10</span><span>Spindle Operation</span><span class="toc-status">Expanded draft</span></a><details class="toc-subsections"><summary>Chapter 10 sections</summary><ol><li><a href="10-spindle.html#basics">10.1 Understand the spindle, its speed request and its actual movement</a></li>
+<li><a href="10-spindle.html#controls">10.2 Locate the controls and understand when they are available</a></li>
+<li><a href="10-spindle.html#preparation">10.3 Prepare the tool, machine and intended operation before starting</a></li>
+<li><a href="10-spindle.html#speed">10.4 Set the requested RPM deliberately</a></li>
+<li><a href="10-spindle.html#manual-start">10.5 Start the spindle manually and verify its response</a></li>
+<li><a href="10-spindle.html#manual-stop">10.6 Stop manual running and distinguish it from a motion stop</a></li>
+<li><a href="10-spindle.html#program-commands">10.7 Recognize spindle instructions in a machining program</a></li>
+<li><a href="10-spindle.html#start-wait">10.8 Understand the start delay and the limits of reverse operation</a></li>
+<li><a href="10-spindle.html#stop-wait">10.9 Understand rundown, stopped qualification and timeout</a></li>
+<li><a href="10-spindle.html#problems">10.10 Respond to a refused start, lost readiness or an incomplete stop</a></li>
+<li><a href="10-spindle.html#examples">10.11 Work through common operating situations</a></li>
+<li><a href="10-spindle.html#review">10.12 Review the operating decisions before working independently</a></li></ol></details></li>
+
+
+<li><a href="13-machine-equipment.html"><span class="chapter-number">13</span><span>Machine-specific Equipment</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 13 sections</summary><ol>
+
+
+
+
+
+
+
+<li><a href="13-machine-equipment.html#options">13.1 Identify other options and obtain their operating instructions</a></li>
+</ol></details></li></ol></section>
+<section class="toc-part"><h3><span class="part-number">Part 3</span>Working with machining programs</h3><ol class="toc-list"><li><a href="14-opening-programs.html"><span class="chapter-number">14</span><span>Opening and Checking a Program</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 14 sections</summary><ol><li><a href="14-opening-programs.html#purpose">14.1 Understand what opening a machining program does</a></li>
+<li><a href="14-opening-programs.html#readiness">14.2 Prepare for loading and understand an unavailable Open file control</a></li>
+<li><a href="14-opening-programs.html#selection">14.3 Select the correct file and verify its full identity</a></li>
+<li><a href="14-opening-programs.html#progress">14.4 Follow preparation and understand the progress display</a></li>
+<li><a href="14-opening-programs.html#cancellation">14.5 Cancel preparation and establish what is loaded afterwards</a></li>
+<li><a href="14-opening-programs.html#accepted-result">14.6 Recognize an accepted load without assuming the machine is ready</a></li>
+<li><a href="14-opening-programs.html#diagnostics">14.7 Read a rejection or load failure and report the right information</a></li>
+<li><a href="14-opening-programs.html#omitted-actions">14.8 Treat ignored instructions and warnings as decisions to resolve</a></li>
+<li><a href="14-opening-programs.html#travel">14.9 Check size, placement and the whole movement envelope</a></li>
+<li><a href="14-opening-programs.html#setup">14.10 Match the prepared job to units, work references and tools</a></li>
+<li><a href="14-opening-programs.html#changes">14.11 Recheck the job after a file, origin or configuration change</a></li>
+<li><a href="14-opening-programs.html#final-check">14.12 Complete a pre-run review and practise the loading decisions</a></li></ol></details></li>
+<li><a href="15-program-preview.html"><span class="chapter-number">15</span><span>G-code View and 3D Preview</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 15 sections</summary><ol><li><a href="15-program-preview.html#purpose">15.1 Understand the two views and the questions they can answer</a></li>
+<li><a href="15-program-preview.html#source">15.2 Read and navigate the source without editing it</a></li>
+<li><a href="15-program-preview.html#states">15.3 Distinguish selection, current execution and completion</a></li>
+<li><a href="15-program-preview.html#linked-selection">15.4 Locate the same movement in the text and graphical path</a></li>
+<li><a href="15-program-preview.html#navigation">15.5 Pan, orbit and zoom without changing the machine</a></li>
+<li><a href="15-program-preview.html#fitting">15.6 Recover the whole job with the fitting controls</a></li>
+<li><a href="15-program-preview.html#views">15.7 Choose standard views and understand perspective</a></li>
+<li><a href="15-program-preview.html#display-aids">15.8 Read path appearance, markers and display layers</a></li>
+<li><a href="15-program-preview.html#measurement">15.9 Measure between two displayed points and interpret the result</a></li>
+<li><a href="15-program-preview.html#capture">15.10 Save a useful preview image and retain its context</a></li>
+<li><a href="15-program-preview.html#problems">15.11 Investigate a blank, confusing or unexpected preview</a></li>
+<li><a href="15-program-preview.html#review">15.12 Use a repeatable preview review and check your understanding</a></li></ol></details></li>
+<li><a href="16-running-programs.html"><span class="chapter-number">16</span><span>Running and Monitoring a Program</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 16 sections</summary><ol><li><a href="16-running-programs.html#purpose">16.1 Understand what Run actually starts</a></li>
+<li><a href="16-running-programs.html#preparation">16.2 Complete the pre-run check at the machine</a></li>
+<li><a href="16-running-programs.html#start-intent">16.3 Know where the next Run is intended to begin</a></li>
+<li><a href="16-running-programs.html#request">16.4 Press Run once and follow the response</a></li>
+
+<li><a href="16-running-programs.html#positioning">16.6 Understand the approach to the entry position</a></li>
+<li><a href="16-running-programs.html#monitoring">16.7 Observe the first cut and maintain a useful monitoring routine</a></li>
+<li><a href="16-running-programs.html#feed">16.8 Use the main-program feed percentage deliberately</a></li>
+<li><a href="16-running-programs.html#timing">16.9 Interpret progress and the nominal time display</a></li>
+<li><a href="16-running-programs.html#waits">16.10 Distinguish an expected wait from a problem that needs action</a></li>
+<li><a href="16-running-programs.html#completion">16.11 Recognize program completion and any final parking movement</a></li>
+<li><a href="16-running-programs.html#practice">16.12 Practise the complete operating sequence and check your understanding</a></li></ol></details></li>
+<li><a href="17-stopping-and-recovery.html"><span class="chapter-number">17</span><span>Pause, Reset and Recovery</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 17 sections</summary><ol><li><a href="17-stopping-and-recovery.html#decisions">17.1 Choose an interruption by its effect, not its appearance</a></li>
+<li><a href="17-stopping-and-recovery.html#pause">17.2 Use Pause for an ordinary controlled interruption</a></li>
+<li><a href="17-stopping-and-recovery.html#stop">17.3 Use Reset with its following program reset in mind</a></li>
+<li><a href="17-stopping-and-recovery.html#reset">17.4 Reset a stopped program only when you intend a new start</a></li>
+<li><a href="17-stopping-and-recovery.html#zero-feed">17.5 Treat zero feed as a retained active operation</a></li>
+<li><a href="17-stopping-and-recovery.html#stop-result">17.6 Confirm the stop result before making a recovery decision</a></li>
+<li><a href="17-stopping-and-recovery.html#continue">17.7 Continue an ordinary paused cut after checking what changed</a></li>
+<li><a href="17-stopping-and-recovery.html#return">17.8 Review the return route after moving the head away</a></li>
+
+<li><a href="17-stopping-and-recovery.html#emergency">17.10 Recover from an emergency condition without treating release as restart</a></li>
+<li><a href="17-stopping-and-recovery.html#connection">17.11 Re-establish the machine after communication or power interruption</a></li>
+<li><a href="17-stopping-and-recovery.html#review">17.12 Use a recovery checklist and practise the decisions</a></li></ol></details></li>
+<li><a href="18-selected-start-line.html"><span class="chapter-number">18</span><span>Starting from a Selected Line</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 18 sections</summary><ol><li><a href="18-selected-start-line.html#purpose">18.1 Understand when a selected start is the right decision</a></li>
+<li><a href="18-selected-start-line.html#line-numbers">18.2 Read physical line numbers and identify the exact file</a></li>
+<li><a href="18-selected-start-line.html#readiness">18.3 Prepare the job and understand an unavailable Start Line control</a></li>
+<li><a href="18-selected-start-line.html#dialog">18.4 Use the Start Line dialog step by step</a></li>
+<li><a href="18-selected-start-line.html#confirmation">18.5 Distinguish confirmation, cancellation and a main-view double-click</a></li>
+<li><a href="18-selected-start-line.html#entry-policy">18.6 Understand the requested line and the resolved entry</a></li>
+<li><a href="18-selected-start-line.html#required-state">18.7 Understand why earlier equipment actions can still matter</a></li>
+
+<li><a href="18-selected-start-line.html#preview">18.9 Read the selected-start preview without mistaking it for completed work</a></li>
+<li><a href="18-selected-start-line.html#run">18.10 Request the selected start and observe each preparation stage</a></li>
+<li><a href="18-selected-start-line.html#problems">18.11 Resolve rejected entries and recheck selection after changes</a></li>
+<li><a href="18-selected-start-line.html#practice">18.12 Practise the selection workflow and complete the final review</a></li></ol></details></li>
+<li><a href="19-editing-gcode.html"><span class="chapter-number">19</span><span>Editing a G-code File</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 19 sections</summary><ol><li><a href="19-editing-gcode.html#purpose">19.1 Understand what editing changes and when to use it</a></li>
+<li><a href="19-editing-gcode.html#opening">19.2 Open the correct document in a settled machine state</a></li>
+<li><a href="19-editing-gcode.html#navigation">19.3 Find the intended text without changing it accidentally</a></li>
+<li><a href="19-editing-gcode.html#editing">19.4 Make one controlled correction and inspect the replacement</a></li>
+<li><a href="19-editing-gcode.html#editor-aids">19.5 Use coloring, suggestions and local warnings without treating them as approval</a></li>
+<li><a href="19-editing-gcode.html#review">19.6 Review the whole effect of the correction before Save</a></li>
+<li><a href="19-editing-gcode.html#saving">19.7 Save to the original file and wait for the result</a></li>
+<li><a href="19-editing-gcode.html#cancel">19.8 Cancel an unsaved draft without confusing it with restoration</a></li>
+<li><a href="19-editing-gcode.html#save-errors">19.9 Handle a save failure and establish the actual file state</a></li>
+<li><a href="19-editing-gcode.html#reload">19.10 Follow the reload and distinguish saving from program acceptance</a></li>
+<li><a href="19-editing-gcode.html#verify">19.11 Check the revised job and establish a new start intention</a></li>
+<li><a href="19-editing-gcode.html#practice">19.12 Practise an approved correction and record the result</a></li></ol></details></li>
+<li><a href="20-simulation.html"><span class="chapter-number">20</span><span>Simulation Mode</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 20 sections</summary><ol><li><a href="20-simulation.html#purpose">20.1 Understand what Simulation does and what it cannot prove</a></li>
+<li><a href="20-simulation.html#identity">20.2 Identify the selected mode and the actual connected session</a></li>
+<li><a href="20-simulation.html#readiness">20.3 Prepare an idle session before changing mode</a></li>
+<li><a href="20-simulation.html#change-mode">20.4 Change mode once and follow the reconnection to its result</a></li>
+<li><a href="20-simulation.html#setup">20.5 Establish the simulated machine and protect the real setup data</a></li>
+<li><a href="20-simulation.html#program-practice">20.6 Practise a complete job with deliberate observation points</a></li>
+<li><a href="20-simulation.html#equipment">20.7 Understand simulated spindle feedback</a></li>
+<li><a href="20-simulation.html#problems">20.8 Recognize a simulation problem and report the right evidence</a></li>
+<li><a href="20-simulation.html#normal">20.9 Return to Normal with a fresh physical-machine review</a></li>
+<li><a href="20-simulation.html#practice">20.10 Complete a supervised exercise and record what it established</a></li></ol></details></li></ol></section>
+<section class="toc-part"><h3><span class="part-number">Part 4</span>Configuration and access control</h3><ol class="toc-list"><li><a href="21-configuration-window.html"><span class="chapter-number">21</span><span>Using the Configuration Window</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 21 sections</summary><ol><li><a href="21-configuration-window.html#purpose">21.1 Decide what you need to inspect or change before opening Configuration</a></li>
+<li><a href="21-configuration-window.html#navigation">21.2 Find a group, select an item and read its description</a></li>
+<li><a href="21-configuration-window.html#access">21.3 Understand read-only values, disabled controls and access prompts</a></li>
+<li><a href="21-configuration-window.html#values">21.4 Edit one text or numeric value and verify what was accepted</a></li>
+<li><a href="21-configuration-window.html#editors">21.5 Use choices, on/off values and specialized editors correctly</a></li>
+<li><a href="21-configuration-window.html#toolbar">21.6 Recognize toolbar operations and their immediate effects</a></li>
+<li><a href="21-configuration-window.html#context-menu">21.7 Treat right-click Save, Import and Reset as separate operations</a></li>
+<li><a href="21-configuration-window.html#accept">21.8 Review validation and program-rebuild prompts before accepting</a></li>
+<li><a href="21-configuration-window.html#cancel">21.9 Cancel ordinary edits without assuming a universal rollback</a></li>
+<li><a href="21-configuration-window.html#practice">21.10 Practise an ordinary edit and complete a change record</a></li></ol></details></li>
+<li><a href="22-settings-reference.html"><span class="chapter-number">22</span><span>Configuration Reference</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 22 sections</summary><ol><li><a href="22-settings-reference.html#reading">22.1 Read a parameter reference without mistaking defaults for setup instructions</a></li>
+<li><a href="22-settings-reference.html#preferences">22.2 Display preferences and window behavior</a></li>
+<li><a href="22-settings-reference.html#general">22.3 General movement, jogging, parking and start preferences</a></li>
+<li><a href="22-settings-reference.html#controller">22.4 Controller identity, connection mode and hardware configuration</a></li>
+<li><a href="22-settings-reference.html#axes">22.5 Axis identity, scaling, travel and motion limits</a></li>
+<li><a href="22-settings-reference.html#home">22.6 Homing direction, speeds, displacement and timeout</a></li>
+<li><a href="22-settings-reference.html#paths">22.7 Coordinated-motion settings and program rebuilding</a></li>
+<li><a href="22-settings-reference.html#spindle">22.8 Spindle speed scaling, timing and live inverter values</a></li>
+
+
+<li><a href="22-settings-reference.html#router">22.11 Router machining settings</a></li>
+<li><a href="22-settings-reference.html#references">22.12 Work references and the final review of a settings change</a></li></ol></details></li>
+<li><a href="23-io-configuration.html"><span class="chapter-number">23</span><span>I/O Configuration and Signal Mapping</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 23 sections</summary><ol><li><a href="23-io-configuration.html#signals">23.1 Start with the machine function, then identify its channel</a></li>
+<li><a href="23-io-configuration.html#editor">23.2 Find the mapping and understand the fields</a></li>
+<li><a href="23-io-configuration.html#channels">23.3 Read channel addresses and compare the supplied assignments</a></li>
+<li><a href="23-io-configuration.html#special">23.4 Distinguish disabled, unassigned, fixed and virtual signals</a></li>
+<li><a href="23-io-configuration.html#state">23.5 Read State without confusing an indication with a command</a></li>
+<li><a href="23-io-configuration.html#filter">23.6 Understand digital-input filtering</a></li>
+<li><a href="23-io-configuration.html#change">23.7 Carry out an authorized mapping change in a controlled order</a></li>
+<li><a href="23-io-configuration.html#verify">23.8 Interpret diagnostics, verify the response and record the result</a></li></ol></details></li>
+<li><a href="24-keyboard-shortcuts.html"><span class="chapter-number">24</span><span>Keyboard Shortcuts</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 24 sections</summary><ol><li><a href="24-keyboard-shortcuts.html#basics">24.1 Understand what a shortcut does before pressing it</a></li>
+<li><a href="24-keyboard-shortcuts.html#defaults">24.2 Read the default-key reference and the current machine assignments</a></li>
+<li><a href="24-keyboard-shortcuts.html#assign">24.3 Capture, assign, remove and save a shortcut</a></li>
+<li><a href="24-keyboard-shortcuts.html#conflicts">24.4 Resolve duplicate assignments and understand status messages</a></li>
+<li><a href="24-keyboard-shortcuts.html#held">24.5 Distinguish one-time commands from held jogging keys</a></li>
+<li><a href="24-keyboard-shortcuts.html#verification">24.6 Verify an assignment and troubleshoot without trial movement</a></li></ol></details></li>
+<li><a href="25-passwords.html"><span class="chapter-number">25</span><span>Passwords and Access Levels</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 25 sections</summary><ol><li><a href="25-passwords.html#purpose">25.1 Separate permission, machine readiness and password accounts</a></li>
+<li><a href="25-passwords.html#login">25.2 Respond to Operator and Engineering access prompts</a></li>
+<li><a href="25-passwords.html#session">25.3 Handle an incorrect password and understand session lifetime</a></li>
+<li><a href="25-passwords.html#replace">25.4 Replace an existing password using the Passwords form</a></li>
+<li><a href="25-passwords.html#initial">25.5 Recognize initial setup and board-dependent password operations</a></li>
+<li><a href="25-passwords.html#recovery">25.6 Read failures, verify the result and hand over access responsibly</a></li></ol></details></li>
+<li><a href="26-time-locks.html"><span class="chapter-number">26</span><span>Time Locks and Board Information</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 26 sections</summary><ol><li><a href="26-time-locks.html#meaning">26.1 Understand what a dated lock restricts</a></li>
+<li><a href="26-time-locks.html#window">26.2 Open Time locks and read the list and board information</a></li>
+<li><a href="26-time-locks.html#clock">26.3 Review the board clock and synchronize it only when authorized</a></li>
+<li><a href="26-time-locks.html#add">26.4 Enter a valid date and add an authorized lock</a></li>
+<li><a href="26-time-locks.html#delete">26.5 Remove the intended lock and verify the remaining restrictions</a></li>
+<li><a href="26-time-locks.html#refresh">26.6 Interpret refreshes, unavailable data and operation failures</a></li></ol></details></li></ol></section>
+<section class="toc-part"><h3><span class="part-number">Part 5</span>PLC tools, diagnostics and support</h3><ol class="toc-list"><li><a href="27-plc-source.html"><span class="chapter-number">27</span><span>Viewing and Editing PLC Source</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 27 sections</summary><ol><li><a href="27-plc-source.html#purpose">27.1 Understand PLC source as machine instructions</a></li>
+<li><a href="27-plc-source.html#catalog">27.2 Find the document in the Configuration catalog</a></li>
+<li><a href="27-plc-source.html#edit">27.3 Make only the approved change and review the text</a></li>
+<li><a href="27-plc-source.html#validation">27.4 Read validation messages without guessing a repair</a></li>
+<li><a href="27-plc-source.html#save">27.5 Distinguish saved source from the loaded program</a></li>
+<li><a href="27-plc-source.html#cancel">27.6 Cancel an edit, verify a change and prepare a useful service report</a></li></ol></details></li>
+<li><a href="28-plc-program-monitor.html"><span class="chapter-number">28</span><span>PLC Program Monitor</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 28 sections</summary><ol><li><a href="28-plc-program-monitor.html#open">28.1 Open the correct monitor and understand its purpose</a></li>
+<li><a href="28-plc-program-monitor.html#columns">28.2 Read each column and the footer before interpreting a row</a></li>
+<li><a href="28-plc-program-monitor.html#states">28.3 Interpret loaded, running, pending and error states</a></li>
+<li><a href="28-plc-program-monitor.html#outcomes">28.4 Read Last result and distinguish completion from success</a></li>
+<li><a href="28-plc-program-monitor.html#refresh">28.5 Observe cyclic and command programs within the display limits</a></li>
+<li><a href="28-plc-program-monitor.html#report">28.6 Use a repeatable observation and reporting procedure</a></li></ol></details></li>
+<li><a href="29-plc-memory.html"><span class="chapter-number">29</span><span>PLC Memory and Variables</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 29 sections</summary><ol><li><a href="29-plc-memory.html#purpose">29.1 Understand what a memory view can tell you</a></li>
+<li><a href="29-plc-memory.html#range">29.2 Select the requested range without changing memory</a></li>
+<li><a href="29-plc-memory.html#types">29.3 Interpret INTEGER, REAL and packed LOGIC values</a></li>
+<li><a href="29-plc-memory.html#names">29.4 Relate a raw index to a named variable and the correct version</a></li>
+<li><a href="29-plc-memory.html#live">29.5 Understand live updates, unavailable values and timing limits</a></li>
+<li><a href="29-plc-memory.html#report">29.6 Collect a reliable observation and report unexpected values</a></li></ol></details></li>
+<li><a href="30-io-monitor.html"><span class="chapter-number">30</span><span>Input and Output Monitor</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 30 sections</summary><ol><li><a href="30-io-monitor.html#open">30.1 Open the dedicated monitor and navigate the module panels</a></li>
+<li><a href="30-io-monitor.html#channels">30.2 Match the module, channel and signal name</a></li>
+<li><a href="30-io-monitor.html#digital">30.3 Read digital indications without confusing a command with feedback</a></li>
+<li><a href="30-io-monitor.html#values">30.4 Interpret analog, encoder and inverter readings</a></li>
+<li><a href="30-io-monitor.html#availability">30.5 Recognize connection, simulation and refresh limitations</a></li>
+<li><a href="30-io-monitor.html#report">30.6 Observe a signal and prepare a useful support report</a></li></ol></details></li>
+<li><a href="31-diagnostic-graphs.html"><span class="chapter-number">31</span><span>Graphs, Scope and Communication Diagnostics</span><span class="toc-status">Review draft</span></a><details class="toc-subsections"><summary>Chapter 31 sections</summary><ol><li><a href="31-diagnostic-graphs.html#choose">31.1 Choose and open the appropriate diagnostic window</a></li>
+<li><a href="31-diagnostic-graphs.html#velocity">31.2 Read the dedicated axis-velocity graph</a></li>
+<li><a href="31-diagnostic-graphs.html#controls">31.3 Use Pause, Resume and Clear in the dedicated graphs</a></li>
+<li><a href="31-diagnostic-graphs.html#timing">31.4 Understand cycle timing and the deadline statistics</a></li>
+<li><a href="31-diagnostic-graphs.html#communication">31.5 Read EtherCAT health without misinterpreting the counters</a></li>
+<li><a href="31-diagnostic-graphs.html#scope">31.6 Use the general diagnostic scope and recognize its differences</a></li>
+<li><a href="31-diagnostic-graphs.html#evidence">31.7 Capture useful evidence and respond to unclear graphs</a></li></ol></details></li>
+<li><a href="32-troubleshooting.html"><span class="chapter-number">32</span><span>Messages, Reports and Troubleshooting</span><span class="toc-status">Review draft</span></a><details class="toc-subsections" open><summary>Chapter 32 sections</summary><ol><li><a href="32-troubleshooting.html#messages">32.1 Understand the message before choosing a response</a></li>
+<li><a href="32-troubleshooting.html#details">32.2 Expand and preserve message details</a></li>
+<li><a href="32-troubleshooting.html#report">32.3 Open the current session report and find the relevant event</a></li>
+<li><a href="32-troubleshooting.html#sequence">32.4 Read the operation sequence without assuming success</a></li>
+<li><a href="32-troubleshooting.html#troubleshoot">32.5 Use a symptom guide without bypassing the cause</a></li>
+<li><a href="32-troubleshooting.html#support">32.6 Prepare a service handover and verify an authorized recovery</a></li></ol></details></li></ol></section>
+<section class="toc-part"><h3><span class="part-number">Part 6</span>Daily reference and appendices</h3><ol class="toc-list"><li><a href="#chapter-33"><span class="chapter-number">33</span><span>Daily Operating Checklists</span><span class="toc-status">Planned</span></a></li>
+<li><a href="#chapter-a"><span class="chapter-number">A</span><span>G-code and M-code Reference</span><span class="toc-status">Planned</span></a></li>
+<li><a href="#chapter-b"><span class="chapter-number">B</span><span>Controls, Indicators and Glossary</span><span class="toc-status">Planned</span></a></li>
+<li><a href="#chapter-c"><span class="chapter-number">C</span><span>Machine Configuration and Support Record</span><span class="toc-status">Planned</span></a></li></ol></section>
+</nav>
+<section id="chapter-plans"><p class="eyebrow">CHAPTER SCOPE</p><h2>Detailed chapter plan</h2>
+<h3 class="part-divider">Part 1 · Getting started</h3><article class="chapter-plan" id="chapter-01"><div class="chapter-heading"><span class="plan-number">01</span><h4>Introduction and How to Use This Manual</h4></div><ol><li><a href="01-introduction.html#welcome">1.1 Before you begin</a></li>
+<li><a href="01-introduction.html#cnc">1.2 What a CNC router does</a></li>
+<li><a href="01-introduction.html#parts">1.3 Meet the main parts of the machine</a></li>
+<li><a href="01-introduction.html#axes">1.4 Understanding axes and coordinated movement</a></li>
+<li><a href="01-introduction.html#system">1.5 The operator, application, controller and machine</a></li>
+<li><a href="01-introduction.html#programs">1.6 The different meanings of “program”</a></li>
+<li><a href="01-introduction.html#positions">1.7 Position, distance and the point called zero</a></li>
+<li><a href="01-introduction.html#units">1.8 Units and values you will encounter</a></li>
+<li><a href="01-introduction.html#states">1.9 Why machine state matters</a></li>
+<li><a href="01-introduction.html#responsibility">1.10 Your role and the limits of software information</a></li>
+<li><a href="01-introduction.html#journey">1.11 How a job progresses through the application</a></li>
+<li><a href="01-introduction.html#reading">1.12 How to use this book</a></li>
+<li><a href="01-introduction.html#procedure">1.13 How to follow an operating procedure</a></li>
+<li><a href="01-introduction.html#presentation">1.14 Labels, messages, figures and examples</a></li>
+<li><a href="01-introduction.html#specific">1.15 What must match your installation</a></li>
+<li><a href="01-introduction.html#review">1.16 Check your understanding before moving on</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Two original conceptual diagrams, nine explanatory tables and a reserved machine photograph.</p><p class="file-plan"><a href="01-introduction.html">Read Chapter 1</a> <span>· Expanded draft for review</span></p></article>
+<article class="chapter-plan" id="chapter-02"><div class="chapter-heading"><span class="plan-number">02</span><h4>Safe Operation and Pre-start Checks</h4></div><ol><li><a href="02-safe-operation.html#ready">2.1 What “ready to start” really means</a></li>
+<li><a href="02-safe-operation.html#work-area">2.2 Know the machine and prepare the work area</a></li>
+<li><a href="02-safe-operation.html#job-setup">2.3 Match the workpiece, job and work zero</a></li>
+<li><a href="02-safe-operation.html#tools">2.4 Check tools and understand actions that can start motion</a></li>
+<li><a href="02-safe-operation.html#routes">2.5 Check the whole movement, not just the cutting shape</a></li>
+<li><a href="02-safe-operation.html#screen-readiness">2.6 Read the screen without assuming more than it tells you</a></li>
+<li><a href="02-safe-operation.html#stopping">2.7 Understand Pause, Reset and feed override</a></li>
+<li><a href="02-safe-operation.html#emergency">2.8 Respond to immediate danger and understand the emergency indication</a></li>
+<li><a href="02-safe-operation.html#access">2.9 Distinguish a stopped machine from permission to enter</a></li>
+<li><a href="02-safe-operation.html#first-motion">2.10 Make the first movement a deliberate operation</a></li>
+<li><a href="02-safe-operation.html#before-cutting">2.11 Complete the final pre-run check and watch the start</a></li>
+<li><a href="02-safe-operation.html#unexpected">2.12 Respond when the result is different from what you expected</a></li>
+<li><a href="02-safe-operation.html#restart">2.13 Recheck the setup before restarting or handing over</a></li>
+<li><a href="02-safe-operation.html#understanding">2.14 Check your understanding before operating independently</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> One original conceptual diagram, ten explanatory tables including a pre-run checklist, and two reserved images for the installed machine and application indicators.</p><p class="file-plan"><a href="02-safe-operation.html">Read Chapter 2</a> <span>· Expanded draft for review</span></p></article>
+<article class="chapter-plan" id="chapter-03"><div class="chapter-heading"><span class="plan-number">03</span><h4>Startup, Login, Connection and Shutdown</h4></div><ol><li><a href="03-startup.html#stages">3.1 Understand the stages of starting work</a></li>
+<li><a href="03-startup.html#launch">3.2 Open the correct application and recognize the first screen</a></li>
+<li><a href="03-startup.html#operator-login">3.3 Enter the operator password when requested</a></li>
+<li><a href="03-startup.html#access-retry">3.4 Understand read-only access and retrying login</a></li>
+<li><a href="03-startup.html#mode">3.5 Confirm whether you are using Simulation or the real machine</a></li>
+<li><a href="03-startup.html#connection">3.6 Wait for connection and read its result</a></li>
+<li><a href="03-startup.html#startup-complete">3.7 Decide whether startup is complete</a></li>
+<li><a href="03-startup.html#startup-problems">3.8 Deal with an incomplete start or failed connection</a></li>
+<li><a href="03-startup.html#reconnection">3.9 Reconnect or change mode deliberately</a></li>
+<li><a href="03-startup.html#shutdown">3.10 Close the application in an orderly way</a></li>
+<li><a href="03-startup.html#saved-information">3.11 Understand saved settings and respond to a save failure</a></li>
+<li><a href="03-startup.html#practice">3.12 Follow a complete example and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> One original startup diagram, eight explanatory tables, worked examples and three reserved screenshots for login, connection and Configuration.</p><p class="file-plan"><a href="03-startup.html">Read Chapter 3</a> <span>· Expanded draft for review</span></p></article>
+<article class="chapter-plan" id="chapter-04"><div class="chapter-heading"><span class="plan-number">04</span><h4>Main Window and Status Indicators</h4></div><ol><li><a href="04-main-window.html#reading">4.1 Read the screen before using its controls</a></li>
+<li><a href="04-main-window.html#screen-map">4.2 Find the main screen areas</a></li>
+<li><a href="04-main-window.html#indicators">4.3 Interpret the connection, axis and warning indicators</a></li>
+<li><a href="04-main-window.html#positions">4.4 Read Machine position and Work position correctly</a></li>
+<li><a href="04-main-window.html#references">4.5 Distinguish Home, Go Home, Go Ref and zero setting</a></li>
+<li><a href="04-main-window.html#manual-motion">4.6 Identify the manual-motion controls and their values</a></li>
+<li><a href="04-main-window.html#program-view">4.7 Identify the job, its text and the preview</a></li>
+<li><a href="04-main-window.html#run-controls">4.8 Recognize Run, Pause, Reset and program feed override</a></li>
+<li><a href="04-main-window.html#spindle-tool">4.9 Read the spindle area without confusing commands with confirmation</a></li>
+<li><a href="04-main-window.html#speed-progress">4.10 Understand speed, percentage and time displays</a></li>
+<li><a href="04-main-window.html#messages">4.11 Read messages and understand unavailable controls</a></li>
+<li><a href="04-main-window.html#window-actions">4.12 Use Configuration and window controls for their intended purpose</a></li>
+<li><a href="04-main-window.html#review">4.13 Build a reliable screen-reading routine</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> One original screen-orientation diagram, twelve explanatory tables, practical reading examples and three reserved screenshot figures.</p><p class="file-plan"><a href="04-main-window.html">Read Chapter 4</a> <span>· Expanded draft for review</span></p></article>
+<article class="chapter-plan" id="chapter-05"><div class="chapter-heading"><span class="plan-number">05</span><h4>Coordinates, Units and Position Displays</h4></div><ol><li><a href="05-coordinates.html#meaning">5.1 Give every position number a meaning</a></li>
+<li><a href="05-coordinates.html#axes">5.2 Understand axes, positive directions and negative positions</a></li>
+<li><a href="05-coordinates.html#machine-frame">5.3 Understand machine coordinates and what homing establishes</a></li>
+<li><a href="05-coordinates.html#work-origin">5.4 Locate the job with a work origin</a></li>
+<li><a href="05-coordinates.html#readout-relationship">5.5 Relate the two position panels and the applied corrections</a></li>
+<li><a href="05-coordinates.html#multiple-origins">5.6 Recognize G54–G59 and references selected by the job</a></li>
+<li><a href="05-coordinates.html#position-distance">5.7 Keep a destination separate from a distance to move</a></li>
+
+<li><a href="05-coordinates.html#length-units">5.9 Read millimetres, inches and decimal places carefully</a></li>
+<li><a href="05-coordinates.html#speed-units">5.10 Compare feed, jog speed and spindle speed using the right units</a></li>
+<li><a href="05-coordinates.html#unexpected-readings">5.11 Investigate an unexpected reading before changing a value</a></li>
+<li><a href="05-coordinates.html#worked-example">5.12 Work through an example and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Two original coordinate/tool diagrams, eleven explanatory tables, worked examples and two reserved images for installed axis directions and application readouts.</p><p class="file-plan"><a href="05-coordinates.html">Read Chapter 5</a> <span>· Expanded draft for review</span></p></article>
+<h3 class="part-divider">Part 2 · Preparing the machine</h3><article class="chapter-plan" id="chapter-06"><div class="chapter-heading"><span class="plan-number">06</span><h4><a href="06-homing.html">Homing the Machine</a></h4></div><ol><li><a href="06-homing.html#purpose">6.1 Understand what Home establishes</a></li>
+<li><a href="06-homing.html#when">6.2 Know when the machine reference needs attention</a></li>
+<li><a href="06-homing.html#preparation">6.3 Prepare the machine and the whole homing route</a></li>
+<li><a href="06-homing.html#controls">6.4 Identify the Home control and understand why it may be unavailable</a></li>
+<li><a href="06-homing.html#request">6.5 Start one complete Home operation deliberately</a></li>
+<li><a href="06-homing.html#z-stage">6.6 Follow the first stage: establish the Z reference</a></li>
+<li><a href="06-homing.html#gantry-stage">6.7 Follow X and the two sides of the gantry</a></li>
+<li><a href="06-homing.html#completion">6.8 Confirm completion without expecting every number to be zero</a></li>
+<li><a href="06-homing.html#individual">6.9 Use individual-axis homing only for its intended scope</a></li>
+<li><a href="06-homing.html#interruption">6.10 Stop an attempt and treat the result as incomplete</a></li>
+<li><a href="06-homing.html#problems">6.11 Read unsuccessful results and collect useful evidence</a></li>
+<li><a href="06-homing.html#practice">6.12 Build a repeatable routine and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Thirteen operator tables, one homing-sequence diagram and three clearly described image placeholders.</p><p class="file-plan"><a href="06-homing.html">Open Chapter 6</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-07"><div class="chapter-heading"><span class="plan-number">07</span><h4><a href="07-manual-motion.html">Manual Motion and Position Jog</a></h4></div><ol><li><a href="07-manual-motion.html#purpose">7.1 Choose the kind of movement before touching a control</a></li>
+<li><a href="07-manual-motion.html#panel">7.2 Find the axis rows, direction controls and mode</a></li>
+<li><a href="07-manual-motion.html#readiness">7.3 Prepare for a deliberate manual movement</a></li>
+<li><a href="07-manual-motion.html#editing">7.4 Enter and confirm a value before requesting movement</a></li>
+<li><a href="07-manual-motion.html#continuous">7.5 Use Continuous Jog as a held direction command</a></li>
+<li><a href="07-manual-motion.html#step">7.6 Use Step Jog for one known displacement</a></li>
+<li><a href="07-manual-motion.html#speed">7.7 Combine axis speed and jog percentage correctly</a></li>
+<li><a href="07-manual-motion.html#diagonal">7.8 Treat a diagonal command as two axis movements</a></li>
+<li><a href="07-manual-motion.html#destination">7.9 Move one axis to an absolute machine coordinate</a></li>
+<li><a href="07-manual-motion.html#keyboard">7.10 Use keyboard movement with the same care as screen controls</a></li>
+<li><a href="07-manual-motion.html#stopping">7.11 Stop the movement and verify the resulting state</a></li>
+<li><a href="07-manual-motion.html#problems">7.12 Investigate an unavailable control or an unexpected result</a></li>
+<li><a href="07-manual-motion.html#practice">7.13 Practise the decisions and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Thirteen operator tables, two explanatory diagrams and two clearly described screenshot placeholders.</p><p class="file-plan"><a href="07-manual-motion.html">Open Chapter 7</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-08"><div class="chapter-heading"><span class="plan-number">08</span><h4><a href="08-work-origins.html">Work Origins and Zero Setting</a></h4></div><ol><li><a href="08-work-origins.html#purpose">8.1 Understand what the work origin tells the machine</a></li>
+<li><a href="08-work-origins.html#controls">8.2 Find the available reference controls</a></li>
+<li><a href="08-work-origins.html#preparation">8.3 Establish the physical meaning before changing a number</a></li>
+<li><a href="08-work-origins.html#selection">8.4 Select and identify the intended G54–G59 row</a></li>
+<li><a href="08-work-origins.html#zero-xy">8.5 Set X or Y zero from an established position</a></li>
+
+<li><a href="08-work-origins.html#numeric-edit">8.7 Edit a known reference value carefully</a></li>
+<li><a href="08-work-origins.html#accept-cancel">8.8 Finish Configuration and distinguish acceptance from cancellation</a></li>
+<li><a href="08-work-origins.html#program-origins">8.9 Understand which origins the machining file actually uses</a></li>
+<li><a href="08-work-origins.html#verification">8.10 Verify the origin change before any machining start</a></li>
+<li><a href="08-work-origins.html#problems">8.11 Resolve unexpected values without hiding the original problem</a></li>
+<li><a href="08-work-origins.html#practice">8.12 Work through a setup example and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve operator tables, one conceptual zero-setting diagram and three clearly described image placeholders.</p><p class="file-plan"><a href="08-work-origins.html">Open Chapter 8</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-09"><div class="chapter-heading"><span class="plan-number">09</span><h4>Positioning, Return to Work and Parking</h4></div><p>Choose the correct destination, check the entire route, and understand return handoff, manual parking, completion parking and interrupted movement.</p><ol><li><a href="09-positioning.html#destinations">9.1 Choose the destination and what should happen afterward</a></li>
+<li><a href="09-positioning.html#preparation">9.2 Prepare the whole route and the operation that may follow</a></li>
+<li><a href="09-positioning.html#route">9.3 Understand the Z-first route and its limits</a></li>
+<li><a href="09-positioning.html#speed">9.4 Check the positioning speed and issue one request</a></li>
+<li><a href="09-positioning.html#go-home">9.5 Use Go Home to request machine zero</a></li>
+<li><a href="09-positioning.html#go-reference">9.6 Use Go Ref with the applied work reference and tool correction</a></li>
+<li><a href="09-positioning.html#return-to-work">9.7 Treat ReturnToWork as a program start or continuation</a></li>
+<li><a href="09-positioning.html#manual-parking">9.8 Set up and request manual parking</a></li>
+<li><a href="09-positioning.html#automatic-parking">9.9 Understand parking after normal program completion</a></li>
+<li><a href="09-positioning.html#interruption">9.10 Stop positioning and reassess before another request</a></li>
+<li><a href="09-positioning.html#problems">9.11 Read positioning messages and resolve a refused or incomplete move</a></li>
+<li><a href="09-positioning.html#practice">9.12 Work through a positioning example and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Thirteen operator tables, one positioning-route diagram and two clearly described image placeholders.</p><p class="file-plan"><a href="09-positioning.html">Open Chapter 9</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-10"><div class="chapter-heading"><span class="plan-number">10</span><h4>Spindle Operation</h4></div><p>Operate the spindle controls deliberately, distinguish requested RPM from actual rotation, and understand program starts, stop qualification, reverse capability and fault response.</p><ol><li><a href="10-spindle.html#basics">10.1 Understand the spindle, its speed request and its actual movement</a></li>
+<li><a href="10-spindle.html#controls">10.2 Locate the controls and understand when they are available</a></li>
+<li><a href="10-spindle.html#preparation">10.3 Prepare the tool, machine and intended operation before starting</a></li>
+<li><a href="10-spindle.html#speed">10.4 Set the requested RPM deliberately</a></li>
+<li><a href="10-spindle.html#manual-start">10.5 Start the spindle manually and verify its response</a></li>
+<li><a href="10-spindle.html#manual-stop">10.6 Stop manual running and distinguish it from a motion stop</a></li>
+<li><a href="10-spindle.html#program-commands">10.7 Recognize spindle instructions in a machining program</a></li>
+<li><a href="10-spindle.html#start-wait">10.8 Understand the start delay and the limits of reverse operation</a></li>
+<li><a href="10-spindle.html#stop-wait">10.9 Understand rundown, stopped qualification and timeout</a></li>
+<li><a href="10-spindle.html#problems">10.10 Respond to a refused start, lost readiness or an incomplete stop</a></li>
+<li><a href="10-spindle.html#examples">10.11 Work through common operating situations</a></li>
+<li><a href="10-spindle.html#review">10.12 Review the operating decisions before working independently</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve operator tables, one spindle-stop sequence diagram and two clearly described image placeholders.</p><p class="file-plan"><a href="10-spindle.html">Open Chapter 10</a> <span>· Expanded draft ready for review</span></p></article>
+
+
+<article class="chapter-plan" id="chapter-13"><div class="chapter-heading"><span class="plan-number">13</span><h4>Machine-specific Equipment</h4></div><p>Identify installed options and check their commands, feedback and commissioning records.</p><ol>
+
+
+
+
+
+
+
+<li><a href="13-machine-equipment.html#options">13.1 Identify other options and obtain their operating instructions</a></li>
+</ol><p class="visual-plan"><strong>Figures and tables:</strong> Eleven tables, one completed orientation diagram and three clearly described spaces for actual machine photographs and screenshots.</p><p class="file-plan">Chapter file: <a href="13-machine-equipment.html">13-machine-equipment.html</a> <span>· Expanded draft ready for review</span></p></article>
+<h3 class="part-divider">Part 3 · Working with machining programs</h3><article class="chapter-plan" id="chapter-14"><div class="chapter-heading"><span class="plan-number">14</span><h4>Opening and Checking a Program</h4></div><p>Select the approved file, follow preparation and cancellation, interpret accepted and rejected results, resolve reported omissions and travel warnings, and verify dimensions, references and tools before Run.</p><ol><li><a href="14-opening-programs.html#purpose">14.1 Understand what opening a machining program does</a></li>
+<li><a href="14-opening-programs.html#readiness">14.2 Prepare for loading and understand an unavailable Open file control</a></li>
+<li><a href="14-opening-programs.html#selection">14.3 Select the correct file and verify its full identity</a></li>
+<li><a href="14-opening-programs.html#progress">14.4 Follow preparation and understand the progress display</a></li>
+<li><a href="14-opening-programs.html#cancellation">14.5 Cancel preparation and establish what is loaded afterwards</a></li>
+<li><a href="14-opening-programs.html#accepted-result">14.6 Recognize an accepted load without assuming the machine is ready</a></li>
+<li><a href="14-opening-programs.html#diagnostics">14.7 Read a rejection or load failure and report the right information</a></li>
+<li><a href="14-opening-programs.html#omitted-actions">14.8 Treat ignored instructions and warnings as decisions to resolve</a></li>
+<li><a href="14-opening-programs.html#travel">14.9 Check size, placement and the whole movement envelope</a></li>
+<li><a href="14-opening-programs.html#setup">14.10 Match the prepared job to units, work references and tools</a></li>
+<li><a href="14-opening-programs.html#changes">14.11 Recheck the job after a file, origin or configuration change</a></li>
+<li><a href="14-opening-programs.html#final-check">14.12 Complete a pre-run review and practise the loading decisions</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve tables, one completed preparation-stage diagram and three clearly described spaces for actual selection, rejection and accepted-job screenshots.</p><p class="file-plan">Chapter file: <a href="14-opening-programs.html">14-opening-programs.html</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-15"><div class="chapter-heading"><span class="plan-number">15</span><h4>G-code View and 3D Preview</h4></div><p>Read source and path together, distinguish selection from execution and restart intent, navigate and fit useful views, interpret display aids, measure scene points and export images with the right context.</p><ol><li><a href="15-program-preview.html#purpose">15.1 Understand the two views and the questions they can answer</a></li>
+<li><a href="15-program-preview.html#source">15.2 Read and navigate the source without editing it</a></li>
+<li><a href="15-program-preview.html#states">15.3 Distinguish selection, current execution and completion</a></li>
+<li><a href="15-program-preview.html#linked-selection">15.4 Locate the same movement in the text and graphical path</a></li>
+<li><a href="15-program-preview.html#navigation">15.5 Pan, orbit and zoom without changing the machine</a></li>
+<li><a href="15-program-preview.html#fitting">15.6 Recover the whole job with the fitting controls</a></li>
+<li><a href="15-program-preview.html#views">15.7 Choose standard views and understand perspective</a></li>
+<li><a href="15-program-preview.html#display-aids">15.8 Read path appearance, markers and display layers</a></li>
+<li><a href="15-program-preview.html#measurement">15.9 Measure between two displayed points and interpret the result</a></li>
+<li><a href="15-program-preview.html#capture">15.10 Save a useful preview image and retain its context</a></li>
+<li><a href="15-program-preview.html#problems">15.11 Investigate a blank, confusing or unexpected preview</a></li>
+<li><a href="15-program-preview.html#review">15.12 Use a repeatable preview review and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve tables, one completed top/front comparison diagram and three clearly described spaces for actual linked-view, measurement and toolbar screenshots.</p><p class="file-plan">Chapter file: <a href="15-program-preview.html">15-program-preview.html</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-16"><div class="chapter-heading"><span class="plan-number">16</span><h4>Running and Monitoring a Program</h4></div><ol><li><a href="16-running-programs.html#purpose">16.1 Understand what Run actually starts</a></li>
+<li><a href="16-running-programs.html#preparation">16.2 Complete the pre-run check at the machine</a></li>
+<li><a href="16-running-programs.html#start-intent">16.3 Know where the next Run is intended to begin</a></li>
+<li><a href="16-running-programs.html#request">16.4 Press Run once and follow the response</a></li>
+
+<li><a href="16-running-programs.html#positioning">16.6 Understand the approach to the entry position</a></li>
+<li><a href="16-running-programs.html#monitoring">16.7 Observe the first cut and maintain a useful monitoring routine</a></li>
+<li><a href="16-running-programs.html#feed">16.8 Use the main-program feed percentage deliberately</a></li>
+<li><a href="16-running-programs.html#timing">16.9 Interpret progress and the nominal time display</a></li>
+<li><a href="16-running-programs.html#waits">16.10 Distinguish an expected wait from a problem that needs action</a></li>
+<li><a href="16-running-programs.html#completion">16.11 Recognize program completion and any final parking movement</a></li>
+<li><a href="16-running-programs.html#practice">16.12 Practise the complete operating sequence and check your understanding</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve tables, one completed start-sequence diagram and three clearly described spaces for actual start-control, monitoring and nominal-timing screenshots.</p><p class="file-plan">Chapter file: <a href="16-running-programs.html">16-running-programs.html</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-17"><div class="chapter-heading"><span class="plan-number">17</span><h4>Pause, Reset and Recovery</h4></div><ol><li><a href="17-stopping-and-recovery.html#decisions">17.1 Choose an interruption by its effect, not its appearance</a></li>
+<li><a href="17-stopping-and-recovery.html#pause">17.2 Use Pause for an ordinary controlled interruption</a></li>
+<li><a href="17-stopping-and-recovery.html#stop">17.3 Use Reset with its following program reset in mind</a></li>
+<li><a href="17-stopping-and-recovery.html#reset">17.4 Reset a stopped program only when you intend a new start</a></li>
+<li><a href="17-stopping-and-recovery.html#zero-feed">17.5 Treat zero feed as a retained active operation</a></li>
+<li><a href="17-stopping-and-recovery.html#stop-result">17.6 Confirm the stop result before making a recovery decision</a></li>
+<li><a href="17-stopping-and-recovery.html#continue">17.7 Continue an ordinary paused cut after checking what changed</a></li>
+<li><a href="17-stopping-and-recovery.html#return">17.8 Review the return route after moving the head away</a></li>
+
+<li><a href="17-stopping-and-recovery.html#emergency">17.10 Recover from an emergency condition without treating release as restart</a></li>
+<li><a href="17-stopping-and-recovery.html#connection">17.11 Re-establish the machine after communication or power interruption</a></li>
+<li><a href="17-stopping-and-recovery.html#review">17.12 Use a recovery checklist and practise the decisions</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve tables, one completed recovery-decision diagram and three clearly described spaces for actual stop-report, tool-interruption and recovery-readiness screenshots.</p><p class="file-plan">Chapter file: <a href="17-stopping-and-recovery.html">17-stopping-and-recovery.html</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-18"><div class="chapter-heading"><span class="plan-number">18</span><h4>Starting from a Selected Line</h4></div><ol><li><a href="18-selected-start-line.html#purpose">18.1 Understand when a selected start is the right decision</a></li>
+<li><a href="18-selected-start-line.html#line-numbers">18.2 Read physical line numbers and identify the exact file</a></li>
+<li><a href="18-selected-start-line.html#readiness">18.3 Prepare the job and understand an unavailable Start Line control</a></li>
+<li><a href="18-selected-start-line.html#dialog">18.4 Use the Start Line dialog step by step</a></li>
+<li><a href="18-selected-start-line.html#confirmation">18.5 Distinguish confirmation, cancellation and a main-view double-click</a></li>
+<li><a href="18-selected-start-line.html#entry-policy">18.6 Understand the requested line and the resolved entry</a></li>
+<li><a href="18-selected-start-line.html#required-state">18.7 Understand why earlier equipment actions can still matter</a></li>
+
+<li><a href="18-selected-start-line.html#preview">18.9 Read the selected-start preview without mistaking it for completed work</a></li>
+<li><a href="18-selected-start-line.html#run">18.10 Request the selected start and observe each preparation stage</a></li>
+<li><a href="18-selected-start-line.html#problems">18.11 Resolve rejected entries and recheck selection after changes</a></li>
+<li><a href="18-selected-start-line.html#practice">18.12 Practise the selection workflow and complete the final review</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve tables, one completed entry-policy diagram and three clearly described spaces for actual dialog, selected-preview and diagnostic screenshots.</p><p class="file-plan">Chapter file: <a href="18-selected-start-line.html">18-selected-start-line.html</a> <span>· Expanded draft ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-19"><div class="chapter-heading"><span class="plan-number">19</span><h4>Editing a G-code File</h4></div><p>Identify the source document, navigate and correct text carefully, use editor aids with appropriate limits, review and save to the original file, distinguish cancellation from restoration, resolve write failures, and inspect the newly prepared job before another Run.</p><ol><li><a href="19-editing-gcode.html#purpose">19.1 Understand what editing changes and when to use it</a></li>
+<li><a href="19-editing-gcode.html#opening">19.2 Open the correct document in a settled machine state</a></li>
+<li><a href="19-editing-gcode.html#navigation">19.3 Find the intended text without changing it accidentally</a></li>
+<li><a href="19-editing-gcode.html#editing">19.4 Make one controlled correction and inspect the replacement</a></li>
+<li><a href="19-editing-gcode.html#editor-aids">19.5 Use coloring, suggestions and local warnings without treating them as approval</a></li>
+<li><a href="19-editing-gcode.html#review">19.6 Review the whole effect of the correction before Save</a></li>
+<li><a href="19-editing-gcode.html#saving">19.7 Save to the original file and wait for the result</a></li>
+<li><a href="19-editing-gcode.html#cancel">19.8 Cancel an unsaved draft without confusing it with restoration</a></li>
+<li><a href="19-editing-gcode.html#save-errors">19.9 Handle a save failure and establish the actual file state</a></li>
+<li><a href="19-editing-gcode.html#reload">19.10 Follow the reload and distinguish saving from program acceptance</a></li>
+<li><a href="19-editing-gcode.html#verify">19.11 Check the revised job and establish a new start intention</a></li>
+<li><a href="19-editing-gcode.html#practice">19.12 Practise an approved correction and record the result</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve operator tables, one save/reload diagram, and three explained screenshot placeholders.</p><p class="file-plan"><a href="19-editing-gcode.html">Open Chapter 19</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-20"><div class="chapter-heading"><span class="plan-number">20</span><h4>Simulation Mode</h4></div><p>Identify the actual simulated session, change mode while idle, prepare and practise an approved job, understand modelled equipment and its limits, report problems, and return to Normal with a fresh physical-machine review.</p><ol><li><a href="20-simulation.html#purpose">20.1 Understand what Simulation does and what it cannot prove</a></li>
+<li><a href="20-simulation.html#identity">20.2 Identify the selected mode and the actual connected session</a></li>
+<li><a href="20-simulation.html#readiness">20.3 Prepare an idle session before changing mode</a></li>
+<li><a href="20-simulation.html#change-mode">20.4 Change mode once and follow the reconnection to its result</a></li>
+<li><a href="20-simulation.html#setup">20.5 Establish the simulated machine and protect the real setup data</a></li>
+<li><a href="20-simulation.html#program-practice">20.6 Practise a complete job with deliberate observation points</a></li>
+<li><a href="20-simulation.html#equipment">20.7 Understand simulated spindle feedback</a></li>
+<li><a href="20-simulation.html#problems">20.8 Recognize a simulation problem and report the right evidence</a></li>
+<li><a href="20-simulation.html#normal">20.9 Return to Normal with a fresh physical-machine review</a></li>
+<li><a href="20-simulation.html#practice">20.10 Complete a supervised exercise and record what it established</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Ten operator tables, one return-to-Normal diagram, and two explained screenshot placeholders.</p><p class="file-plan"><a href="20-simulation.html">Open Chapter 20</a> <span>· Expanded operator edition ready for review</span></p></article>
+<h3 class="part-divider">Part 4 · Configuration and access control</h3><article class="chapter-plan" id="chapter-21"><div class="chapter-heading"><span class="plan-number">21</span><h4>Using the Configuration Window</h4></div><p>Navigate groups and descriptions, recognize access restrictions, edit and check approved values, distinguish toolbar and context-menu actions, review validation and program-rebuild prompts, and understand the limits of Cancel.</p><ol><li><a href="21-configuration-window.html#purpose">21.1 Decide what you need to inspect or change before opening Configuration</a></li>
+<li><a href="21-configuration-window.html#navigation">21.2 Find a group, select an item and read its description</a></li>
+<li><a href="21-configuration-window.html#access">21.3 Understand read-only values, disabled controls and access prompts</a></li>
+<li><a href="21-configuration-window.html#values">21.4 Edit one text or numeric value and verify what was accepted</a></li>
+<li><a href="21-configuration-window.html#editors">21.5 Use choices, on/off values and specialized editors correctly</a></li>
+<li><a href="21-configuration-window.html#toolbar">21.6 Recognize toolbar operations and their immediate effects</a></li>
+<li><a href="21-configuration-window.html#context-menu">21.7 Treat right-click Save, Import and Reset as separate operations</a></li>
+<li><a href="21-configuration-window.html#accept">21.8 Review validation and program-rebuild prompts before accepting</a></li>
+<li><a href="21-configuration-window.html#cancel">21.9 Cancel ordinary edits without assuming a universal rollback</a></li>
+<li><a href="21-configuration-window.html#practice">21.10 Practise an ordinary edit and complete a change record</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Ten operator tables, one settings-decision diagram, and two explained screenshot placeholders.</p><p class="file-plan"><a href="21-configuration-window.html">Open Chapter 21</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-22"><div class="chapter-heading"><span class="plan-number">22</span><h4>Configuration Reference</h4></div><p>Interpret parameter names, units and effects across preferences, general motion, controller hardware, axes, homing, coordinated paths, spindle, tools, measurement, router equipment and work references. Distinguish software defaults from commissioned machine values.</p><ol><li><a href="22-settings-reference.html#reading">22.1 Read a parameter reference without mistaking defaults for setup instructions</a></li>
+<li><a href="22-settings-reference.html#preferences">22.2 Display preferences and window behavior</a></li>
+<li><a href="22-settings-reference.html#general">22.3 General movement, jogging, parking and start preferences</a></li>
+<li><a href="22-settings-reference.html#controller">22.4 Controller identity, connection mode and hardware configuration</a></li>
+<li><a href="22-settings-reference.html#axes">22.5 Axis identity, scaling, travel and motion limits</a></li>
+<li><a href="22-settings-reference.html#home">22.6 Homing direction, speeds, displacement and timeout</a></li>
+<li><a href="22-settings-reference.html#paths">22.7 Coordinated-motion settings and program rebuilding</a></li>
+<li><a href="22-settings-reference.html#spindle">22.8 Spindle speed scaling, timing and live inverter values</a></li>
+
+
+<li><a href="22-settings-reference.html#router">22.11 Router machining settings</a></li>
+<li><a href="22-settings-reference.html#references">22.12 Work references and the final review of a settings change</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Twelve parameter/reference tables, one coordinate-settings diagram, and two explained screenshot placeholders.</p><p class="file-plan"><a href="22-settings-reference.html">Open Chapter 22</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-23"><div class="chapter-heading"><span class="plan-number">23</span><h4>I/O Configuration and Signal Mapping</h4></div><p>Understand signal names and channels, mapping fields, supplied assignments, disabled and special targets, live states, input filtering, authorized editing and supervised verification.</p><ol><li><a href="23-io-configuration.html#signals">23.1 Start with the machine function, then identify its channel</a></li>
+<li><a href="23-io-configuration.html#editor">23.2 Find the mapping and understand the fields</a></li>
+<li><a href="23-io-configuration.html#channels">23.3 Read channel addresses and compare the supplied assignments</a></li>
+<li><a href="23-io-configuration.html#special">23.4 Distinguish disabled, unassigned, fixed and virtual signals</a></li>
+<li><a href="23-io-configuration.html#state">23.5 Read State without confusing an indication with a command</a></li>
+<li><a href="23-io-configuration.html#filter">23.6 Understand digital-input filtering</a></li>
+<li><a href="23-io-configuration.html#change">23.7 Carry out an authorized mapping change in a controlled order</a></li>
+<li><a href="23-io-configuration.html#verify">23.8 Interpret diagnostics, verify the response and record the result</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Eight reference tables, a command-and-feedback diagram and two explained screenshot placeholders.</p><p class="file-plan"><a href="23-io-configuration.html">Open Chapter 23</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-24"><div class="chapter-heading"><span class="plan-number">24</span><h4>Keyboard Shortcuts</h4></div><p>Understand shortcut combinations, main-window activation, actual and default assignments, explicit capture and assignment, conflicts, held-key behavior, jogging modes and controlled verification.</p><ol><li><a href="24-keyboard-shortcuts.html#basics">24.1 Understand what a shortcut does before pressing it</a></li>
+<li><a href="24-keyboard-shortcuts.html#defaults">24.2 Read the default-key reference and the current machine assignments</a></li>
+<li><a href="24-keyboard-shortcuts.html#assign">24.3 Capture, assign, remove and save a shortcut</a></li>
+<li><a href="24-keyboard-shortcuts.html#conflicts">24.4 Resolve duplicate assignments and understand status messages</a></li>
+<li><a href="24-keyboard-shortcuts.html#held">24.5 Distinguish one-time commands from held jogging keys</a></li>
+<li><a href="24-keyboard-shortcuts.html#verification">24.6 Verify an assignment and troubleshoot without trial movement</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables, one assignment-workflow diagram and an explained editor screenshot placeholder.</p><p class="file-plan"><a href="24-keyboard-shortcuts.html">Open Chapter 24</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-25"><div class="chapter-heading"><span class="plan-number">25</span><h4>Passwords and Access Levels</h4></div><p>Understand Operator and Engineering access, session lifetime, password replacement, initial preparation, board-account requirements and recovery from unsuccessful or unknown operations.</p><ol><li><a href="25-passwords.html#purpose">25.1 Separate permission, machine readiness and password accounts</a></li>
+<li><a href="25-passwords.html#login">25.2 Respond to Operator and Engineering access prompts</a></li>
+<li><a href="25-passwords.html#session">25.3 Handle an incorrect password and understand session lifetime</a></li>
+<li><a href="25-passwords.html#replace">25.4 Replace an existing password using the Passwords form</a></li>
+<li><a href="25-passwords.html#initial">25.5 Recognize initial setup and board-dependent password operations</a></li>
+<li><a href="25-passwords.html#recovery">25.6 Read failures, verify the result and hand over access responsibly</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables, one access-lifetime diagram and two explained screenshot placeholders covering the login and password-management forms.</p><p class="file-plan"><a href="25-passwords.html">Open Chapter 25</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-26"><div class="chapter-heading"><span class="plan-number">26</span><h4>Time Locks and Board Information</h4></div><p>Understand dated run restrictions, Engineering access, lock-list states, board information, clock synchronization, authorized addition and deletion, refresh behavior and uncertain operation results.</p><ol><li><a href="26-time-locks.html#meaning">26.1 Understand what a dated lock restricts</a></li>
+<li><a href="26-time-locks.html#window">26.2 Open Time locks and read the list and board information</a></li>
+<li><a href="26-time-locks.html#clock">26.3 Review the board clock and synchronize it only when authorized</a></li>
+<li><a href="26-time-locks.html#add">26.4 Enter a valid date and add an authorized lock</a></li>
+<li><a href="26-time-locks.html#delete">26.5 Remove the intended lock and verify the remaining restrictions</a></li>
+<li><a href="26-time-locks.html#refresh">26.6 Interpret refreshes, unavailable data and operation failures</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables and two explained screenshot placeholders for the form and its available/unavailable states.</p><p class="file-plan"><a href="26-time-locks.html">Open Chapter 26</a> <span>· Expanded operator edition ready for review</span></p></article>
+<h3 class="part-divider">Part 5 · PLC tools, diagnostics and support</h3><article class="chapter-plan" id="chapter-27"><div class="chapter-heading"><span class="plan-number">27</span><h4>Viewing and Editing PLC Source</h4></div><p>Identify the machine-control source catalog, follow an approved text change, interpret diagnostics, distinguish saved source from deployed programs, cancel tracked edits and verify the result.</p><ol><li><a href="27-plc-source.html#purpose">27.1 Understand PLC source as machine instructions</a></li>
+<li><a href="27-plc-source.html#catalog">27.2 Find the document in the Configuration catalog</a></li>
+<li><a href="27-plc-source.html#edit">27.3 Make only the approved change and review the text</a></li>
+<li><a href="27-plc-source.html#validation">27.4 Read validation messages without guessing a repair</a></li>
+<li><a href="27-plc-source.html#save">27.5 Distinguish saved source from the loaded program</a></li>
+<li><a href="27-plc-source.html#cancel">27.6 Cancel an edit, verify a change and prepare a useful service report</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables and two explained screenshot placeholders for source selection and validation.</p><p class="file-plan"><a href="27-plc-source.html">Open Chapter 27</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-28"><div class="chapter-heading"><span class="plan-number">28</span><h4>PLC Program Monitor</h4></div><p>Open the dedicated read-only monitor, interpret columns and states, distinguish completion from success, understand cyclic activity and display timing, and prepare an accurate support record.</p><ol><li><a href="28-plc-program-monitor.html#open">28.1 Open the correct monitor and understand its purpose</a></li>
+<li><a href="28-plc-program-monitor.html#columns">28.2 Read each column and the footer before interpreting a row</a></li>
+<li><a href="28-plc-program-monitor.html#states">28.3 Interpret loaded, running, pending and error states</a></li>
+<li><a href="28-plc-program-monitor.html#outcomes">28.4 Read Last result and distinguish completion from success</a></li>
+<li><a href="28-plc-program-monitor.html#refresh">28.5 Observe cyclic and command programs within the display limits</a></li>
+<li><a href="28-plc-program-monitor.html#report">28.6 Use a repeatable observation and reporting procedure</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables and an explained full-window screenshot placeholder.</p><p class="file-plan"><a href="28-plc-program-monitor.html">Open Chapter 28</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-29"><div class="chapter-heading"><span class="plan-number">29</span><h4>PLC Memory and Variables</h4></div><p>Open the read-only memory view, select ranges, interpret typed values and packed logic words, relate indices to the deployed configuration, understand live-read limits and prepare useful observations.</p><ol><li><a href="29-plc-memory.html#purpose">29.1 Understand what a memory view can tell you</a></li>
+<li><a href="29-plc-memory.html#range">29.2 Select the requested range without changing memory</a></li>
+<li><a href="29-plc-memory.html#types">29.3 Interpret INTEGER, REAL and packed LOGIC values</a></li>
+<li><a href="29-plc-memory.html#names">29.4 Relate a raw index to a named variable and the correct version</a></li>
+<li><a href="29-plc-memory.html#live">29.5 Understand live updates, unavailable values and timing limits</a></li>
+<li><a href="29-plc-memory.html#report">29.6 Collect a reliable observation and report unexpected values</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables and an explained memory-window screenshot placeholder.</p><p class="file-plan"><a href="29-plc-memory.html">Open Chapter 29</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-30"><div class="chapter-heading"><span class="plan-number">30</span><h4>Input and Output Monitor</h4></div><p>Navigate the read-only module panels, identify channels and mapping names, distinguish commands from feedback, interpret numeric and inverter readings, recognize availability and simulation limits, and collect useful support evidence.</p><ol><li><a href="30-io-monitor.html#open">30.1 Open the dedicated monitor and navigate the module panels</a></li>
+<li><a href="30-io-monitor.html#channels">30.2 Match the module, channel and signal name</a></li>
+<li><a href="30-io-monitor.html#digital">30.3 Read digital indications without confusing a command with feedback</a></li>
+<li><a href="30-io-monitor.html#values">30.4 Interpret analog, encoder and inverter readings</a></li>
+<li><a href="30-io-monitor.html#availability">30.5 Recognize connection, simulation and refresh limitations</a></li>
+<li><a href="30-io-monitor.html#report">30.6 Observe a signal and prepare a useful support report</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables, a command-and-feedback diagram and an explained monitor screenshot placeholder.</p><p class="file-plan"><a href="30-io-monitor.html">Open Chapter 30</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-31"><div class="chapter-heading"><span class="plan-number">31</span><h4>Graphs, Scope and Communication Diagnostics</h4></div><p>Choose the correct diagnostic window, read actual and target velocity, use graph controls, interpret timing and EtherCAT health, recognize the general scope limitations and collect reliable support evidence.</p><ol><li><a href="31-diagnostic-graphs.html#choose">31.1 Choose and open the appropriate diagnostic window</a></li>
+<li><a href="31-diagnostic-graphs.html#velocity">31.2 Read the dedicated axis-velocity graph</a></li>
+<li><a href="31-diagnostic-graphs.html#controls">31.3 Use Pause, Resume and Clear in the dedicated graphs</a></li>
+<li><a href="31-diagnostic-graphs.html#timing">31.4 Understand cycle timing and the deadline statistics</a></li>
+<li><a href="31-diagnostic-graphs.html#communication">31.5 Read EtherCAT health without misinterpreting the counters</a></li>
+<li><a href="31-diagnostic-graphs.html#scope">31.6 Use the general diagnostic scope and recognize its differences</a></li>
+<li><a href="31-diagnostic-graphs.html#evidence">31.7 Capture useful evidence and respond to unclear graphs</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Seven reference tables and three explained screenshot placeholders, one for each diagnostic window.</p><p class="file-plan"><a href="31-diagnostic-graphs.html">Open Chapter 31</a> <span>· Expanded operator edition ready for review</span></p></article>
+<article class="chapter-plan" id="chapter-32"><div class="chapter-heading"><span class="plan-number">32</span><h4>Messages, Reports and Troubleshooting</h4></div><p>Interpret messages and response buttons, preserve details, find session-report events, distinguish requests from outcomes, use the symptom guide and prepare a clear service handover.</p><ol><li><a href="32-troubleshooting.html#messages">32.1 Understand the message before choosing a response</a></li>
+<li><a href="32-troubleshooting.html#details">32.2 Expand and preserve message details</a></li>
+<li><a href="32-troubleshooting.html#report">32.3 Open the current session report and find the relevant event</a></li>
+<li><a href="32-troubleshooting.html#sequence">32.4 Read the operation sequence without assuming success</a></li>
+<li><a href="32-troubleshooting.html#troubleshoot">32.5 Use a symptom guide without bypassing the cause</a></li>
+<li><a href="32-troubleshooting.html#support">32.6 Prepare a service handover and verify an authorized recovery</a></li></ol><p class="visual-plan"><strong>Figures and tables:</strong> Six reference tables, including a symptom guide and service handover template, and two explained screenshot placeholders.</p><p class="file-plan"><a href="32-troubleshooting.html">Open Chapter 32</a> <span>· Expanded operator edition ready for review</span></p></article>
+<h3 class="part-divider">Part 6 · Daily reference and appendices</h3><article class="chapter-plan" id="chapter-33"><div class="chapter-heading"><span class="plan-number">33</span><h4>Daily Operating Checklists</h4></div><ul><li>Start of shift and first-workpiece preparation</li><li>End of shift and information for the next operator</li></ul><p class="visual-plan"><strong>Figures and tables:</strong> Printable checklists.</p><p class="file-plan">Planned file: <code>33-daily-checklists.html</code> <span>· Not yet written</span></p></article>
+<article class="chapter-plan" id="chapter-a"><div class="chapter-heading"><span class="plan-number">A</span><h4>G-code and M-code Reference</h4></div><ul><li>Supported motion, units, coordinate and auxiliary commands</li><li>Tool compensation behavior and compatibility-only commands</li><li>Unsupported or ignored commands and file requirements</li></ul><p class="visual-plan"><strong>Figures and tables:</strong> Command tables and short annotated examples.</p><p class="file-plan">Planned file: <code>a-gcode-reference.html</code> <span>· Not yet written</span></p></article>
+<article class="chapter-plan" id="chapter-b"><div class="chapter-heading"><span class="plan-number">B</span><h4>Controls, Indicators and Glossary</h4></div><ul><li>Button and indicator lookup</li><li>Units, abbreviations and operator terminology</li><li>Cross-references to operating procedures</li></ul><p class="visual-plan"><strong>Figures and tables:</strong> Icon legend and glossary tables.</p><p class="file-plan">Planned file: <code>b-glossary.html</code> <span>· Not yet written</span></p></article>
+<article class="chapter-plan" id="chapter-c"><div class="chapter-heading"><span class="plan-number">C</span><h4>Machine Configuration and Support Record</h4></div><ul><li>Machine identification and installed options</li><li>Approved equipment configuration</li><li>Software/manual revision and fault-report worksheet</li></ul><p class="visual-plan"><strong>Figures and tables:</strong> Fill-in machine record and support worksheet.</p><p class="file-plan">Planned file: <code>c-machine-record.html</code> <span>· Not yet written</span></p></article>
+</section>
+<section id="illustrations"><p class="eyebrow">FIGURES AND TABLES</p><h2>Illustration plan</h2>
+<p>Use real screenshots for software controls and simple diagrams for coordinates and motion sequences. Do not use invented interface images as operating instructions. Screenshots must match the documented application version, language and access level.</p>
+<div class="table-scroll"><table><caption>Visual material to prepare while writing each chapter</caption><thead><tr><th scope="col">Material</th><th scope="col">Presentation</th><th scope="col">If not available</th></tr></thead><tbody>
+<tr><td>Application forms</td><td>English-language screenshot with numbered callouts and a matching legend.</td><td>Reserve a figure with the required window, state and capture instructions.</td></tr>
+<tr><td>Motion and coordinate concepts</td><td>Clearly labelled diagrams, showing coordinate frame and movement order.</td><td>Describe the required diagram and labels in the reserved figure.</td></tr>
+<tr><td>Commands and parameters</td><td>Tables with meaning, unit, required access and operational effect.</td><td>Mark unverified fields explicitly for review.</td></tr>
+<tr><td>Machine-specific hardware</td><td>Photograph of the installed device with its functional labels.</td><td>Request the actual machine photograph; do not substitute a generic arrangement.</td></tr>
+</tbody></table></div>
+<figure class="figure-placeholder"><div class="placeholder-label">RESERVED FIGURE · EDITORIAL EXAMPLE</div><h3>Main window overview</h3><p>Capture the complete main window in English with a sample program loaded and the machine stationary in Simulation mode. Include the status indicators, coordinate displays, jog controls, spindle/tool controls, source viewer, 3D preview and status area. Use a non-production sample file and exclude private paths or credentials.</p><p><strong>Suggested asset:</strong> <code>assets/images/04-main-window.png</code></p><figcaption>This reserved figure demonstrates how missing images will be documented. It is not a screenshot of the application.</figcaption></figure>
+</section>
+<section id="editorial-notes"><p class="eyebrow">BEFORE CHAPTER PUBLICATION</p><h2>Items requiring confirmation</h2>
+<p>The final procedures must follow the current application and the installed machine configuration, including its saved PLC sources. Existing developer documentation is supporting material, not a substitute for checking the controls.</p>
+<ul><li>Confirm the visible route for work-origin editing; the current main-window designer hides the direct origin editors and selector.</li>
+
+<li>Verify the available controls and edit permissions in each auxiliary form before describing live operations.</li>
+<li>Document machine-specific equipment only when implemented and enabled on the target installation.</li></ul>
+<p class="back-link"><a href="#contents">Return to contents ↑</a></p></section>
+</div><footer class="page-footer"><span>RADONIX · RouterXYZAC+RTCP Operator Manual</span><span>Draft outline · English</span></footer>
+</main></body></html>

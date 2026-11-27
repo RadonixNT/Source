@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>x64</Platforms>
+    <Platform>x64</Platform>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <RootNamespace>CutterXYZ</RootNamespace>
+    <AssemblyName>CutterXYZ</AssemblyName>
+    <Company>Radonix</Company>
+    <Product>CutterXYZ</Product>
+    <RadonixPackageVersion Condition="'$(RadonixPackageVersion)' == ''">1.0.0</RadonixPackageVersion>
+    <!-- Consume binary libraries by default, including inside the full repository. -->
+    <RadonixUseProjectReferences Condition="'$(RadonixUseProjectReferences)' == ''">false</RadonixUseProjectReferences>
+    <ApplicationIcon>RadCAM.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Retained for later repair; preparation integration is not part of this build. -->
+    <Compile Remove="MainForm.PcReadiness.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="MainForm.*.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition="'$(RadonixUseProjectReferences)' != 'true'">
+  </ItemGroup>
+  <ItemGroup>
+    <!-- This package's build assets copy Scintilla/Lexilla native DLLs only for direct consumers. -->
+  </ItemGroup>
+  <ItemGroup Condition="'$(RadonixUseProjectReferences)' == 'true'">
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="CutterXYZ.Simulation.Tests" />
+    <EmbeddedResource Include="PLCPrograms\*.plc">
+      <LogicalName>CutterXYZ.PLC.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\Catalogs\*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="RadCAM.ico" />
+  </ItemGroup>
+  <Import Project="RuntimeDeployment.targets" />
+  <Import Project="..\DeliveryReferences.props" />
+  <ItemGroup>
+    <PackageReference Include="ACadSharp" Version="3.7.1" />
+    <PackageReference Include="OpenTK" Version="4.9.4" />
+    <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
+    <PackageReference Include="Scintilla.NET.WinForms" Version="1.0.11.5320" />
+  </ItemGroup>
+</Project>

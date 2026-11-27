@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Radonix MM EtherCAT Slave Information. Firmware, ESI, and the
+     programmed LAN9252 SII EEPROM must use the same identity and layout. -->
+<EtherCATInfo>
+  <Vendor>
+    <Id>#x009C4400</Id>
+    <Name LcId="1033">RadonixNT</Name>
+  </Vendor>
+  <Descriptions>
+    <Groups>
+      <Group>
+        <Type>RadonixMicroMM</Type>
+        <Name LcId="1033">Radonix Micro Modules</Name>
+      </Group>
+    </Groups>
+    <Devices>
+      <Device Physics="YY">
+        <Type ProductCode="#x00000001" RevisionNo="#x00000001">MM</Type>
+        <Name LcId="1033">Radonix MM</Name>
+        <GroupType>RadonixMicroMM</GroupType>
+        <Profile>
+          <ProfileNo>5001</ProfileNo>
+          <AddInfo>0</AddInfo>
+          <Dictionary>
+            <DataTypes>
+              <DataType><Name>BYTE</Name><BitSize>8</BitSize></DataType>
+              <DataType><Name>USINT</Name><BitSize>8</BitSize></DataType>
+              <DataType>
+                <Name>ARRAY [0..15] OF BYTE</Name>
+                <BaseType>BYTE</BaseType>
+                <BitSize>128</BitSize>
+                <ArrayInfo><LBound>0</LBound><Elements>16</Elements></ArrayInfo>
+              </DataType>
+              <DataType>
+                <Name>ARRAY [0..23] OF BYTE</Name>
+                <BaseType>BYTE</BaseType>
+                <BitSize>192</BitSize>
+                <ArrayInfo><LBound>0</LBound><Elements>24</Elements></ArrayInfo>
+              </DataType>
+              <DataType>
+                <Name>ARRAY [0..4] OF BYTE</Name>
+                <BaseType>BYTE</BaseType>
+                <BitSize>40</BitSize>
+                <ArrayInfo><LBound>0</LBound><Elements>5</Elements></ArrayInfo>
+              </DataType>
+              <DataType>
+                <Name>ARRAY [0..159] OF BYTE</Name>
+                <BaseType>BYTE</BaseType>
+                <BitSize>1280</BitSize>
+                <ArrayInfo><LBound>0</LBound><Elements>160</Elements></ArrayInfo>
+              </DataType>
+              <DataType>
+                <Name>DT6000</Name>
+                <BitSize>272</BitSize>
+                <SubItem>
+                  <SubIdx>0</SubIdx><Name>Max SubIndex</Name><Type>USINT</Type>
+                  <BitSize>8</BitSize><BitOffs>0</BitOffs>
+                  <Flags><Access>ro</Access></Flags>
+                </SubItem>
+                <SubItem>
+                  <SubIdx>1</SubIdx><Name>Device Inputs 0..15</Name><Type>ARRAY [0..15] OF BYTE</Type>
+                  <BitSize>128</BitSize><BitOffs>16</BitOffs>
+                  <Flags><Access>ro</Access></Flags>
+                </SubItem>
+                <SubItem>
+                  <SubIdx>2</SubIdx><Name>Device Inputs 16..31</Name><Type>ARRAY [0..15] OF BYTE</Type>
+                  <BitSize>128</BitSize><BitOffs>144</BitOffs>
+                  <Flags><Access>ro</Access></Flags>
+                </SubItem>
+              </DataType>
+              <DataType>
+                <Name>DT7000</Name>
+                <BitSize>208</BitSize>
+                <SubItem>
+                  <SubIdx>0</SubIdx><Name>Max SubIndex</Name><Type>USINT</Type>
+                  <BitSize>8</BitSize><BitOffs>0</BitOffs>
+                  <Flags><Access>ro</Access></Flags>
+                </SubItem>
+                <SubItem>
+                  <SubIdx>1</SubIdx><Name>Master Outputs 0..23</Name><Type>ARRAY [0..23] OF BYTE</Type>
+                  <BitSize>192</BitSize><BitOffs>16</BitOffs>
+                  <Flags><Access>ro</Access></Flags>
+                </SubItem>
+              </DataType>
+            </DataTypes>
+            <Objects>
+              <Object>
+                <Index>#x6000</Index><Name>Device Inputs</Name><Type>DT6000</Type><BitSize>272</BitSize>
+                <Info>
+                  <SubItem><Name>Max SubIndex</Name><Info><DefaultValue>2</DefaultValue></Info></SubItem>
+                  <SubItem><Name>Device Inputs 0..15</Name><Info/></SubItem>
+                  <SubItem><Name>Device Inputs 16..31</Name><Info/></SubItem>
+                </Info>
+                <Flags><Access>ro</Access></Flags>
+              </Object>
+              <Object>
+                <Index>#x7000</Index><Name>Master Outputs</Name><Type>DT7000</Type><BitSize>208</BitSize>
+                <Info>
+                  <SubItem><Name>Max SubIndex</Name><Info><DefaultValue>1</DefaultValue></Info></SubItem>
+                  <SubItem><Name>Master Outputs 0..23</Name><Info/></SubItem>
+                </Info>
+                <Flags><Access>ro</Access></Flags>
+              </Object>
+              <Object>
+                <Index>#x8000</Index><Name>Module Configuration</Name><Type>ARRAY [0..159] OF BYTE</Type><BitSize>1280</BitSize>
+                <Flags><Access>wo</Access></Flags>
+              </Object>
+              <Object>
+                <Index>#x8001</Index><Name>Module Service</Name><Type>ARRAY [0..4] OF BYTE</Type><BitSize>40</BitSize>
+                <Flags><Access>wo</Access></Flags>
+              </Object>
+            </Objects>
+          </Dictionary>
+        </Profile>
+        <Fmmu>Outputs</Fmmu>
+        <Fmmu>Inputs</Fmmu>
+        <Fmmu>MBoxState</Fmmu>
+        <Sm MinSize="#x24" MaxSize="#x40" ControlByte="#x26" DefaultSize="64" Enable="1" StartAddress="#x1000">MBoxOut</Sm>
+        <Sm MinSize="#x24" MaxSize="#x40" ControlByte="#x22" DefaultSize="64" Enable="1" StartAddress="#x1040">MBoxIn</Sm>
+        <Sm ControlByte="#x64" DefaultSize="24" Enable="1" StartAddress="#x1100">Outputs</Sm>
+        <Sm ControlByte="#x20" DefaultSize="32" Enable="1" StartAddress="#x1180">Inputs</Sm>
+        <RxPdo Fixed="true" Mandatory="true" Sm="2">
+          <Index>#x1600</Index><Name>Master Outputs</Name>
+          <Entry>
+            <Index>#x7000</Index><SubIndex>1</SubIndex><BitLen>192</BitLen>
+            <Name>Master Outputs 0..23</Name><DataType>ARRAY [0..23] OF BYTE</DataType>
+          </Entry>
+        </RxPdo>
+        <TxPdo Fixed="true" Mandatory="true" Sm="3">
+          <Index>#x1A00</Index><Name>Device Inputs</Name>
+          <Entry>
+            <Index>#x6000</Index><SubIndex>1</SubIndex><BitLen>128</BitLen>
+            <Name>Device Inputs 0..15</Name><DataType>ARRAY [0..15] OF BYTE</DataType>
+          </Entry>
+          <Entry>
+            <Index>#x6000</Index><SubIndex>2</SubIndex><BitLen>128</BitLen>
+            <Name>Device Inputs 16..31</Name><DataType>ARRAY [0..15] OF BYTE</DataType>
+          </Entry>
+        </TxPdo>
+        <Mailbox DataLinkLayer="true">
+          <CoE CompleteAccess="false" PdoAssign="false" PdoConfig="false"
+               SdoInfo="true" SegmentedSdo="true"/>
+        </Mailbox>
+        <Eeprom>
+          <ByteSize>2048</ByteSize>
+          <ConfigData>80020000000000000000</ConfigData>
+        </Eeprom>
+      </Device>
+    </Devices>
+  </Descriptions>
+</EtherCATInfo>

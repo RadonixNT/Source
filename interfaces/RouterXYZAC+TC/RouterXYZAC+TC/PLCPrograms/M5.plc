@@ -1,0 +1,12 @@
+// Clear commands and wait for the minimum stop delay plus Background's S3 qualification.
+// Direction/run outputs change; the speed setpoint remains owned by S/manual edits.
+// Result 0: qualified stop; 3: feedback timeout, with TP0 Stop requested.
+TIMER StopTime;
+SpindleCW := FALSE;
+SpindleCCW := FALSE;
+StopTime(TYPE := TON, IN := TRUE, PT := SpindleOffTime);
+IF StopTime.Q AND SpindleStopped THEN END_FUNCTION(Result := 0); END_IF;
+IF SF.Time >= SpindleOffTime + 1000 + SpindleFeedbackTimeout THEN
+    TOOLPATH_STOP(TOOLPATH := 0);
+    END_FUNCTION(Result := 3);
+END_IF;

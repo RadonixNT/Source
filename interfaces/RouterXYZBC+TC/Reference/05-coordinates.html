@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 5 — Coordinates, Units and Position Displays | RouterXYZBC+TC</title>
+<meta name="description" content="A beginner-friendly operator guide to axes, machine and work coordinates, work origins, tool compensation, units and interpreting position changes.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#meaning">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZBC+TC · CHAPTER 5</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Coordinates, Units and Position Displays</h1>
+<p class="lead">Learn what a position number means, why the same location can have different coordinates, and how work references and tool length affect the numbers you read.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> All numerical examples are for explanation. They are not movement instructions or approved settings for the installed machine.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-05">Manual contents</a> · <a href="04-main-window.html">Previous chapter: Main window</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZBC update — 10 November 2026.</strong> XYZ positions are millimeters; B/C positions are direct degrees. The top V readout measures linear XYZ speed only. See the <a href="XYZBC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#meaning">Give every position number a meaning</a></li>
+<li><a href="#axes">Understand axes, positive directions and negative positions</a></li>
+<li><a href="#machine-frame">Understand machine coordinates and what homing establishes</a></li>
+<li><a href="#work-origin">Locate the job with a work origin</a></li>
+<li><a href="#readout-relationship">Relate the two position panels and the applied corrections</a></li>
+<li><a href="#multiple-origins">Recognize G54–G59 and references selected by the job</a></li>
+<li><a href="#position-distance">Keep a destination separate from a distance to move</a></li>
+<li><a href="#tool-length">Understand why tool length changes the coordinate relationship</a></li>
+<li><a href="#length-units">Read millimetres, inches and decimal places carefully</a></li>
+<li><a href="#speed-units">Compare feed, jog speed and spindle speed using the right units</a></li>
+<li><a href="#unexpected-readings">Investigate an unexpected reading before changing a value</a></li>
+<li><a href="#worked-example">Work through an example and check your understanding</a></li>
+</ol></nav>
+<section id="meaning" aria-labelledby="meaning-title"><h2 id="meaning-title">5.1 Give every position number a meaning</h2>
+
+<p>A position number is like an address: it becomes useful only when you know the system it belongs to. “Twenty” is not a complete instruction. Twenty along which direction, measured from where, and in which unit? Those questions are the foundation of reading coordinates correctly.</p>
+<p>A <strong>coordinate</strong> is a number that locates a point along a named direction relative to a reference. A set of coordinates gives a more complete location. For this router, the usual three directions are X, Y and Z. A <strong>coordinate system</strong> is the agreed combination of directions, origin and units used to describe locations.</p>
+<p>You already use references in ordinary life. A distance from a doorway differs from a distance from the opposite wall, even when both describe the same chair. Moving the measuring tape's starting point changes the number without moving the chair. Machine and work coordinates use this same idea.</p>
+<table><caption>Table 5-1. Questions to ask before using a number</caption><thead><tr><th scope="col">Question</th><th scope="col">Example</th><th scope="col">Why it matters</th></tr></thead><tbody>
+<tr><td>Which axis?</td><td>X, Y or Z.</td><td>The same number on another axis describes a different direction.</td></tr>
+<tr><td>Measured from where?</td><td>Machine reference or work origin.</td><td>Different origins give different coordinates for the same point.</td></tr>
+<tr><td>Which unit?</td><td>Millimetres or inches in the job information.</td><td>A matching numeral does not establish a matching physical length.</td></tr>
+<tr><td>What kind of value?</td><td>Current position, destination, reference or distance.</td><td>A destination is not automatically a distance to move.</td></tr>
+<tr><td>Which corrections apply?</td><td>The established tool length and other configured corrections.</td><td>The relationship between the controlled head and the tool tip depends on the tooling.</td></tr>
+</tbody></table>
+<p>The main window places several kinds of numbers close together. Machine position and Work position are readouts. Reference(mm) contains setup values. Position(mm) beside Goto contains a destination. Step(mm) contains a distance. Read the caption before reading the value; do not copy a number between fields merely because they look similar.</p>
+<aside class="learning-example"><h3>A useful way to say a position</h3><p>Instead of saying “X is 100,” say “the Machine position panel shows X at 100 millimetres.” That longer description identifies the axis, reference and unit. It also helps another operator understand which number you actually read.</p></aside>
+<p>This chapter explains these relationships without requiring you to write a machining program. Later chapters describe the procedures for homing and setting a work origin. Read the examples as explanations; do not enter their values into the machine to see what happens.</p>
+
+</section>
+<section id="axes" aria-labelledby="axes-title"><h2 id="axes-title">5.2 Understand axes, positive directions and negative positions</h2>
+
+<p>An <strong>axis</strong> is a controlled direction of movement. The X and Y coordinates normally describe the two directions across the working plane, while Z describes the height direction of this router arrangement. Learn the actual positive directions from the approved diagram and practical instruction for the installed machine.</p>
+<p>A positive direction is the direction in which that coordinate increases. A negative direction is the direction in which it decreases. Positive does not mean “safe,” and negative does not mean “fault.” The plus or minus sign describes direction or location within a coordinate system.</p>
+<table><caption>Table 5-2. Reading a sign without guessing movement direction</caption><thead><tr><th scope="col">Change in coordinate</th><th scope="col">Direction of coordinate change</th><th scope="col">Distance between the values</th></tr></thead><tbody>
+<tr><td>20 mm to 30 mm</td><td>Positive: the number increases.</td><td>10 mm.</td></tr>
+<tr><td>20 mm to 10 mm</td><td>Negative: the number decreases.</td><td>10 mm.</td></tr>
+<tr><td>−20 mm to −10 mm</td><td>Positive: the number becomes less negative.</td><td>10 mm.</td></tr>
+<tr><td>5 mm to −5 mm</td><td>Negative: the coordinate passes through zero.</td><td>10 mm.</td></tr>
+</tbody></table>
+<p>The examples show why the sign of the final position does not, by itself, tell you the direction of the move. To determine the change, compare the starting and ending coordinates in the same system. Moving from −20 to −10 is movement in the positive direction even though both positions are negative.</p>
+<p>The physical meaning of X+ or Y− does not change when you rotate the 3D preview or stand at another side of the machine. Your view changes; the machine's axis definitions do not. Avoid describing directions only as “left” or “toward me” when another person is standing somewhere else.</p>
+<h3>Why the gantry can have another motor without another work coordinate</h3>
+<p>When Y Gantry is enabled, its companion motor is identified as YG; X and Z can similarly have XG and ZG companions. The base profile has no enabled gantry. The operator's job coordinates are X, Y, Z, B and C. YG supports the gantry's physical movement; it is not an extra location you should add to an ordinary XYZ job or adjust independently as a way of correcting a work origin.</p>
+<p>The homing and readiness checks account for this paired hardware. If a fault concerns the gantry or its additional motor, stop at the appropriate operating procedure and obtain assistance. A coordinate correction is not a repair for a mechanical or drive disagreement.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 5-1 · INSTALLED-MACHINE IMAGE REQUIRED</p><h3>Actual positive axis directions</h3><p>Insert a photograph or approved machine drawing with X+, Y+ and Z+ labelled by the machine owner. Show the normal operator position and identify the paired gantry arrangement if visible. Do not infer arrows from a preview camera angle.</p><p>Suggested image: <code>assets/images/05-installed-axis-directions.png</code>.</p><figcaption>This figure must match the installed machine. No universal left/right or up/down direction is prescribed by this placeholder.</figcaption></figure>
+
+</section>
+<section id="machine-frame" aria-labelledby="machine-frame-title"><h2 id="machine-frame-title">5.3 Understand machine coordinates and what homing establishes</h2>
+
+<p><strong>Machine coordinates</strong> provide the machine's reference for describing axis locations. They allow the system to relate a position to configured travel, tool stations, measuring locations and other machine-specific points. This reference must be established correctly before operations that depend on it.</p>
+<p><strong>Homing</strong> is the procedure that establishes the machine reference using its configured search and positioning sequence. It involves real movement. It is not the same as pressing a work-zero button or entering zero into an editable field.</p>
+<p>Successful homing does not necessarily make every displayed machine coordinate zero. In the supplied homing sequence, each axis finishes at its configured home position. That configured value may be different from zero. The Homed indication reports completion of the required referencing condition; it is not a test that every position row contains the numeral 0.</p>
+<aside class="learning-example"><h3>Homed, but the position is not zero</h3><p>The Homed indication is active and a machine-position row shows a nonzero value. This can be consistent with the configured home position. Do not change a reference simply to make the display read zero. Compare the result with the approved homing procedure and expected machine setup.</p></aside>
+<h3>Machine position is a readout, not a request</h3>
+<p>The main-window Machine position panel displays commanded XYZ in millimeters and B/C in degrees. These are the positions used in the application's coordinate presentation. They are not an independent inspection of the physical cutting edge or proof that the material is where the setup sheet says it is.</p>
+<p>A mechanical problem, an incorrect setup or an uncertain reference cannot be resolved just by finding a plausible number on the screen. After an interruption that leaves position uncertain, use the appropriate recovery and referencing procedure. Do not invent an adjustment to make the numbers resemble an earlier photograph.</p>
+<h3>Machine zero, home position and a clear position are different ideas</h3>
+<p>Machine zero is the zero of the machine coordinate system. The configured home position is the position established at completion of homing. A clear position is a location and route that satisfy the physical setup's clearance requirements. These can be related, but they are not interchangeable.</p>
+<p>In this application, Go Home requests positioning to machine-coordinate zero. It does not search for the home sensors or establish a lost reference. Its route still has to suit the installed machine and current setup. Likewise, a destination lying within configured travel does not prove that the cutter, holder or head will avoid every clamp or obstruction.</p>
+<p>Workpiece setup normally uses a separate work origin so the job can be located without redefining the machine's own reference. Keep that distinction: homing establishes the machine reference; work-origin setting relates the job to the material. The next section explains the second part.</p>
+<p>For the actual movement sequence, expected completion and interrupted-homing response, use <a href="index.html#chapter-06">Homing the Machine</a>. This section explains what the resulting coordinates mean, not how to perform an unsupervised first homing operation.</p>
+
+</section>
+<section id="work-origin" aria-labelledby="work-origin-title"><h2 id="work-origin-title">5.4 Locate the job with a work origin</h2>
+
+<p>A <strong>work origin</strong>, often called work zero, is the reference used to locate the job. It may be a corner, centre or other feature specified by the setup instructions. The choice must match the machining file. It is not simply whichever point is easiest to reach.</p>
+<p>Imagine placing a ruler beside a workpiece. The machine already has its own reference, but the part drawing may describe a hole as a distance from the workpiece's edge. The work origin supplies the relationship between those descriptions. It lets the job's coordinates be interpreted at the intended physical location.</p>
+<figure class="concept-figure"><img src="assets/images/05-two-coordinate-readings.svg" width="1000" height="390" alt="A point at machine X 500 millimetres is work X 100 when the work origin is at machine X 400, with no corrections."><figcaption>Figure 5-2. One point described from two origins. The rightward direction is only for this example, not an axis-direction instruction for your machine.</figcaption></figure>
+<p>In the illustrated example, the work origin is at machine X 400 mm. A point at machine X 500 mm is therefore 100 mm from that origin in the positive direction. Both readings are correct. The point has not moved between the two descriptions.</p>
+<table><caption>Table 5-3. Simple one-axis examples with no corrections</caption><thead><tr><th scope="col">Machine coordinate</th><th scope="col">Work-origin location in machine coordinates</th><th scope="col">Work coordinate</th></tr></thead><tbody>
+<tr><td>500 mm</td><td>400 mm</td><td>100 mm.</td></tr>
+<tr><td>400 mm</td><td>400 mm</td><td>0 mm.</td></tr>
+<tr><td>380 mm</td><td>400 mm</td><td>−20 mm.</td></tr>
+<tr><td>500 mm</td><td>450 mm</td><td>50 mm.</td></tr>
+</tbody></table>
+<p>The last row describes the same machine position as the first row but uses another origin. Its work coordinate is different. This is why changing a reference can change the work-position display while the machine-position display remains unchanged.</p>
+<h3>Work zero belongs to the setup</h3>
+<p>For X and Y, the job may use a selected corner or centre. For Z, the job may use the top of the material, a support surface or another approved height reference. Do not assume that the same height convention applies to every file. The program provider's setup information must make the intended reference clear.</p>
+<p>A zero work-position reading means the current coordinate is zero in the applied work system and corrections. It does not prove that the tool is touching a surface, that the workpiece was loaded correctly or that the established reference is valid. Those physical facts must come from the setup procedure.</p>
+<aside class="learning-example"><h3>Moving the material without updating the setup</h3><p>A job is prepared relative to a workpiece corner. The workpiece is then repositioned, but the old origin is retained. The coordinates can remain mathematically consistent while describing the wrong physical place. The reference must be checked against the new setup before another operating command.</p></aside>
+<p>Changing an origin is a setup action, not a way to improve the appearance of the preview. Use the work-origin procedure and record the intended physical reference so another operator can understand the setup.</p>
+
+</section>
+<section id="readout-relationship" aria-labelledby="readout-relationship-title"><h2 id="readout-relationship-title">5.5 Relate the two position panels and the applied corrections</h2>
+
+<p>For a simple job without corrections, subtracting the work-origin location from the machine position gives the work position. The actual application also accounts for the applied tool correction and any additional active position adjustment. This is why subtracting only the visible reference value may not reproduce the displayed result.</p>
+<div class="note"><strong>The relationship used for each displayed axis</strong><p>Work position = Machine position − applied program reference − tool correction − additional applied correction.</p><p>All terms must refer to the same axis and use the same length unit. This is an explanation of the readout, not an instruction to calculate and enter new settings.</p></div>
+<p>“Applied” is important. The display follows the reference and corrections actually being used for the prepared machining path. A reference entry you can see or edit in the interface is not necessarily a complete description of every coordinate instruction in a file. The following section explains jobs that explicitly select references.</p>
+<table><caption>Table 5-4. Reading the relationship in a simplified X example</caption><thead><tr><th scope="col">Example condition</th><th scope="col">Values in millimetres</th><th scope="col">Result</th></tr></thead><tbody>
+<tr><td>No corrections</td><td>Machine 500; reference 400; corrections 0.</td><td>Work position is 100.</td></tr>
+<tr><td>Positive tool correction</td><td>Machine 502; reference 400; tool correction 2; additional correction 0.</td><td>Work position is 100.</td></tr>
+<tr><td>Two applied corrections</td><td>Machine 503; reference 400; tool correction 2; additional correction 1.</td><td>Work position is 100.</td></tr>
+<tr><td>Reference changes while the head stays at 500</td><td>No corrections; reference changes from 400 to 450.</td><td>Work position changes from 100 to 50 without a physical move.</td></tr>
+</tbody></table>
+<p>The correction values in this table are invented only to illustrate addition and subtraction. Do not copy them into the application. Their purpose is to show why two setups can require different machine coordinates to describe the same work coordinate.</p>
+<h3>A coordinate change is not always movement</h3>
+<p>If Machine position remains the same but Work position changes after an accepted setup change, the reference or correction may explain the difference. The preview's origin and job presentation can also change because they use that relationship. First identify the accepted change; do not immediately issue a compensating movement.</p>
+<p>Conversely, a changing Machine position usually indicates that the commanded location is changing, but it is still a software readout rather than a separate physical inspection. The main window uses commanded axis positions, as explained in Chapter 4. This distinction matters if a mechanical problem has made the actual location uncertain.</p>
+<aside class="learning-example"><h3>The numbers do not subtract the way you expected</h3><p>You subtract the visible work-origin value from Machine position and get a different answer from Work position. Before declaring a fault, check whether a tool correction, another applied adjustment or the file's own reference selection is involved. If the relationship remains unclear, request a setup review; do not alter numbers until they happen to match.</p></aside>
+<p>In an ordinary established job, operators should use the approved setup information rather than reconstructing every correction by hand. Understanding the relationship helps you notice inconsistencies and explain them. It does not turn a readout discrepancy into authorization to edit machine configuration.</p>
+
+</section>
+<section id="multiple-origins" aria-labelledby="multiple-origins-title"><h2 id="multiple-origins-title">5.6 Recognize G54–G59 and references selected by the job</h2>
+
+<p>The interface provides six saved work-reference entries named <strong>G54</strong> through <strong>G59</strong>. These names identify different origins; they are not distances, tool numbers or six additional machine axes. You can understand their purpose without learning to write program code.</p>
+<p>Think of two fixtures on the table. Each can have its own documented origin so that a job can be related to the correct fixture. Selecting the correct entry matters even if both fixtures hold the same kind of part. A familiar reference name is not proof that its stored values still match today's physical setup.</p>
+<h3>The selector is not the whole story</h3>
+<p>The interface's selected reference supplies the initial work-reference choice when the application prepares a file. However, the file can explicitly request another reference. A file using one explicit reference can therefore be prepared against that reference independently of the selector's initial choice.</p>
+<p>For example, the interface may initially show G54 while the approved file explicitly uses G55. The operator must check the origin that the file actually requires, not assume the visible initial choice overrides it. If the setup sheet does not make that requirement clear, ask the person responsible for the file before starting.</p>
+<table><caption>Table 5-5. Reference situations a job can contain</caption><thead><tr><th scope="col">Situation</th><th scope="col">What it means for the operator</th><th scope="col">Required understanding</th></tr></thead><tbody>
+<tr><td>Job uses the initial reference</td><td>The interface's initial selection contributes to preparation.</td><td>The selected entry and its values must match the setup.</td></tr>
+<tr><td>Job explicitly uses one named reference</td><td>The file can establish a different origin choice.</td><td>Confirm the reference named by the job, not just the initial selector.</td></tr>
+<tr><td>Job uses several references</td><td>Different portions relate to different work origins.</td><td>Every used origin and associated fixture must be correct.</td></tr>
+<tr><td>Job includes machine-coordinate moves</td><td>Some destinations use the machine frame rather than a work origin.</td><td>A work-origin change does not necessarily shift those destinations with the rest of the part.</td></tr>
+</tbody></table>
+<p>A machine-coordinate instruction may be identified as G53 in the file. In this interpreter it applies to the relevant block rather than permanently changing the following work-reference selection. You do not need to edit that instruction to recognize the practical consequence: not every movement belongs to the same work-origin frame.</p>
+<h3>Why a work readout may not repeat a number in the file</h3>
+<p>The Work position panel uses the reference and corrections applied to the prepared path. A file containing multiple origins or machine-coordinate moves is resolved into a common prepared path. The displayed work coordinate should not be assumed to reproduce the local coordinate written on every individual program line.</p>
+<p>Similarly, after a reference edit, a simple single-origin job may shift as a whole, while a job using several origins or machine coordinates can require the application to prepare its geometry again. Read the resulting message and wait for successful preparation. Do not assume that changing one entry moves every segment by the same amount.</p>
+<aside class="learning-example"><h3>Changing the unused entry</h3><p>A file explicitly uses G55, but an operator changes G54 while trying to correct the setup. The expected shift may not happen because the file does not use that entry for its work movements. Resolve which origin the approved job requires instead of continuing to change values.</p></aside>
+<p>For a new operator, the practical requirement is simple: obtain the job's reference instructions, identify every origin it uses and compare those with the established setup. When the relationship is unclear, stop preparation and request clarification.</p>
+
+</section>
+<section id="position-distance" aria-labelledby="position-distance-title"><h2 id="position-distance-title">5.7 Keep a destination separate from a distance to move</h2>
+
+<p>A <strong>position</strong> answers “where?” A <strong>distance</strong> answers “how far?” They both use length units, but they are not interchangeable. Confusing them can turn a small intended adjustment into a much larger movement.</p>
+<p>The main-window <strong>Position(mm)</strong> field beside Goto is a machine-coordinate destination for the named axis. The <strong>Step(mm)</strong> field is a distance used by a step jog. The plus or minus direction control supplies the direction of that step. The work-position readout is a third kind of information: it reports location in the applied work system.</p>
+<table><caption>Table 5-6. A starting machine X position of 40 mm</caption><thead><tr><th scope="col">Illustrative request</th><th scope="col">Meaning</th><th scope="col">Resulting machine X</th></tr></thead><tbody>
+<tr><td>Positive step of 10 mm</td><td>Add 10 mm in the positive X direction.</td><td>50 mm.</td></tr>
+<tr><td>Negative step of 10 mm</td><td>Travel 10 mm in the negative X direction.</td><td>30 mm.</td></tr>
+<tr><td>Goto destination 10 mm</td><td>Reach machine coordinate X = 10 mm.</td><td>10 mm; the coordinate change is −30 mm.</td></tr>
+<tr><td>Goto destination 40 mm</td><td>Request the current machine X coordinate.</td><td>The same destination coordinate; this is not a 40 mm increment.</td></tr>
+</tbody></table>
+<p>These examples assume an ordinary one-axis interpretation and do not establish whether a move is permitted or physically clear. They explain how a value is interpreted, not which destination you should command.</p>
+<h3>Absolute and incremental descriptions</h3>
+<p>An <strong>absolute</strong> coordinate gives a destination relative to the relevant origin. An <strong>incremental</strong> distance gives a change from the current position. In machining files, the familiar names G90 and G91 identify these modes for ordinary coordinate interpretation. The approved file can establish which mode applies to its instructions.</p>
+<p>Do not transfer that assumption to unrelated interface fields. The Goto controls in this application request absolute machine-coordinate destinations. A file's incremental mode does not turn the Goto field into a distance field, nor does the visible Work position panel make Goto use work coordinates.</p>
+<aside class="learning-example"><h3>The work readout says 10</h3><p>You want to move toward the work origin and see work X = 10 mm. Entering 0 in Goto X requests machine X zero, not automatically work X zero. The two zero locations may be far apart. Identify the correct operation and coordinate system before moving.</p></aside>
+<p>Changing a work reference is different again. It changes how a location is described; it is not an incremental movement. Pressing Set X0 establishes the current position as work zero for the selected reference under the applicable corrections. It does not command travel to machine zero.</p>
+<p>Before accepting any position-related action, say its meaning in plain language: “move one step in positive X,” “go to this machine X coordinate,” or “establish this work reference.” If you cannot say which of these you intend, stop and resolve the distinction first.</p>
+
+</section>
+<section id="tool-length" aria-labelledby="tool-length-title"><h2 id="tool-length-title">5.8 Understand why tool length changes the coordinate relationship</h2>
+
+<p>The machine controls the position of its moving assembly, while cutting happens at the tool's cutting edge. Different tools can project different distances from the spindle. To place their tips at the same intended work height, the machine must account for those differences.</p>
+<p><strong>Tool-length compensation</strong> is the positional allowance that connects the controlled assembly to the installed tool's effective length. It is not a change to the shape of the part, and it is not a replacement for locating the workpiece.</p>
+<figure class="concept-figure"><img src="assets/images/05-tool-tip-and-head.svg" width="1000" height="430" alt="Shorter and longer tool assemblies with tips at the same example level but different holder heights, illustrating the need for tool-length compensation."><figcaption>Figure 5-3. Tool projection affects the head position needed for a tip location. The drawing is conceptual and does not prescribe probing motion or clearance.</figcaption></figure>
+<h3>What the application keeps separate</h3>
+<p>The reviewed application stores a measured length for each tool relative to the established empty-spindle reference. It also has configured X, Y and Z correction values. For an installed tool, its applied Z tool correction includes the measured length plus the configured Z correction. The X and Y corrections come from their configured values.</p>
+<table><caption>Table 5-7. Tool information and work setup have different purposes</caption><thead><tr><th scope="col">Item</th><th scope="col">Purpose</th><th scope="col">Do not confuse it with</th></tr></thead><tbody>
+<tr><td>Empty-spindle reference measurement</td><td>Establish the measurement baseline used for tool lengths.</td><td>The top surface of today's workpiece.</td></tr>
+<tr><td>Measured tool length</td><td>Describe the tool's effective length relative to that baseline.</td><td>Only the length of its cutting flutes or a catalogue dimension.</td></tr>
+<tr><td>Configured tool correction</td><td>Provide the established additional positional correction for the tool.</td><td>An operator's arbitrary adjustment to hide a setup error.</td></tr>
+<tr><td>Work origin</td><td>Locate the job relative to its material or fixture.</td><td>A substitute for correct tool-length information.</td></tr>
+</tbody></table>
+<p>When no tool is recorded in the spindle, the application's tool correction is zero. That state has a defined meaning in the tool-handling sequence. It does not establish that an unrecorded physical tool is absent. The displayed tool state and actual tooling must agree through the required checks.</p>
+<aside class="learning-example"><h3>Replacing a cutter in the same holder</h3><p>The tool number may stay the same while the cutter projects farther from the holder than before. The old length can then be inappropriate even though the number looks familiar. Follow the measurement and setup procedure rather than assuming the unchanged number guarantees unchanged geometry.</p></aside>
+<p>Applying a correction changes the relationship used for the work-position display and program placement. The physical movements involved in exchanging or measuring a tool are separate operations. Do not treat a changed work Z reading as proof that an exchange or measurement has completed successfully.</p>
+<p>If a depth is wrong, do not immediately add the same amount to a work origin or tool correction. First establish the intended height reference, actual tool, valid measurement and job requirements. A change in one value can affect other parts of the job. Use the detailed tool-measurement and work-origin procedures, and seek assistance when the cause is uncertain.</p>
+
+</section>
+<section id="length-units" aria-labelledby="length-units-title"><h2 id="length-units-title">5.9 Read millimetres, inches and decimal places carefully</h2>
+
+<p>A length value is incomplete without its unit. One inch and one millimetre are different physical lengths even though both can be written with the numeral 1. Before transferring a dimension from a drawing, setup sheet or program into a field, check the unit on both sides.</p>
+<p>The reviewed main-window Machine position, Work position, Step and Position fields use millimetres. A machining file can specify its own supported length-unit mode, commonly identified by G20 for inches or G21 for millimetres. The application interprets that file information and converts its linear values for the machine. An inch-based file does not turn the main-window millimetre fields into inch-entry fields.</p>
+<table><caption>Table 5-8. Length examples for unit recognition</caption><thead><tr><th scope="col">Written value</th><th scope="col">Equivalent length</th><th scope="col">Reading point</th></tr></thead><tbody>
+<tr><td>1 inch</td><td>25.4 mm.</td><td>Entering 1 in a millimetre field is not entering one inch.</td></tr>
+<tr><td>0.1 inch</td><td>2.54 mm.</td><td>The decimal point does not remove the need to check the unit.</td></tr>
+<tr><td>1.000 mm</td><td>1 mm.</td><td>Trailing decimal zeros do not multiply the length.</td></tr>
+<tr><td>0.100 mm</td><td>One tenth of a millimetre.</td><td>Ten times 0.010 mm.</td></tr>
+<tr><td>0.010 mm</td><td>One hundredth of a millimetre.</td><td>Ten times 0.001 mm.</td></tr>
+</tbody></table>
+<h3>Display precision is not machining accuracy</h3>
+<p>The position readouts use three decimal places. This makes small differences readable, but it does not guarantee that the installed machine, tool, workholding and measurement process achieve that accuracy. A displayed increment and a verified machining tolerance are different things.</p>
+<p>Some editable fields suppress unnecessary trailing zeros, and some stored values may have more detail than the main display shows. A value displayed as 1, 1.0 or 1.000 can represent the same quantity. Do not rewrite a valid field solely to make its formatting resemble another panel.</p>
+<p>Likewise, a very small value can round to a displayed zero. Readouts are presentations of values, not an unlimited-precision measuring instrument. If a tolerance or setup decision depends on finer information, follow the required measurement and verification procedure rather than inferring it from the number of digits on the screen.</p>
+<aside class="learning-example"><h3>A missed decimal point</h3><p>A setup instruction specifies 0.5 mm, but an entry is read as 5 mm. That is a tenfold difference. Before accepting a numerical edit, reread the whole value, including its sign, decimal point and unit.</p></aside>
+<p>Use the number format accepted by the actual field and application language. Do not assume that a decimal comma, decimal point or thousands separator will be interpreted identically in every text box. After accepting an authorized edit, reread the accepted value. If the field reports an error or restores its earlier value, resolve that result instead of assuming your new entry was stored.</p>
+<p>Unit conversions in this chapter are mathematical examples only. They do not establish a suitable step distance, tool correction or cutting allowance. Obtain operational values from the approved job and machine procedures.</p>
+
+</section>
+<section id="speed-units" aria-labelledby="speed-units-title"><h2 id="speed-units-title">5.10 Compare feed, jog speed and spindle speed using the right units</h2>
+
+<p>Position describes where the machine is; speed describes how fast a movement is requested or occurring. Even among speed values, the unit matters. Millimetres per second and millimetres per minute describe linear travel. Revolutions per minute describe rotation.</p>
+<p>The manual jog velocity fields are labelled <strong>V(mm/s)</strong>. The program's ordinary G94 feed value describes distance per minute in the program's selected length unit. A numeric value taken from a machining file therefore must not be copied directly into a jog-velocity field without understanding the difference.</p>
+<table><caption>Table 5-9. Speed quantities and conversions</caption><thead><tr><th scope="col">Quantity or example</th><th scope="col">Meaning</th><th scope="col">Equivalent or distinction</th></tr></thead><tbody>
+<tr><td>600 mm/min</td><td>600 millimetres per minute.</td><td>10 mm/s.</td></tr>
+<tr><td>60 mm/s</td><td>60 millimetres per second.</td><td>3,600 mm/min.</td></tr>
+<tr><td>60 inches/min</td><td>60 inches per minute.</td><td>25.4 mm/s.</td></tr>
+<tr><td>G94 feed in a millimetre program</td><td>The F value is interpreted as millimetres per minute.</td><td>It is not the same unit as the jog V field.</td></tr>
+<tr><td>Spindle RPM</td><td>Revolutions per minute.</td><td>Rotation, not millimetres of travel per minute.</td></tr>
+</tbody></table>
+<p>There are 60 seconds in a minute. To convert millimetres per minute to millimetres per second, divide by 60. To go the other way, multiply by 60. This arithmetic explains the units; it does not select an appropriate machining speed.</p>
+<aside class="learning-example"><h3>The numeral 600 in two places</h3><p>In a millimetre G94 program, an F value of 600 means 600 mm/min, equivalent to 10 mm/s. A jog entry of 600 mm/s would be sixty times that linear speed. Matching numerals are not matching requests when the units differ.</p></aside>
+<h3>Percentages scale a value; they are not length or speed units</h3>
+<p>The program-feed override scales the main program's feed. The jog percentage scales the velocity used for a new manual jog request. These are separate controls. Fifty percent of an illustrative 10 mm/s request is 5 mm/s, but that simple calculation does not mean the whole job will finish in exactly twice the time: acceleration, other operations and waits also matter.</p>
+<p>The default program override spans 0–120%, and the default jog range is 5–100%. Zero program feed can hold movement without cancelling the operation; raising it can allow the retained movement to resume without another Run. Use the stopping procedures rather than treating a percentage as a safe-access control.</p>
+<h3>Requested speed and displayed movement speed are different</h3>
+<p>The top-strip V display estimates combined commanded X/Y/Z speed from position changes over time. It need not equal one axis's jog setting during acceleration or combined movement. The spindle-speed control shows requested RPM, not a direct measurement of shaft rotation. Neither should be used as an independent confirmation of physical standstill.</p>
+<p>Before transferring a speed value, identify its source, unit, operating mode and purpose. If those are unclear, ask for the approved value in the required unit rather than guessing a conversion or a cutting parameter.</p>
+
+</section>
+<section id="unexpected-readings" aria-labelledby="unexpected-readings-title"><h2 id="unexpected-readings-title">5.11 Investigate an unexpected reading before changing a value</h2>
+
+<p>When a position number surprises you, start by describing what changed. Was it Machine position, Work position, a reference value, a destination field or only the view of the preview? Those are different observations and lead to different questions.</p>
+<p>Then identify the immediately preceding action. A reference selection, a zero-setting command, completed tool measurement, file reload or homing operation can change the coordinate presentation for a reason. Do not make a second change before understanding the first one.</p>
+<table><caption>Table 5-10. Questions that help explain coordinate changes</caption><thead><tr><th scope="col">Observation</th><th scope="col">Possible explanation to check</th><th scope="col">What not to assume</th></tr></thead><tbody>
+<tr><td>Work position changes while Machine position stays the same</td><td>A reference or applied correction changed.</td><td>The head necessarily moved.</td></tr>
+<tr><td>Different values appear after selecting another reference</td><td>You are reading another saved origin entry.</td><td>The previous entry was erased.</td></tr>
+<tr><td>Homing completes at nonzero coordinates</td><td>The configured final home positions are nonzero.</td><td>Homing failed simply because the readout is not zero.</td></tr>
+<tr><td>The preview appears displaced after a setup edit</td><td>The applied reference/correction or prepared job placement changed.</td><td>The file's part dimensions changed by the same amount.</td></tr>
+<tr><td>A work readout differs from a program-line coordinate</td><td>The line's reference, units, coordinate mode or the prepared path's frame may differ.</td><td>Either number is automatically wrong.</td></tr>
+<tr><td>A value appears unchanged after a very small edit</td><td>The visible number may be rounded, or the edit may have been rejected.</td><td>The edit definitely succeeded or definitely had no effect.</td></tr>
+</tbody></table>
+<p>The table gives questions to investigate, not diagnoses to accept without evidence. Read any message, inspect the correct entry and follow the relevant procedure. If the application says preparation or reloading is required after a change, do not run the previous preview as though nothing changed.</p>
+<h3>Record a complete observation</h3>
+<p>A useful report identifies the panel, axis, value, unit, selected reference, current tool and last action. For example: “After selecting the documented second reference, Machine X stayed the same but Work X changed.” That is more informative than “the coordinates jumped.”</p>
+<p>If a screenshot is appropriate, include the labels and units around the number. A crop containing only “100.000” removes the information needed to interpret it. Also note whether the application was in Simulation or Normal mode and whether the machine was connected.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 5-4 · APPLICATION EXAMPLE REQUIRED</p><h3>A labelled comparison of coordinate readouts</h3><p>Capture a stationary Simulation example showing both position panels, the selected reference and its values, and the current tool. If using before/after images, label the exact authorized reference change and keep the machine-position values visible in both.</p><p>Suggested image: <code>assets/images/05-coordinate-readout-comparison.png</code>. Add captions identifying units, corrections used in the example and what remained physically unchanged.</p><figcaption>Do not create an unexplained offset on a real machine for this illustration. A controlled simulated example is sufficient.</figcaption></figure>
+<p>If the physical position, tool state or setup is uncertain, leave the job stopped and obtain the required assistance. Do not resolve uncertainty by changing offsets until the displayed numbers look familiar. An apparently convenient correction can conceal the original cause and affect later tools or another work origin.</p>
+
+</section>
+<section id="worked-example" aria-labelledby="worked-example-title"><h2 id="worked-example-title">5.12 Work through an example and check your understanding</h2>
+
+<p>The following example combines the ideas in this chapter. It describes an imaginary established setup, with all values in millimetres. It is not a probing method, movement plan or set of values to enter into the application.</p>
+<p>Assume that the applied program reference is X 400, Y 200 and Z 100. Assume an established tool correction of zero in X and Y and 50 in Z, with no additional corrections. The displayed machine position is X 500, Y 250 and Z 155.</p>
+<table><caption>Table 5-11. One illustrative three-axis readout</caption><thead><tr><th scope="col">Axis</th><th scope="col">Machine position</th><th scope="col">Applied reference</th><th scope="col">Tool correction</th><th scope="col">Work position</th></tr></thead><tbody>
+<tr><td>X</td><td>500 mm</td><td>400 mm</td><td>0 mm</td><td>100 mm.</td></tr>
+<tr><td>Y</td><td>250 mm</td><td>200 mm</td><td>0 mm</td><td>50 mm.</td></tr>
+<tr><td>Z</td><td>155 mm</td><td>100 mm</td><td>50 mm</td><td>5 mm.</td></tr>
+</tbody></table>
+<p>The Z calculation is 155 − 100 − 50 = 5. Subtracting only the reference would have given 55, which would miss the tool correction. This arithmetic explains the coordinate display; it does not prove physical clearance or that the example's work surface is correctly established.</p>
+<h3>Now change only the reference used in the example</h3>
+<p>Keep the imaginary machine X at 500 but change the applied X reference from 400 to 420, with no X corrections. The work X reading becomes 80. The head has not moved in this example. The change is in the point from which the work coordinate is described.</p>
+<p>If instead you request a destination of machine X 420 from machine X 500, that is a movement request toward a coordinate. It is different from changing the reference to 420. The same numeral can have different consequences depending on the field and command.</p>
+<h3>Questions to discuss before practical setup</h3>
+<ol class="journey">
+<li><strong>Machine X is 300 and the applied X reference is 250, with no corrections. What is work X?</strong><p>50 mm. Both values describe the same location from different references.</p></li>
+<li><strong>The coordinate changes from −15 to −5. Is the change positive or negative?</strong><p>Positive, by 10 units of the stated length unit. The final coordinate is still negative.</p></li>
+<li><strong>Does work Z zero prove that the cutter is touching the workpiece?</strong><p>No. It depends on the established origin and corrections; physical contact is not established by the numeral alone.</p></li>
+<li><strong>The file explicitly uses G55, but the initial selector showed G54. Which setup must you verify?</strong><p>The origin actually required by the approved file, including G55. Do not assume the initial selector overrides the file.</p></li>
+<li><strong>A cutter is replaced without changing its tool number. Can its old length always be reused?</strong><p>No. The assembly's effective length may have changed and must be handled through the required measurement/setup procedure.</p></li>
+<li><strong>Does 600 mm/min equal 600 mm/s?</strong><p>No. It equals 10 mm/s.</p></li>
+<li><strong>Does a three-decimal-place readout certify three-decimal-place machining accuracy?</strong><p>No. Display precision and verified physical accuracy are different.</p></li>
+</ol>
+<p>Before any coordinate-related edit, identify the axis, unit, frame and purpose of the value. Afterward, check the accepted result and any required preparation message. This habit is more valuable than memorizing example numbers.</p>
+<p>The next chapter, <a href="index.html#chapter-06">Homing the Machine</a>, explains how the machine reference is established in operation. The later <a href="index.html#chapter-08">Work Origins and Zero Setting</a> chapter applies the work-reference concepts to the operator's setup procedure.</p>
+<aside class="source-note"><p><strong>Scope of this chapter.</strong> Coordinate readouts, reference handling, tool compensation, manual destinations and unit interpretation were checked against the RouterXYZBC+TC application and its machining-file interpreter on 8 October 2026. The numerical examples and two diagrams are explanatory. The installed-machine direction image and application comparison screenshot remain to be supplied.</p></aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZBC+TC · Operator Manual · Chapter 5</span><a href="index.html#chapter-05">Return to the contents</a></footer></main></body></html>

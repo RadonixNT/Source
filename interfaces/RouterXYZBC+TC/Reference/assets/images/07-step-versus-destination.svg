@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="t d">
+<title id="t">Step distance and Goto destination</title><desc id="d">From machine X 40, a positive 10 millimetre step ends at X 50, but Goto X with Position 10 requests X 10, a negative 30 millimetre change.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#316f7c"/></marker></defs>
+<rect width="1000" height="420" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#173e4b">
+<text x="500" y="40" text-anchor="middle" font-size="25" font-weight="700">The same numeral does not mean the same movement</text>
+<text x="50" y="95" font-size="20" font-weight="700">Step = 10 mm, then X+</text>
+<path d="M160 157H900" stroke="#9cafb6" stroke-width="2"/><path d="M665 141H835" stroke="#316f7c" stroke-width="4" marker-end="url(#a)"/>
+<circle cx="660" cy="157" r="7" fill="#173e4b"/><circle cx="840" cy="157" r="7" fill="#ad7320"/>
+<text x="630" y="188" font-size="19">X 40</text><text x="812" y="188" font-size="19">X 50</text><text x="725" y="126" font-size="19">+10 mm</text>
+<text x="50" y="246" font-size="20" font-weight="700">Position = 10 mm, then Goto X</text>
+<path d="M160 308H900" stroke="#9cafb6" stroke-width="2"/><path d="M655 292H245" stroke="#316f7c" stroke-width="4" marker-end="url(#a)"/>
+<circle cx="660" cy="308" r="7" fill="#173e4b"/><circle cx="240" cy="308" r="7" fill="#ad7320"/>
+<text x="630" y="340" font-size="19">X 40</text><text x="212" y="340" font-size="19">X 10</text><text x="415" y="276" font-size="19">−30 mm</text>
+<text x="500" y="390" text-anchor="middle" font-size="17" fill="#576e77">Both examples start at machine X 40. Conceptual, not to scale; not instructions to enter these values.</text>
+</g></svg>

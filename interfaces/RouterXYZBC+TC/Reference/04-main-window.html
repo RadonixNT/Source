@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 4 — Main Window and Status Indicators | RouterXYZBC+TC</title>
+<meta name="description" content="An operator's guide to the RouterXYZBC+TC main screen, indicators, position readouts, motion controls, program preview, speed displays and status messages.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#reading">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZBC+TC · CHAPTER 4</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Main Window and Status Indicators</h1>
+<p class="lead">Learn where to look, what each part of the screen tells you, and which controls can change the job or move the machine.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> A guided screen tour for operators. The orientation diagram is not an application screenshot; reserved captures must match the installed version.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-04">Manual contents</a> · <a href="03-startup.html">Previous chapter: Startup and shutdown</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZBC update — 10 November 2026.</strong> Both position panels and readiness lamps cover XYZBC. The arrows switch the two Jog pages without changing the layout. See the <a href="XYZBC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#reading">Read the screen before using its controls</a></li>
+<li><a href="#screen-map">Find the main screen areas</a></li>
+<li><a href="#indicators">Interpret the connection, axis and warning indicators</a></li>
+<li><a href="#positions">Read Machine position and Work position correctly</a></li>
+<li><a href="#references">Distinguish Home, Go Home, Go Ref and zero setting</a></li>
+<li><a href="#manual-motion">Identify the manual-motion controls and their values</a></li>
+<li><a href="#program-view">Identify the job, its text and the preview</a></li>
+<li><a href="#run-controls">Recognize Run, Pause, Reset and program feed override</a></li>
+<li><a href="#spindle-tool">Read the spindle and tool area without confusing commands with confirmation</a></li>
+<li><a href="#speed-progress">Understand speed, percentage and time displays</a></li>
+<li><a href="#messages">Read messages and understand unavailable controls</a></li>
+<li><a href="#window-actions">Use Configuration and window controls for their intended purpose</a></li>
+<li><a href="#review">Build a reliable screen-reading routine</a></li>
+</ol></nav>
+<section id="reading" aria-labelledby="reading-title"><h2 id="reading-title">4.1 Read the screen before using its controls</h2>
+
+<p>The main window brings together information and actions. Some areas report a condition, some let you enter a value, and some issue a command. Learning the difference is more useful than memorizing the location of every button. Before touching an unfamiliar item, decide which of those three jobs it performs.</p>
+<p>An <strong>indicator</strong> reports a condition such as connection or homing. A <strong>readout</strong> displays information such as position. An <strong>entry field</strong> lets you enter or select something. A <strong>command</strong> asks the application or machine to do something. A control can combine roles: the Tool selector displays a tool number, but accepting a different selection can also request a real exchange.</p>
+<table><caption>Table 4-1. Reading information and issuing actions are different tasks</caption><thead><tr><th scope="col">Screen item</th><th scope="col">What you use it for</th><th scope="col">Example</th></tr></thead><tbody>
+<tr><td>Status indication</td><td>Understand a reported condition.</td><td>Homed shows whether the complete required homing condition is reported.</td></tr>
+<tr><td>Position readout</td><td>Read a position in its stated coordinate system.</td><td>Machine position and Work position can show different numbers for the same head location.</td></tr>
+<tr><td>Editable value</td><td>Prepare or change a value for an operation.</td><td>Step(mm) specifies the distance used by a step jog.</td></tr>
+<tr><td>Action button</td><td>Request an operation.</td><td>Goto X requests movement to an X destination.</td></tr>
+<tr><td>Combined display and control</td><td>Read a value and, when permitted, change the associated operation.</td><td>Accepting a Tool selection can start a tool exchange.</td></tr>
+</tbody></table>
+<p>Read the screen in a consistent order: identify the mode and connection, check relevant indicators and messages, identify the loaded job, then examine the values needed for your intended action. This gives each number a context. A plausible position or a green-looking lamp means little if you do not know whether the session is simulated, connected or still preparing a file.</p>
+<p>This chapter is a tour, not an invitation to try every control on the real machine. Follow it by observing the screen in an approved stationary condition or during supervised training. For actual movement, use the relevant operating procedure and the checks in <a href="02-safe-operation.html">Chapter 2</a>.</p>
+<aside class="learning-example"><h3>“I was only looking at the tools”</h3><p>Reading the displayed tool number is observation. Accepting another item in the tool list is an operating choice. Before exploring a list or button, learn whether selection itself starts an action or merely changes what is displayed.</p></aside>
+<p>The captions in this chapter describe the reviewed English application. Another language, theme or screen size can change appearance. Use the caption, unit, surrounding controls and current state together; do not identify an action solely by its colour or approximate position.</p>
+
+</section>
+<section id="screen-map" aria-labelledby="screen-map-title"><h2 id="screen-map-title">4.2 Find the main screen areas</h2>
+
+<p>The reviewed main window is arranged around a large preview on the left and machine-preparation controls on the right. The top strip reports overall status. Lower areas contain the machining program, its running controls and the spindle/tool controls. A bottom strip provides file actions, messages and Configuration.</p>
+<p>Use the orientation map below to learn these relationships. It deliberately leaves out individual icons and decorative details. It is not a screenshot and should not be used to match a button by shape. The actual application captures reserved later in this section will provide that visual detail.</p>
+<figure class="concept-figure"><img src="assets/images/04-screen-orientation.svg" width="1000" height="660" alt="Simplified main-window map with eight labelled areas: status, preview, positions, references, manual motion, program controls, spindle and tool controls, and the bottom action/status strip."><figcaption>Figure 4-1. Orientation map based on the reviewed layout. Numbers correspond to Table 4-2; they are documentation labels, not labels printed in the application.</figcaption></figure>
+<table><caption>Table 4-2. What to look for in each area</caption><thead><tr><th scope="col">Area</th><th scope="col">Find it when you need to…</th><th scope="col">Read it with…</th></tr></thead><tbody>
+<tr><td>1. Status strip</td><td>Check connection, axis readiness, homing or an alarm.</td><td>The current message and intended operating mode.</td></tr>
+<tr><td>2. Program preview</td><td>Understand the displayed shape and its orientation.</td><td>The correct job file, references and physical setup.</td></tr>
+<tr><td>3. Position readouts</td><td>Read machine and work coordinates.</td><td>The panel title, axis name, sign and unit.</td></tr>
+<tr><td>4. Reference and Home controls</td><td>Find homing, reference selection and zero-setting actions.</td><td>The separate homing and work-origin procedures.</td></tr>
+<tr><td>5. Manual motion</td><td>Find jog directions, step sizes, velocities and destinations.</td><td>The selected jog mode and the intended route.</td></tr>
+<tr><td>6. Program controls</td><td>Read program text or find Run, Pause, Reset and feed override.</td><td>The selected starting point and current operation state.</td></tr>
+<tr><td>7. Spindle and tool</td><td>Find spindle command, requested speed, tool selection and measurement.</td><td>The actual tooling and the appropriate operating procedure.</td></tr>
+<tr><td>8. Bottom strip</td><td>Open or edit a file, select a start line, read messages or open Configuration.</td><td>The purpose and consequences of the selected action.</td></tr>
+</tbody></table>
+<p>Several areas belong to the same operation. To begin a job, for example, you may look at the file name, preview, tool display, connection indicators and Run control. Their separation on the screen does not make them independent checks. A correct file name does not excuse a wrong tool, and a ready axis does not confirm the work origin.</p>
+<p>Some commands also appear more than once. The Pause controls in the run, jog and reference/motion areas share one all-motion Pause command and preserve the TP0 cursor. The Reset button in the run area stops all motion and then rewinds TP0. Their effects are not restricted to the nearest panel.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 4-2 · FULL-WINDOW SCREENSHOT REQUIRED</p><h3>The actual main window with numbered callouts</h3><p>Capture the English main window in a clearly identified, stationary Simulation session with an approved sample file loaded. Add callouts 1–8 matching the orientation map and table. Keep the connection caption, units and bottom status visible. Label the image as Simulation and state the application version.</p><p>Suggested image: <code>assets/images/04-main-window-overview.png</code>. Use the real running window; do not use the form designer or assemble controls from different states.</p><figcaption>A screenshot is still required. The conceptual map above does not reproduce the application's exact appearance.</figcaption></figure>
+
+</section>
+<section id="indicators" aria-labelledby="indicators-title"><h2 id="indicators-title">4.3 Interpret the connection, axis and warning indicators</h2>
+
+<p>The indicators across the top of the window answer separate questions. Read each caption before interpreting its active or inactive appearance. An active readiness indication and an active warning indication do not mean the same thing simply because both are illuminated.</p>
+<p>In Normal mode the Online indicator reports contact with the physical MM. In Simulation mode the same indicator is labelled Simulation and reports the simulated session. Check Controller / Mode and the runtime connection result to identify the active session.</p>
+<table><caption>Table 4-3. Main status indicators</caption><thead><tr><th scope="col">Caption</th><th scope="col">When the indication is active</th><th scope="col">What it does not establish</th></tr></thead><tbody>
+<tr><td>Online</td><td>The physical MM has been identified, independently of licensing and the number of connected axes.</td><td>Homing, job preparation or physical setup is complete.</td></tr>
+<tr><td>X Axis, Y Axis, Z Axis</td><td>The corresponding axis reports ready to move, without its axis or paired-drive fault, while the machine connection is operational.</td><td>That the axis has completed homing or the intended route is clear.</td></tr>
+<tr><td>Homed</td><td>All configured axes report homed while the machine connection is operational, including the additional gantry motor.</td><td>The workpiece's origin, tool length or machining file is correct.</td></tr>
+<tr><td>Alarm</td><td>At least one configured axis reports an axis fault or a fault involving paired drives.</td><td>Which component needs attention, or that every possible machine problem is represented by this lamp.</td></tr>
+<tr><td>Emergency</td><td>The emergency input is open under the supplied normally closed arrangement; the indication is red.</td><td>All parts are physically at rest or entry into the machine is permitted.</td></tr>
+</tbody></table>
+<h3>Axis readiness and homing are different</h3>
+<p>A drive can be ready to respond to a command before the machine has established its reference. This is why axis-ready indications and Homed are separate. Readiness answers whether the relevant drive is available under its reported conditions. Homing answers whether the reference-search procedure has established the required machine positions.</p>
+<p>The machine uses an additional motor for the gantry even though the main position displays show X, Y and Z. The overall Homed and Alarm checks include that motor. Do not conclude that the whole machine is homed merely because the three visible axis-ready indicators are active.</p>
+<h3>Warnings need context</h3>
+<p>If Alarm becomes active, read the accompanying message or report rather than repeatedly trying the rejected command. If Emergency is active, follow the applicable machine procedure. These indicators report conditions; clicking their screen areas is not a repair or an emergency-stop reset procedure.</p>
+<aside class="learning-example"><h3>All axis-ready indications are active, but Homed is not</h3><p>This combination is possible. It does not mean that one set of indications must be wrong. Determine whether homing is required and follow its preparation and operating procedure before attempting a command that depends on it.</p></aside>
+<p>When communication is unavailable, do not treat retained numbers or a familiar caption as fresh confirmation of the machine's condition. If the physical situation is uncertain, use the response described in <a href="02-safe-operation.html#unexpected">Chapter 2</a>. A screen indication is information about the system; it does not replace the machine's physical stopping or access arrangements.</p>
+<p>After any fault or connection interruption, look for a consistent result across the indicators and messages before continuing. A single warning disappearing is not proof that every preparation step has been restored.</p>
+
+</section>
+<section id="positions" aria-labelledby="positions-title"><h2 id="positions-title">4.4 Read Machine position and Work position correctly</h2>
+
+<p>The two position panels describe the machine's location using different references. <strong>Machine position</strong> uses the machine coordinate system. <strong>Work position</strong> expresses the location relative to the active work setup and its applicable corrections. Different numbers in these panels are therefore expected; they are not automatically evidence of an error.</p>
+<p>Each row identifies an axis: X, Y or Z. Read the axis name, the sign of the number and the unit before using the value. The reviewed main-window position readouts are expressed in millimetres. A minus sign is part of the coordinate, not a fault symbol. Its meaning depends on the selected reference and axis direction.</p>
+<h3>The same place can have two descriptions</h3>
+<p>For a simplified example, imagine that a point has a machine X coordinate of 500 mm and the job's X origin is 400 mm along the same axis, with no other X correction involved. Its work X coordinate would be 100 mm. The two numbers describe the same point from different starting references. These are explanation values, not values to enter into your machine.</p>
+<p>A work-position value can change when the reference or an applicable correction changes, even if the head has not moved. For that reason, a changed work readout should be interpreted alongside any reference selection, zero-setting or tool-related action that just occurred.</p>
+<table><caption>Table 4-4. Similar position numbers with different purposes</caption><thead><tr><th scope="col">Where the number appears</th><th scope="col">What it represents</th><th scope="col">How to avoid a mistake</th></tr></thead><tbody>
+<tr><td>Machine position</td><td>The controller's commanded axis position in machine coordinates.</td><td>Do not treat it as a separately measured inspection of the workpiece.</td></tr>
+<tr><td>Work position</td><td>The position expressed with the active work reference and applicable corrections.</td><td>Check which reference is active before interpreting zero or a distance.</td></tr>
+<tr><td>Reference(mm)</td><td>The reference values for the selected work-origin entry.</td><td>Recognize that these are editable setup values, not a second live-position panel.</td></tr>
+<tr><td>Position(mm) beside Goto</td><td>A destination for a manual axis move.</td><td>Do not confuse a requested destination with the current position.</td></tr>
+</tbody></table>
+<p>The main position readouts use the controller's commanded position. They should not be interpreted as an independent physical measuring instrument that proves the cutter is exactly where the screen says it is. They do not inspect the material, confirm its dimensions or replace the checks required after a mechanical problem.</p>
+<aside class="learning-example"><h3>A destination is waiting in a field</h3><p>The Position(mm) field contains a familiar number from an earlier manual move. That does not tell you where the head is now. Read the position panels for location, and inspect the destination again before issuing Goto.</p></aside>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 4-3 · DETAIL SCREENSHOT REQUIRED</p><h3>Readouts, reference values and destinations</h3><p>Capture the right-hand area of the running English application. Mark Machine position, Work position, the Reference(mm) values and the Position(mm) destination fields as four different groups. Use a stationary Simulation example with clearly labelled illustrative values.</p><p>Suggested image: <code>assets/images/04-position-reference-destination.png</code>.</p><figcaption>Explain the purpose of each number group. Do not imply that the example values are approved machine settings.</figcaption></figure>
+<p>The next chapter explains coordinate systems and units more fully. For now, the essential habit is to identify the panel before reading the number and identify the operation before changing it.</p>
+
+</section>
+<section id="references" aria-labelledby="references-title"><h2 id="references-title">4.5 Distinguish Home, Go Home, Go Ref and zero setting</h2>
+
+<p>The reference and homing area groups controls that sound similar but perform different actions. Read their complete captions. <strong>Home</strong>, <strong>Go Home</strong> and <strong>Set X0</strong> are not three ways of doing the same thing.</p>
+<p><strong>Home</strong> starts the machine's homing procedure. That procedure uses the configured reference-search sequence to establish machine positions. <strong>Go Home</strong> is a positioning command: in the reviewed application it requests the machine-coordinate zero destination using the positioning sequence. It does not perform the homing search or establish a missing reference.</p>
+<p>The English main-window caption <strong>Go Ref</strong> means Go Reference. It requests movement to the current work-reference destination with the applicable corrections. It is not a shortcut for opening the reference settings. As with other positioning actions, check the intended route before using it.</p>
+<table><caption>Table 4-5. Controls in the reference and homing area</caption><thead><tr><th scope="col">Control</th><th scope="col">Purpose</th><th scope="col">What to recognize before using it</th></tr></thead><tbody>
+<tr><td>Home</td><td>Establish the machine reference through homing.</td><td>It starts a machine movement sequence.</td></tr>
+<tr><td>Go Home</td><td>Position at the machine-coordinate zero destination.</td><td>It requires the applicable readiness conditions and does not replace homing.</td></tr>
+<tr><td>Go Ref</td><td>Position at the active work-reference destination.</td><td>The selected reference and applicable corrections affect the destination.</td></tr>
+<tr><td>Reference selector</td><td>Select a work-origin entry such as G54 or G55.</td><td>Selection changes the active reference; it is not merely a list to browse.</td></tr>
+<tr><td>Reference(mm) values</td><td>Read or edit the selected reference's axis values when permitted.</td><td>They are setup information that can change the meaning of later coordinates.</td></tr>
+<tr><td>Set X0, Set Y0, Set Z0</td><td>Set the selected reference so that the current position is work zero on that axis, with applicable corrections accounted for.</td><td>These actions change the reference; they do not move the head to a zero position.</td></tr>
+<tr><td>Pause</td><td>Request all-motion Pause while preserving TP0 progress.</td><td>It is not restricted to the reference area.</td></tr>
+</tbody></table>
+<h3>The names G54–G59 identify saved work references</h3>
+<p>You do not need programming knowledge to recognize these names. Think of them as six labelled work-origin entries. The job and setup procedure determine which entry is appropriate. Two entries can contain different values, or even look identical while still being separate entries. Always read the selected name before interpreting or editing its X, Y and Z values.</p>
+<p>Changing the selected entry updates the displayed reference values. The reviewed application discards unfinished reference text when you change that selection, so a partially typed value is not transferred to another entry. Complete or cancel an intended edit deliberately; do not move between entries while assuming unfinished text has already been accepted.</p>
+<aside class="learning-example"><h3>Set X0 is not “move X to zero”</h3><p>You press Set X0 and the head does not move, but the work-position value changes. That can be the expected result: you changed the reference used to describe the current location. If your intention was movement, you selected the wrong kind of action. Do not follow it with another command until the reference is understood and, if necessary, restored through the approved procedure.</p></aside>
+<p>The main window puts these controls close together because they are used during preparation. Their proximity does not make them interchangeable. Detailed homing and work-origin chapters explain how to use them; this screen tour teaches you to identify their effects before committing a command.</p>
+
+</section>
+<section id="manual-motion" aria-labelledby="manual-motion-title"><h2 id="manual-motion-title">4.6 Identify the manual-motion controls and their values</h2>
+
+<p>The manual-motion area lets you prepare and request individual movements. The common word <strong>jog</strong> means an operator-directed machine move. Before using this area, identify the axis, the kind of move and the values that will be used. The presence of an arrow does not tell you the distance or speed by itself.</p>
+<p>The X, Y and Z rows contain values under <strong>V(mm/s)</strong>, <strong>Step(mm)</strong> and <strong>Position(mm)</strong>. V is velocity: the requested speed setting in millimetres per second. Step is a distance. Position is a destination in machine coordinates for the corresponding Goto command. These are three different quantities even when their numbers happen to match.</p>
+<table><caption>Table 4-6. Read a manual-movement request before issuing it</caption><thead><tr><th scope="col">Item</th><th scope="col">Meaning</th><th scope="col">Check before movement</th></tr></thead><tbody>
+<tr><td>X+, X−, Y+, Y−, Z+, Z−, B+, B−, C+, C−</td><td>Positive or negative movement along the named axis.</td><td>The physical direction established during machine training.</td></tr>
+<tr><td>Diagonal direction controls</td><td>A combined X/Y jog request.</td><td>Both axis directions and the complete diagonal route.</td></tr>
+<tr><td>Jog mode</td><td>Continuous movement while held, or one configured step.</td><td>Which behavior is currently selected.</td></tr>
+<tr><td>V(mm/s)</td><td>The axis's requested jog velocity before the jog percentage is applied.</td><td>The intended value and the relevant unit.</td></tr>
+<tr><td>Step(mm)</td><td>The distance for a step movement.</td><td>The distance suits the intended adjustment and available route.</td></tr>
+<tr><td>Position(mm) and Goto X/Y/Z</td><td>A destination and the command to move that axis there.</td><td>The destination is a machine coordinate, not a distance measured from here.</td></tr>
+<tr><td>Jog percentage slider</td><td>A percentage used to scale the requested jog velocity.</td><td>It is the jog control, not the program-feed or spindle-speed slider.</td></tr>
+</tbody></table>
+<h3>Continuous and finite movements behave differently</h3>
+<p>In continuous jog, holding a direction control requests movement and releasing it requests stopping that jog. In step mode, one activation requests the configured distance. Goto requests travel to the entered destination. A step or destination move can continue after you release the mouse button or key.</p>
+<p>If a finite move must be interrupted, use the applicable Pause or Reset control. Do not rely on releasing the button to cancel it. Use the physical emergency procedure if the situation requires it, as explained in Chapter 2.</p>
+<aside class="learning-example"><h3>Position 10 does not mean “move 10”</h3><p>If an axis is at machine position 100 mm and its Goto destination is 10 mm, the request is to reach coordinate 10, not to add another 10 to the current location. This simplified example explains why the Position field and Step field must not be confused. It is not an instruction to enter those values.</p></aside>
+<p>The default jog percentage range in the main window is 5–100%. Reducing that percentage changes the requested speed scale, not the configured step distance or destination. It is not a substitute for a Stop command. A slow move to the wrong destination is still the wrong move.</p>
+<p>For orientation, read the fields without changing them. When an actual manual adjustment is needed, follow the <a href="index.html#chapter-07">Manual Motion and Position Jog</a> procedure. If a direction, sign or destination is unclear, resolve it before pressing an arrow or Goto button.</p>
+
+</section>
+<section id="program-view" aria-labelledby="program-view-title"><h2 id="program-view-title">4.7 Identify the job, its text and the preview</h2>
+
+<p>The program area contains the loaded file's identity and its machining instructions. The larger preview shows the prepared geometry. Use both views together: the text helps identify instructions and progress, while the picture helps you understand the shape and spatial arrangement.</p>
+<p>You do not need to become a programmer to begin using this area. You do need to recognize the file you were instructed to use, notice preparation messages and understand that some interactions can change the intended start of the job. Detailed editing and command interpretation belong to later chapters.</p>
+<h3>Start with the file identity</h3>
+<p>The file-path display identifies the opened program. Before loading, it can show <strong>No program loaded</strong>. Check the name and location against the approved job information. Two different files can produce similar-looking previews, so a familiar outline is not enough to establish the correct revision.</p>
+<table><caption>Table 4-7. File and program-view controls</caption><thead><tr><th scope="col">Control or area</th><th scope="col">Purpose</th><th scope="col">Operator point to remember</th></tr></thead><tbody>
+<tr><td>Open file</td><td>Select and prepare a machining file.</td><td>Wait for preparation and read its result before considering Run.</td></tr>
+<tr><td>Cancel during loading</td><td>The Open file control changes to a cancellation action while preparation is active.</td><td>Cancellation can take time to complete; it does not mean deleting the original file.</td></tr>
+<tr><td>Program text</td><td>Display the machining instructions and their selection/progress presentation.</td><td>Double-clicking a line while stopped can select a later start location.</td></tr>
+<tr><td>Edit G-code</td><td>Open the machining-file editor.</td><td>Editing the file is a separate authorized task, not a preview-display adjustment.</td></tr>
+<tr><td>Start Line</td><td>Open the interface for choosing a program starting location.</td><td>A selected start affects a later Run; it needs a restart procedure.</td></tr>
+<tr><td>3D preview</td><td>Inspect the prepared shape, view and position/reference presentation.</td><td>It does not inspect the actual clamps, tool or material.</td></tr>
+</tbody></table>
+<h3>Viewing the picture does not prove the setup</h3>
+<p>Changing the preview's viewpoint changes how you look at the job, not the physical machine's position. Conversely, changing a work reference can move the displayed job relative to the machine-coordinate scene without changing the shape described by the file. Read the references and position panels when something appears to shift unexpectedly.</p>
+<p>The position pointer represents the application's position information. It is not a camera view of the real cutter. A clear-looking path in the preview does not establish clearance around every physical object. The <a href="02-safe-operation.html#routes">whole-route checks in Chapter 2</a> still apply.</p>
+<aside class="learning-example"><h3>A highlighted line is not proof of a finished cut</h3><p>While stopped, selecting a restart line can make earlier lines appear completed in the program presentation. That does not prove the corresponding material was actually removed. Know whether the display reflects real execution or an operator-selected start point.</p></aside>
+<p>For that reason, avoid casually double-clicking program lines while examining a stopped job. If you intended only to read the text but changed the start selection, establish the intended starting place before Run. Do not assume the application will ignore the new selection because no movement occurred immediately.</p>
+<p>Use the preview to ask useful questions: Is this the intended part? Is its orientation plausible? Are the displayed dimensions consistent with the job? Then confirm those observations through the approved setup and file-checking procedures. A visually convincing picture is one piece of preparation, not its final approval.</p>
+
+</section>
+<section id="run-controls" aria-labelledby="run-controls-title"><h2 id="run-controls-title">4.8 Recognize Run, Pause, Reset and program feed override</h2>
+
+<p>The program controls are placed beside the machining text so that you can read the job and control its execution from the same area. Before using them, establish the intended file and starting point. A control becoming available means the application's required conditions allow a request; it does not inspect the physical setup for you.</p>
+<p><strong>Run</strong> requests execution from the applicable start or continuation point. The accepted request may begin tool preparation or positioning before cutting. Watch the reported stage and the expected physical sequence from the permitted operating position. Do not press Run again merely because the first visible action is not the first cutting move you expected.</p>
+<table><caption>Table 4-8. Quick identification of the program controls</caption><thead><tr><th scope="col">Control</th><th scope="col">Main purpose</th><th scope="col">Consequence to remember</th></tr></thead><tbody>
+<tr><td>Run</td><td>Request the prepared job's execution or continuation under the current start conditions.</td><td>Tool preparation or entry positioning may happen before cutting.</td></tr>
+<tr><td>Pause</td><td>Request stopping of motion while retaining the main machining program's place.</td><td>An interrupted auxiliary operation, especially a tool exchange, still requires appropriate recovery.</td></tr>
+<tr><td>Reset</td><td>Request stopping of all motion and reset the main program's place after it is idle.</td><td>A later Run is not automatically continuation from the interrupted cutting location.</td></tr>
+<tr><td>Program feed override</td><td>Scale the main program's feed within the displayed percentage range.</td><td>At zero, raising the value again can resume the retained movement without another Run.</td></tr>
+</tbody></table>
+<p>The program-feed slider is separate from the jog-percentage slider and the spindle-speed control. The default program override range is 0–120%. Read its location and purpose before changing it. “Fifty percent” in this area is a feed adjustment, not a spindle-speed reading or a statement that half the job is finished.</p>
+<h3>Do not use appearance alone to decide whether a job has ended</h3>
+<p>A program held at zero feed can appear stationary while still being active. A Pause keeps the main program's place, but it does not guarantee spindle standstill or safe physical access. Stop changes the later start situation by resetting the main program after stopping. These differences matter even when the position numbers look identical.</p>
+<aside class="learning-example"><h3>The wrong percentage control</h3><p>You want to adjust a manual jog but reach for the slider beside Run. That control belongs to program feed. Identify the panel before changing a percentage, and use the detailed procedure for the operation you are performing.</p></aside>
+<p>The Pause controls in the jog and reference areas invoke the same all-motion Pause as the program Pause button. They preserve TP0 progress. Only Reset schedules the main-program rewind after stopping.</p>
+<p>This section is a recognition guide. Before running or interrupting an actual job, use <a href="02-safe-operation.html#stopping">the stopping explanation in Chapter 2</a> and the later running/recovery procedures. An available button is not permission to skip the pre-run checklist.</p>
+
+</section>
+<section id="spindle-tool" aria-labelledby="spindle-tool-title"><h2 id="spindle-tool-title">4.9 Read the spindle and tool area without confusing commands with confirmation</h2>
+
+<p>The spindle and tool area combines several related operations: commanding spindle rotation, setting the requested spindle speed, selecting a tool and requesting measurement. They belong together, but they report or change different things. A spindle-speed request is not a tool-length value, and a displayed tool number is not a description of the cutter's shape or condition.</p>
+<p>The <strong>Spindle</strong> control is associated with the spindle run command. Its displayed command state is not an independent measurement of actual rotation or standstill. The adjacent speed control represents a requested rotational speed in revolutions per minute, usually abbreviated <strong>RPM</strong>. Do not treat that request as a live tachometer reading.</p>
+<table><caption>Table 4-9. Controls in the spindle and tool area</caption><thead><tr><th scope="col">Item</th><th scope="col">What it means</th><th scope="col">What it does not prove</th></tr></thead><tbody>
+<tr><td>Spindle</td><td>The control associated with the spindle run command.</td><td>The physical tool has reached the requested speed or come to rest.</td></tr>
+<tr><td>Spindle speed control</td><td>The requested rotational speed, within the configured available range.</td><td>The actual measured RPM or an approved speed for every tool and material.</td></tr>
+<tr><td>Tool</td><td>The current confirmed tool-state display and selector for an available tool request.</td><td>The physical cutter's identity, condition or suitability without the required setup checks.</td></tr>
+<tr><td>Blank tool selection</td><td>Tool zero: the empty-spindle choice.</td><td>A harmless way to clear text; accepting it can request unloading.</td></tr>
+<tr><td>Measure Tool</td><td>A request for the installed tool's measurement, or an empty-spindle reference measurement when no tool is recorded.</td><td>A display-only operation; it can initiate measurement movement.</td></tr>
+</tbody></table>
+<h3>Tool selection can start an exchange</h3>
+<p>The Tool list contains the enabled tool choices. Selecting an entry from the list or accepting the choice with Enter can request a manual exchange when permitted. Moving focus away does not, by itself, commit this particular tool selection. Do not generalize that behavior to every other editable field in the application.</p>
+<p>During an exchange, the selector is unavailable for a competing selection and follows the confirmed tool state as the operation progresses. The requested destination tool is not necessarily already in the spindle. If the operation stops part-way through, use the required recovery procedure rather than interpreting the original request as proof of completion.</p>
+<h3>Measurement has a physical sequence</h3>
+<p>The reviewed English caption is <strong>Measure Tool</strong>. With a recorded tool, it requests measurement relative to the established empty-spindle reference. With an empty spindle, it requests that reference measurement and asks for confirmation. Read the question before accepting it; the presence or absence of a tool changes the purpose of the measurement.</p>
+<aside class="learning-example"><h3>The speed value is present, but the spindle is not turning</h3><p>A requested speed can be displayed without proving rotation. Look at the intended spindle command and any readiness message, then use the spindle procedure. Increasing the value repeatedly does not resolve a missing readiness condition.</p></aside>
+<p>Use this area only after the tooling and operating conditions have been checked. The detailed spindle, exchange and measurement chapters explain the individual procedures. This chapter's purpose is to help you recognize which operation you are about to request and which result still needs confirmation.</p>
+
+</section>
+<section id="speed-progress" aria-labelledby="speed-progress-title"><h2 id="speed-progress-title">4.10 Understand speed, percentage and time displays</h2>
+
+<p>The screen shows several numbers related to speed and progress. Read their unit and location before comparing them. A value in millimetres per second, a percentage and a value in revolutions per minute describe different quantities. They are not alternative displays of one machine speed.</p>
+<p>The top-strip <strong>V: … mm/s</strong> readout is an estimate of combined X/Y/Z movement speed calculated from changes in the commanded positions over a short sampling interval. It is a movement display, not the spindle's rotational speed and not an independent measurement at the cutter tip. Because it is sampled, it need not change at the exact instant of a command.</p>
+<table><caption>Table 4-10. Identify the number before interpreting it</caption><thead><tr><th scope="col">Number or unit</th><th scope="col">Meaning in its screen area</th><th scope="col">Do not confuse it with</th></tr></thead><tbody>
+<tr><td>Top-strip V, in mm/s</td><td>An estimate of combined commanded X/Y/Z movement speed.</td><td>Actual spindle RPM, a destination or a certified standstill signal.</td></tr>
+<tr><td>Jog-row V, in mm/s</td><td>A requested manual-movement speed setting.</td><td>The top-strip speed estimate.</td></tr>
+<tr><td>Program-feed percentage</td><td>A scale factor for the main program's feed.</td><td>The percentage of the job already completed.</td></tr>
+<tr><td>Jog percentage</td><td>A scale factor used for manual jog velocity.</td><td>Program-feed adjustment or step distance.</td></tr>
+<tr><td>Spindle RPM</td><td>A requested rotational speed.</td><td>A physical rotation measurement or linear movement speed.</td></tr>
+<tr><td>Progress percentage</td><td>The progress presentation for the operation currently being reported.</td><td>A universal indication that the finished part is complete.</td></tr>
+</tbody></table>
+<h3>The time display is an estimate, not a stopwatch</h3>
+<p>During program presentation, the status area can show a percentage followed by <strong>Elapsed</strong>, <strong>Remaining ≈</strong> and <strong>Total ≈</strong>. In the reviewed application, all three times use the prepared program's estimated timeline. Elapsed represents the estimated time assigned to the preceding portion of the program; it is not simply the real time since you pressed Run.</p>
+<p>Pauses, changes in feed override and other real operating delays can make actual clock time differ from that timeline. Do not use the display as a production-time record or a guaranteed finishing time. In particular, waiting with the machine paused does not mean that the nominal Elapsed value will count the waiting time like a clock.</p>
+<p>If you select a start part-way through the program, the estimate still refers to the original whole program and includes the skipped earlier portion. A substantial Elapsed value at the beginning of that restart does not prove that this session has already spent that much time machining.</p>
+<aside class="learning-example"><h3>Two meanings of 100%</h3><p>The progress area can reach 100% while a file is being loaded and prepared, then return to the execution-progress presentation. That first 100% does not mean the part was cut. Read the accompanying words to identify whether the display concerns loading or machining.</p></aside>
+<p>The application also distinguishes a natural program completion from a requested stop or fault. Do not decide that the job finished successfully solely from a full-looking bar or a still position pointer. Read the outcome, and remember that configured parking can follow cutting completion.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 4-4 · STATUS DETAIL SCREENSHOTS REQUIRED</p><h3>Speed and progress in their context</h3><p>Prepare labelled crops from a clearly identified Simulation session: the top-strip speed readout, the program-feed slider and the status area showing estimated times. If illustrating loading, use a separate capture and label it as loading progress. Preserve the actual captions.</p><p>Suggested image: <code>assets/images/04-speed-and-progress.png</code>. Add a caption explaining that Elapsed is nominal program time, not a stopwatch.</p><figcaption>The screenshots should help distinguish units and stages. They must not present an estimated duration as a measured job time.</figcaption></figure>
+
+</section>
+<section id="messages" aria-labelledby="messages-title"><h2 id="messages-title">4.11 Read messages and understand unavailable controls</h2>
+
+<p>The bottom progress/status area is used for more than a single permanent message. It can report loading, program timing, connection state, tool availability or measurement results. Read the words in context and relate them to the action you just requested. A later status can replace an earlier message, so the currently visible line is not a complete history of the session.</p>
+<p>If an action is rejected, read the explanation before trying again. A request can be unavailable because of access, connection, loading, another active operation or a missing preparation condition. The correct response depends on that cause. Repeated clicking does not supply a missing condition.</p>
+<table><caption>Table 4-11. Common reasons a control is unavailable</caption><thead><tr><th scope="col">Situation</th><th scope="col">What it can look like</th><th scope="col">What to check</th></tr></thead><tbody>
+<tr><td>Operator access is not accepted</td><td>Machine-operating controls remain unavailable while the window is visible.</td><td>The access procedure in Chapter 3.</td></tr>
+<tr><td>Connection is absent or changing</td><td>Motion and other operating controls are unavailable.</td><td>The mode, connection indication and current connection message.</td></tr>
+<tr><td>A file is being prepared</td><td>Many controls are temporarily blocked and Open file becomes Cancel.</td><td>Loading progress; wait or cancel through the provided action.</td></tr>
+<tr><td>Homing or positioning is active</td><td>Competing preparation controls are unavailable.</td><td>The current operation and whether it has completed successfully.</td></tr>
+<tr><td>A tool operation is active</td><td>Tool selection and other conflicting actions are unavailable.</td><td>The exchange or measurement result before another request.</td></tr>
+<tr><td>The current state does not meet an action's requirements</td><td>One command is disabled while others are available.</td><td>That action's prerequisites, such as completed homing or a prepared job.</td></tr>
+</tbody></table>
+<p>These are common explanations, not an exhaustive fault diagnosis. A disabled field does not mean its stored value has been erased. A read-only field can still contain useful information. Conversely, an enabled field does not mean that every value you could type is suitable for the job.</p>
+<h3>Accepted, started and completed are different results</h3>
+<p>An accepted request means the application accepted the action under its checks. It does not prove that the entire physical operation has finished. Run can be accepted while tool preparation or entry positioning is still pending. A tool exchange or measurement also has a sequence to complete. Look for the expected final result rather than treating acceptance as completion.</p>
+<p>Measurement results can appear in this shared area and later be replaced by other status information. If you miss a message, do not repeat the machine action merely to read it again. Use the report or ask for assistance in retrieving the recorded result.</p>
+<h3>Open the session report when the current line is not enough</h3>
+<p>Double-click the main program-progress/status area to open the session report. In the reviewed application it opens in Notepad. The report records operations and messages in sequence, so it can help distinguish the command you requested from the result that followed.</p>
+<p>You are not expected to interpret every technical detail. Read or record the relevant message, the operation in progress and the observed machine condition. Provide that information to the responsible person without changing configuration to make the message disappear.</p>
+<aside class="learning-example"><h3>The page looks busy after opening a file</h3><p>The pointer changes to a busy appearance and many controls become unavailable. Read the progress text: the application may still be preparing the program. If cancellation is required, use the provided Cancel action and wait for it to finish rather than repeatedly opening the same file.</p></aside>
+<p>If screen information stops updating while the physical machine's condition is uncertain, do not infer that movement has stopped. Use the machine's applicable stopping response and the guidance in Chapter 2. The report is for understanding events; it is not a physical safety control.</p>
+
+</section>
+<section id="window-actions" aria-labelledby="window-actions-title"><h2 id="window-actions-title">4.12 Use Configuration and window controls for their intended purpose</h2>
+
+<p>Not every control on the main window belongs to machine movement. Configuration and the upper-right window controls help you manage the application itself. They still deserve deliberate use: opening another window can change where your keyboard input goes, and hiding the application does not stop a running machine.</p>
+<table><caption>Table 4-12. Application controls around the main screen</caption><thead><tr><th scope="col">Control</th><th scope="col">Purpose</th><th scope="col">Operator reminder</th></tr></thead><tbody>
+<tr><td>Configuration</td><td>Open the configuration window and its access checks.</td><td>Viewing an available field does not authorize changing it.</td></tr>
+<tr><td>Theme switch</td><td>Switch between light and dark appearance when permitted.</td><td>Appearance changes do not establish a different physical machine condition.</td></tr>
+<tr><td>Minimize</td><td>Hide the main window in the Windows taskbar.</td><td>The application remains open; this is not a stop or logout action.</td></tr>
+<tr><td>Exit</td><td>Request normal application closure when permitted.</td><td>Complete the shutdown procedure from Chapter 3 first.</td></tr>
+</tbody></table>
+<h3>Configuration is a separate working area</h3>
+<p>Selecting Configuration can present an access dialog before opening the configuration window. Operator and Engineering access are different levels, and some values may remain read-only. Read the dialog title and the field explanation instead of assuming that every unavailable control has failed.</p>
+<p>When you open Configuration only to inspect information, keep that purpose in mind. Some actions, such as an accepted mode change, take effect immediately and are not reversed by cancelling the window. The full settings chapter will explain editing and acceptance in detail. Until then, use only the changes authorized by the procedure you are following.</p>
+<h3>Display preferences are not machine-performance settings</h3>
+<p>The application can use different themes, languages and display-refresh preferences. A different theme can make the same indicator look different, which is why captions and meaning matter more than memorized colours. A display-refresh preference changes how often screen information is refreshed; it does not command a higher cutting speed or change the machine's control timing.</p>
+<p>Screen updates also depend on the application being able to refresh its display. Do not interpret a momentarily unchanged value as a precision measurement of standstill. If the screen stops responding and the machine's condition is uncertain, follow the physical response procedure rather than attempting an appearance change.</p>
+<aside class="learning-example"><h3>Minimized is not stopped</h3><p>An operator minimizes the window to read another document. The application's operation has not been cancelled by that window action. Only change your attention or leave the normal operating view when the machine's approved procedure permits it.</p></aside>
+<p>Before using a keyboard command, check which window or entry field has focus. A key intended for the main application may be interpreted by an open dialog or text field. Use the configured shortcuts you have been trained to use; this chapter does not recommend exploring unfamiliar combinations on the real machine.</p>
+<p>Return to the main window after finishing a dialog and re-read the relevant status. Do not assume that opening and closing a secondary window has left every setting, mode or selected operation exactly as it was.</p>
+
+</section>
+<section id="review" aria-labelledby="review-title"><h2 id="review-title">4.13 Build a reliable screen-reading routine</h2>
+
+<p>Once you know the main areas, practise reading them in a repeatable order. The aim is to understand the next action before you issue it. You should not need to scan every number on the screen for every task, but you should know which information belongs to the task you are about to perform.</p>
+<ol class="journey">
+<li><strong>Establish the operating context.</strong><p>Identify Simulation or real-operation mode, the current connection condition and any unresolved warning.</p></li>
+<li><strong>Identify the task.</strong><p>Are you preparing the machine, moving manually, checking a job, running it or responding to an interruption? This tells you which panel and procedure matter next.</p></li>
+<li><strong>Read the relevant values with their labels.</strong><p>Check the axis, reference, sign and unit. Distinguish current position, setup reference and requested destination.</p></li>
+<li><strong>Understand the control before accepting it.</strong><p>Know whether it changes a value, selects a start, requests an exchange or starts movement.</p></li>
+<li><strong>Observe the result.</strong><p>Read acceptance, progress and completion as different stages. If the result differs from the expectation, stop issuing further commands and use the appropriate response.</p></li>
+</ol>
+<h3>Practice case: a manual adjustment</h3>
+<p>You need a permitted manual adjustment. Start with mode, connection and readiness. Read the intended axis row, jog mode, velocity, step or destination and jog percentage. Identify the appropriate direction or Goto control. You are not preparing that action by changing the program-feed slider or by reading a value from the Work position panel and assuming it is a machine-coordinate destination.</p>
+<h3>Practice case: checking a loaded job</h3>
+<p>Begin with the file identity, then examine the preview and relevant setup information. Read the tool and reference state. Avoid double-clicking a program line unless you intend to select a start location under the proper procedure. A familiar shape and a highlighted line are not enough to establish readiness to run.</p>
+<h3>Practice case: the screen shows no movement</h3>
+<p>Check what operation is active and why it is stationary. A zero-feed hold, an ordinary stop, an unfinished tool operation and a lost connection can look similar if you look only at position numbers. The stopping controls, messages and connection indicators provide the context. None of those screen observations, alone, grants physical access.</p>
+<h3>Check your understanding</h3>
+<ul>
+<li><strong>Can you point out a readout, an editable setup value and a destination?</strong> Use the position panels, Reference(mm) and Position(mm) fields as examples.</li>
+<li><strong>Can you explain Home versus Go Home?</strong> One establishes the reference through homing; the other is a positioning request.</li>
+<li><strong>Can you identify all three speed-related controls?</strong> Distinguish program-feed percentage, jog percentage and requested spindle RPM.</li>
+<li><strong>Can you explain why Elapsed is not a stopwatch?</strong> It follows the prepared program's nominal timeline, including a skipped prefix after a selected start.</li>
+<li><strong>Can you recover a message that is no longer visible?</strong> Open the session report through the program-progress/status area rather than repeating the machine action.</li>
+<li><strong>Can you identify an action that looks like selection but can move the machine?</strong> Accepting another Tool selection is a key example.</li>
+</ul>
+<p>Review any uncertain answer with your trainer. The next chapter, <a href="index.html#chapter-05">Coordinates, Units and Position Displays</a>, develops the position concepts used here. Keep <a href="#screen-map">the screen-area map</a> and <a href="#indicators">the indicator table</a> available as a quick reference while learning.</p>
+<aside class="source-note"><p><strong>Scope of this chapter.</strong> Layout, English runtime captions, indicator conditions, control bindings and displayed position/speed/time behavior were checked against RouterXYZBC+TC source on 8 October 2026. Actual screenshots remain to be supplied from the installed application. The orientation map is an original explanatory diagram, not a reproduced interface.</p></aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZBC+TC · Operator Manual · Chapter 4</span><a href="index.html#chapter-04">Return to the contents</a></footer></main></body></html>

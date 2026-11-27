@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 2 — Safe Operation and Pre-start Checks | RouterXYZAC+TC</title>
+<meta name="description" content="An operator's guide to preparing a RouterXYZAC+TC job, understanding stopping controls, checking readiness and responding to unexpected conditions.">
+<link rel="stylesheet" href="assets/manual.css">
+<link rel="stylesheet" href="assets/introduction.css">
+</head>
+<body class="chapter-intro">
+<a class="skip-link" href="#ready">Skip to chapter text</a>
+<main class="book">
+<header class="cover">
+<p class="eyebrow">RADONIX · ROUTERXYZAC+TC · CHAPTER 2</p>
+<p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Safe Operation and Pre-start Checks</h1>
+<p class="lead">Learn what to check before asking the machine to move, what the different stopping controls mean, and when to stop and ask for help.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> Read alongside practical training and the instructions for your installed machine. Machine photographs and an application screenshot are reserved for insertion.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-02">Manual contents</a> · <a href="01-introduction.html">Previous chapter: Introduction</a></nav>
+</header>
+<div class="body">
+<nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#ready">What “ready to start” really means</a></li>
+<li><a href="#work-area">Know the machine and prepare the work area</a></li>
+<li><a href="#job-setup">Match the workpiece, job and work zero</a></li>
+<li><a href="#tools">Check tools and understand actions that can start motion</a></li>
+<li><a href="#routes">Check the whole movement, not just the cutting shape</a></li>
+<li><a href="#screen-readiness">Read the screen without assuming more than it tells you</a></li>
+<li><a href="#stopping">Understand Pause, Reset and feed override</a></li>
+<li><a href="#emergency">Respond to immediate danger and understand the emergency indication</a></li>
+<li><a href="#access">Distinguish a stopped machine from permission to enter</a></li>
+<li><a href="#first-motion">Make the first movement a deliberate operation</a></li>
+<li><a href="#before-cutting">Complete the final pre-run check and watch the start</a></li>
+<li><a href="#unexpected">Respond when the result is different from what you expected</a></li>
+<li><a href="#restart">Recheck the setup before restarting or handing over</a></li>
+<li><a href="#understanding">Check your understanding before operating independently</a></li>
+</ol></nav>
+<section id="ready" aria-labelledby="ready-title">
+<h2 id="ready-title">2.1 What “ready to start” really means</h2>
+
+<p>A machine can be switched on, connected to the computer and showing no alarm, yet still be unprepared for the next operation. The wrong workpiece may be on the table. A clamp may be in the intended route. The selected tool may belong to another job. Readiness therefore means more than finding a green light: the machine, the physical setup and the job information must agree.</p>
+<p>This chapter helps you make that comparison. It does not expect you to understand how the software is written. Instead, it asks practical questions: What will move? Where will it go? What has changed since the last operation? What should I see before I continue? You will use these questions during machine preparation, tool changes, the first start of a job and recovery after an interruption.</p>
+<p>There are two different moments to consider. <strong>Before the first movement</strong>, you must establish that the machine can carry out the intended preparation step, such as homing, with the required safeguards in place. <strong>Before machining</strong>, you must also establish that the workpiece, tool, work zero and machining file are correct. A machine that has not yet been homed cannot satisfy every machining check; that is a reason to complete the proper preparation procedure, not to skip its checks.</p>
+<aside class="learning-example"><h3>A familiar job is still a new setup</h3><p>Yesterday's file may be exactly right, but today's sheet may be thicker, a clamp may have been moved, or a different cutter may have been fitted. The previous successful run tells you that the earlier combination worked. It does not confirm the combination now on the machine.</p></aside>
+<p>Read the stopping explanations before using the motion controls. You should know what you will do if an ordinary operation needs to be interrupted and where the physical emergency-stop controls are located if an immediate danger develops. Learning that distinction while the machine is moving creates unnecessary uncertainty.</p>
+<p>The software can be installed on machines with different guarding, workholding and auxiliary equipment. This chapter explains the reviewed application behavior, but the machine manufacturer's instructions and your site's approved operating procedures supply the physical checks, permitted access methods and training requirements for your installation. If those instructions are missing or conflict with what you observe, obtain clarification before operating.</p>
+<p>By the end of this chapter, you should be able to explain why an accepted command is not a complete safety check, distinguish a motion stop from a safe condition for physical access, and identify the information that must be checked again after something changes.</p>
+
+</section>
+<section id="work-area" aria-labelledby="work-area-title">
+<h2 id="work-area-title">2.2 Know the machine and prepare the work area</h2>
+
+<p>Before your first independent shift, have the person responsible for the machine show you the normal operating position, the permitted loading area and every relevant physical emergency-stop control. Learn how to summon assistance and who may authorize a restart after a fault. These arrangements cannot be learned from the computer screen alone. Practical instruction and supervision should match the work you will actually perform, including setup and cleaning; see <a href="https://www.hse.gov.uk/woodworking/training.htm">HSE guidance on training and supervision</a>.</p>
+<p>Think about the whole machine, not just the point where the cutter touches the workpiece. The cutter rotates, the head and gantry travel, and an automatic tool changer can operate away from the cutting area. Router hazards also include trapping, ejected material, noise and dust. Use the installed safeguards and the protection specified for your machine and process. The general hazard categories are described in <a href="https://www.hse.gov.uk/pubns/wis22.pdf">HSE's router and machining-centre guidance</a>; that document does not identify the safeguards fitted to your particular installation.</p>
+<p>At the start of a shift, look for changes from the expected condition. A maintenance notice, an unfamiliar tool in the spindle, a moved fixture or a colleague still working at the machine means that the previous operating state cannot simply be assumed. Establish who has control of the machine before you touch its commands. An open application is not evidence that the previous operator has handed the machine over.</p>
+<table><caption>Table 2-1. Questions to resolve before using the controls</caption><thead><tr><th scope="col">Area</th><th scope="col">What you need to know</th><th scope="col">If the answer is unclear</th></tr></thead><tbody>
+<tr><td>Operator position</td><td>Where you are expected to stand and how to observe the operation without entering a restricted area.</td><td>Have the approved position and access boundaries demonstrated.</td></tr>
+<tr><td>Physical controls</td><td>Which controls are for ordinary stopping and which are emergency-stop devices.</td><td>Ask for identification before starting; do not discover their purpose during a job.</td></tr>
+<tr><td>Safeguards</td><td>Which guards, doors or other protective devices must be in place for this operation.</td><td>Report a missing, damaged or uncertain safeguard. Do not bypass it to obtain a ready indication.</td></tr>
+<tr><td>People and work area</td><td>Whether anyone is loading, inspecting, cleaning or servicing the machine.</td><td>Resolve the handover and obtain the required clearance before commanding movement.</td></tr>
+<tr><td>Process equipment</td><td>Which extraction, workholding and auxiliary services the approved job requires.</td><td>Use the machine's preparation instructions; do not invent pressure, speed or other setup values.</td></tr>
+</tbody></table>
+<p>Keep the operator's controls available and the approach to them unobstructed. A keyboard partly covered by paperwork or a mouse resting where it can be knocked makes it harder to issue the intended command. Before using a shortcut, check which window is active and what that shortcut means in the current setup. Do not rest objects on controls.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 2-1 · MACHINE PHOTOGRAPH REQUIRED</p><h3>The operator position and physical safety controls</h3><p>Insert an overview photograph of the actual installation, taken from a permitted location. Mark the normal operator position, identified emergency-stop devices, loading access, guarding and tool-changing area. Have the machine owner confirm every label. Use additional views if one photograph cannot show the relevant controls.</p><p>Suggested image: <code>assets/images/02-machine-safety-controls.jpg</code>. Do not use a generic router photograph or infer safety boundaries from this placeholder.</p><figcaption>The photograph must match the installed machine. It supplements the practical walk-through; it does not prescribe safety distances.</figcaption></figure>
+
+</section>
+<section id="job-setup" aria-labelledby="job-setup-title">
+<h2 id="job-setup-title">2.3 Match the workpiece, job and work zero</h2>
+
+<p>Begin with the job you are supposed to make, not with whichever file happens to be open. Identify the work order or drawing, the approved machining file and its revision, the material and the required starting dimensions. If two files have similar names, do not choose by appearance or by assuming that the most recently opened file is the correct one. Use the identification supplied with the job.</p>
+<p>The <strong>workpiece</strong> is the material being machined. <strong>Workholding</strong> means the arrangement that keeps it in its intended position, such as the approved clamps or vacuum arrangement on your machine. The screen does not establish that the material is held correctly. Complete the physical loading and holding checks through the approved machine procedure, including its requirements for access and safe handling.</p>
+<p>Next, compare the physical arrangement with the expected job layout. Check which face is uppermost and which edge or feature establishes the orientation. A rectangular sheet rotated through a quarter turn can still look plausible while placing a feature in the wrong place. Similarly, material of the correct length and width may have the wrong thickness. The drawing or setup sheet should tell you what is intended.</p>
+<table><caption>Table 2-2. The setup must tell one consistent story</caption><thead><tr><th scope="col">Item</th><th scope="col">Compare it with</th><th scope="col">Why the comparison matters</th></tr></thead><tbody>
+<tr><td>Machining file</td><td>The approved job and revision.</td><td>A successfully opened file may still belong to a different part.</td></tr>
+<tr><td>Material and dimensions</td><td>The job's specified starting stock.</td><td>A different thickness changes the relationship between the tool, top surface and table.</td></tr>
+<tr><td>Workpiece orientation</td><td>The setup drawing and intended work zero.</td><td>The same shape can be loaded in more than one orientation.</td></tr>
+<tr><td>Workholding</td><td>The approved holding arrangement and inspection requirements.</td><td>The programmed route must suit the actual supports, clamps and material.</td></tr>
+<tr><td>Work zero</td><td>The physical reference required by this job.</td><td>The program needs a known relationship to the material, not merely a convenient display value.</td></tr>
+</tbody></table>
+<p><strong>Work zero</strong> is the reference from which the job's coordinates are interpreted. It may be associated with a corner, a centre or another specified feature. Do not assume that every job uses the same corner or the same height reference. A displayed zero only has meaning when you know what physical location it represents. The detailed procedure for establishing it belongs to the work-origin chapter.</p>
+<aside class="learning-example"><h3>The right file, the wrong height</h3><p>Suppose a job was prepared with its height reference on the top of the material. A previous setup used another reference, and that earlier value is still present. The preview may show the intended shape, but the tool's physical height can be wrong. Changing the picture's zoom cannot fix this; the reference and setup must be checked.</p></aside>
+<p>Opening a file and seeing a recognizable shape are useful checks, but they do not complete setup approval. Read any preparation or travel warnings and resolve them before starting. Limits concern the machine's permitted travel; they do not describe every clamp, loose object or part of the workpiece. If the file, drawing and physical setup disagree, stop preparation and ask the person responsible for the job to resolve the difference.</p>
+
+</section>
+<section id="tools" aria-labelledby="tools-title">
+<h2 id="tools-title">2.4 Check tools and understand actions that can start motion</h2>
+
+<p>The <strong>tool number</strong> connects a job's tool request with the machine's configured tool information. It does not describe the cutter by itself. Two cutters can fit the same holder but have different diameters, lengths or purposes. Before a job, compare the required tool identification with the approved setup information and the actual installed tooling through the machine's permitted inspection procedure.</p>
+<p>A <strong>holder</strong> is the part that carries the cutter in the spindle or tool station. A <strong>tool station</strong> is a location used by the automatic tool changer. The station number, its contents and the application's tool information must agree. If someone exchanged the contents of two stations without making the required authorized updates, an apparently correct tool number would not resolve that discrepancy.</p>
+<p>Check tooling condition and suitability using the instructions for the installed tooling and process. The application cannot inspect cutting edges or prove that a holder has been assembled correctly. Stop preparation if damage, an uncertain identity or a mismatch is found. Do not substitute a cutter simply because it fits physically. Tool suitability and condition are also discussed in <a href="https://www.hse.gov.uk/woodworking/tooling.htm">HSE's tooling guidance</a>.</p>
+<h3>The tool selector is an operating control</h3>
+<p>In this application, accepting a selection in the tool selector can request a <strong>real tool exchange</strong>. Selecting an entry from the list or committing the choice with <strong>Enter</strong> is not merely changing a label for later use. When the request is permitted, the machine may begin the exchange sequence. Treat that action with the same preparation and attention as a motion command.</p>
+<p>The blank selection represents tool zero, meaning an empty spindle; accepting it can request unloading of the current tool. Do not choose it just to clear an unfamiliar number. During an exchange, the display follows the confirmed tool state as the operation progresses. A requested tool is not necessarily already in the spindle.</p>
+<table><caption>Table 2-3. These actions deserve a deliberate pre-motion check</caption><thead><tr><th scope="col">Action</th><th scope="col">What it can mean physically</th><th scope="col">Check before accepting</th></tr></thead><tbody>
+<tr><td>Accept a tool selection</td><td>Begin a manual tool-exchange request.</td><td>The intended tool, station contents, exchange area and required machine conditions.</td></tr>
+<tr><td>Accept the blank tool selection</td><td>Request an empty spindle by unloading the current tool.</td><td>That unloading is actually intended and permitted.</td></tr>
+<tr><td>Request tool-length measurement</td><td>Move the machine through a measurement sequence.</td><td>The correct measurement procedure, tool state, probe area and required preparation.</td></tr>
+<tr><td>Run a machining job</td><td>Prepare a required tool and position the head before cutting begins.</td><td>Both the preparation route and the cutting setup.</td></tr>
+</tbody></table>
+<p>Tool length tells the system how the tool tip relates to the machine's controlled position. A measurement belongs to the tool and assembly for which it was established. Replacing or moving a cutter in its holder can invalidate that relationship. Do not copy another tool's length or change a value until the display looks convenient. Follow the tool-measurement procedure, and ask for assistance if the physical tooling and the displayed state cannot be reconciled.</p>
+
+</section>
+<section id="routes" aria-labelledby="routes-title">
+<h2 id="routes-title">2.5 Check the whole movement, not just the cutting shape</h2>
+
+<p>When you look at a preview, your attention naturally goes to the shape being machined. The machine also has to reach that shape, change tools when required and leave the work area afterward. These movements can take place outside the outline of the finished part. Before a command, consider its complete route and destination.</p>
+<p><strong>Clearance</strong> means enough separation for the actual moving parts to pass without contact. It concerns more than the cutter tip. The holder, spindle body, head and any fitted attachments occupy space too. A small cutter passing beside a clamp does not prove that the larger parts above it will also pass. The preview is not a complete model of every object on the installed machine.</p>
+<figure class="concept-figure"><img src="assets/images/02-whole-operation.svg" width="1000" height="430" alt="Conceptual sequence of preparation, approach, cutting and departure, showing that tool stations, travel routes and parking also need checks."><figcaption>Figure 2-2. Think through the complete operation. This diagram is an explanation, not a machine layout or a collision-checked route.</figcaption></figure>
+<h3>A raised travel route still needs checking</h3>
+<p>For positioning actions such as <strong>Go Home</strong>, <strong>Go Reference</strong> and parking, the reviewed application uses a raised Z position before horizontal travel when horizontal movement is required. It then travels horizontally and goes to the final height. If only the height needs changing, there is no horizontal travel stage. This describes the application's chosen sequence; it does not establish that every object is clear.</p>
+<p>The raised position comes from the machine configuration. The software checks travel values, but it does not look around the physical machine for a tall clamp, a loose object or an altered attachment. Do not assume that a command is collision-free because its name sounds like a return to a known position. If the configured route does not suit the setup, have the cause resolved by the responsible person rather than editing limits to force acceptance.</p>
+<table><caption>Table 2-4. Movements to consider during preparation</caption><thead><tr><th scope="col">Operation</th><th scope="col">Area to consider</th><th scope="col">Common mistaken assumption</th></tr></thead><tbody>
+<tr><td>Homing</td><td>The reference-search travel of the machine axes.</td><td>“It will stay close to the current workpiece.”</td></tr>
+<tr><td>Tool exchange</td><td>The approach to, movement through and withdrawal from the tool station.</td><td>“Only the tool inside the spindle will change.”</td></tr>
+<tr><td>Tool measurement</td><td>The route to the measuring location and the measurement movement.</td><td>“This button only updates a number.”</td></tr>
+<tr><td>Go Home, Go Reference or parking</td><td>The lift, horizontal route and final descent that apply to the destination.</td><td>“A familiar destination guarantees a clear route.”</td></tr>
+<tr><td>Program start or restart</td><td>Any tool preparation and movement to the entry point, followed by cutting.</td><td>“The next movement must be the first visible cutting line.”</td></tr>
+</tbody></table>
+<aside class="learning-example"><h3>A clamp outside the finished part</h3><p>A clamp may be outside every cutting line and still lie between the current head position and the start of the job. Checking the finished outline alone misses that approach. The correct question is whether the complete intended movement suits the approved setup.</p></aside>
+<p>If you cannot predict the basic purpose and destination of the next movement, read the relevant operating chapter or ask for a demonstration before issuing it. This is particularly important for a new setup and after a tool, fixture or work origin has changed.</p>
+
+</section>
+<section id="screen-readiness" aria-labelledby="screen-readiness-title">
+<h2 id="screen-readiness-title">2.6 Read the screen without assuming more than it tells you</h2>
+
+<p>The screen helps you establish the machine's reported condition. Each indication answers a particular question. A connection indication concerns communication; a homing indication concerns the established machine reference. Neither answers whether today's workpiece is secured or whether a clamp obstructs the next move.</p>
+<h3>Check the operating mode first</h3>
+<p><strong>Simulation</strong> is used for simulated operation; <strong>Normal</strong> is the mode intended for real machine operation. Identify the selected mode before interpreting movement on the display. Do not issue a test movement to find out whether the application is controlling the real machine. If the mode is uncertain, resolve it before using motion controls.</p>
+<p>A mode caption also does not prove a working connection. The application distinguishes the selected operating mode from the condition of its connection. Treat them as two checks: “Am I in the intended mode?” and “Does the application report the required connection state?” After startup or reconnection, wait for a clear, settled state rather than clicking commands while the application is changing state.</p>
+<table><caption>Table 2-5. What common indications do and do not establish</caption><thead><tr><th scope="col">Indication</th><th scope="col">Meaning in the reviewed application</th><th scope="col">Still needs checking separately</th></tr></thead><tbody>
+<tr><td>Connection</td><td>The controller is connected, the machine communication is operational and a connection change is not in progress.</td><td>The physical setup, selected mode, homing and job preparation.</td></tr>
+<tr><td>Axis ready indication</td><td>The reported axis is ready to move without an axis or paired-axis fault.</td><td>Whether homing is complete and the intended route is suitable.</td></tr>
+<tr><td>Homed</td><td>All configured axes report homed while the machine connection is operational. This includes the additional gantry drive.</td><td>Workpiece zero, tool information and setup correctness.</td></tr>
+<tr><td>Alarm</td><td>An axis fault or a fault involving paired-axis movement is reported.</td><td>The cause and required recovery. Absence of this lamp does not rule out every other warning.</td></tr>
+<tr><td>Emergency indication</td><td>The application's reported emergency-input condition.</td><td>Actual standstill and the machine's physical access requirements.</td></tr>
+</tbody></table>
+<p><strong>Homing</strong> establishes the machine's reference; it does not locate a new workpiece for you. A ready axis may still need homing. Conversely, completing homing does not establish the correct work zero or prove that the tool length belongs to the fitted tool. These distinctions explain why several checks are necessary even when the screen appears generally ready.</p>
+<p>A disabled button or a rejected request can be useful information. Read the explanation before trying again. The machine may still be completing another operation, a required condition may be absent, or your current access may not permit the action. Repeated clicking does not supply the missing condition. Do not change settings, input assignments or access credentials simply to make a control available.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 2-3 · APPLICATION SCREENSHOT REQUIRED</p><h3>Mode, connection and readiness indications</h3><p>Insert an English-language screenshot of the actual main window. Label the mode caption, connection indication, axis indications, homed indication and alarm/emergency indications. State the real or simulated capture condition in the final caption. Use a separate image for another state rather than recolouring a lamp.</p><p>Suggested image: <code>assets/images/02-readiness-indicators.png</code>. Capture from an approved stationary condition; do not create a machine fault merely to obtain an illustration.</p><figcaption>The screenshot should illustrate how to locate information, not declare the illustrated physical machine safe to operate.</figcaption></figure>
+
+</section>
+<section id="stopping" aria-labelledby="stopping-title">
+<h2 id="stopping-title">2.7 Understand Pause, Reset and feed override</h2>
+
+<p>Several controls can make the machine appear to stop or wait, but they do different jobs. Learn their meaning before running a program. Choosing the wrong one can change where a later start begins, or leave a movement ready to continue when you thought it had been cancelled.</p>
+<p>The explanations below concern ordinary application controls. They do not replace the physical emergency-stop procedure. If there is immediate danger, respond through that procedure; do not delay while deciding which control best preserves the job.</p>
+<table><caption>Table 2-6. Stopping and waiting controls in this application</caption><thead><tr><th scope="col">Control</th><th scope="col">Effect on motion and the job</th><th scope="col">What you must not assume</th></tr></thead><tbody>
+<tr><td><strong>Pause</strong></td><td>Requests a stop of all motion while retaining the main machining program's place for possible continuation. Cancels pending positioning continuation and tool-changing activity.</td><td>That the spindle has stopped, or that an interrupted tool exchange can simply carry on.</td></tr>
+<tr><td><strong>Reset</strong></td><td>Requests a stop of all motion. After the main machining program is idle, the application resets its place to the beginning.</td><td>That a later Run will continue where cutting stopped, or that physical access is permitted.</td></tr>
+
+<tr><td><strong>Feed override at 0%</strong></td><td>Holds the main program's feed through controlled deceleration. Its existing operation remains available to continue when the override is raised.</td><td>That all machine actions have been cancelled or another Run is required before feed can resume.</td></tr>
+<tr><td><strong>Physical emergency stop</strong></td><td>Acts through the installed machine's emergency-stop system.</td><td>That its physical behavior or the conditions for access can be determined from this software manual alone.</td></tr>
+</tbody></table>
+<h3>Pause keeps the program's place, not a promise to resume safely</h3>
+<p>Imagine a bookmark in a book. Pause keeps the main machining program's bookmark, so the application can retain where it was interrupted. The physical setup must still be suitable before you continue. If a tool has been replaced or the workpiece has shifted, retaining the bookmark does not make the old cutting conditions valid.</p>
+<p>Pause also interrupts auxiliary motion. In particular, a partly completed tool exchange is not the same as a simple pause during an ordinary cutting move. Establish the resulting tool state and use the appropriate recovery procedure. Do not assume that every interrupted operation is preserved just because the main machining program retains its place.</p>
+<h3>Reset changes the next-start situation</h3>
+<p>Reset requests stopping first; the program reset follows when the main program is idle. Allow that sequence to complete and check the resulting state. Pressing Run afterward must be treated as a new start situation, with the starting location and setup checked again. The Pause controls in the run, jog and motion areas also stop all motion, but preserve the main program cursor.</p>
+<p>Reset changes the program's selected place; it does not move the physical head to match it. Reset is available while connected, including during motion: it first requests a controlled stop and then rewinds the idle main path. It does not repair faults or establish permission for physical access.</p>
+<h3>Zero feed is especially easy to misunderstand</h3>
+<p>Feed override adjusts the rate of the main machining movement. At zero, feed can come to a controlled hold while the operation remains active. Raising it again can allow movement to resume <strong>without pressing Run again</strong>. Tell anyone taking over the controls if the machine is waiting this way. Never use zero feed as permission to reach into the machine.</p>
+<aside class="learning-example"><h3>“I only moved the slider”</h3><p>An operator sees a stationary head and raises the feed slider from zero. The existing program can then continue. The slider change is therefore a motion-affecting action, even though no new Run command was issued.</p></aside>
+<p><strong>Stopping travel does not prove that the cutter has stopped rotating.</strong> Pause and Reset are motion-stop requests; the spindle has its own control and stopping behavior. Observe the required machine procedure for spindle stopping and access. A changed button appearance, a zero feed value or a still position display is not a substitute for establishing the required physical condition.</p>
+
+</section>
+<section id="emergency" aria-labelledby="emergency-title">
+<h2 id="emergency-title">2.8 Respond to immediate danger and understand the emergency indication</h2>
+
+<p>If an immediate danger develops, use the installed physical emergency-stop control from a safe position according to your machine training. Keep clear and follow the site's emergency response arrangements. Do not delay to save a program position, dismiss a message or find the correct software window. This chapter does not prescribe the layout or stopping performance of the physical emergency circuit.</p>
+<p>Learn the difference between the physical emergency-stop device and the application's emergency indication. The device is part of the machine's installed emergency-stop system. The indication is information displayed by the application. A lamp on the screen is not a device that you should rely on to make the machine stop.</p>
+<h3>What the application reports</h3>
+<p>In the reviewed configuration, the emergency input is normally closed: its normal, closed condition makes the red emergency indication turn off. An open condition makes it turn on. This describes the expected signal arrangement. The indication alone does not explain why the input is open, identify which physical device is involved, or prove that the machine has reached standstill.</p>
+<p>The supplied machine-control behavior responds to an open emergency input by requesting a hold on motion and stopping spindle commands. This software response complements the physical emergency-stop circuit. It is not a replacement for that circuit, and its presence must not be interpreted as a safety certification for the installed machine.</p>
+<table><caption>Table 2-7. Interpreting the emergency indication</caption><thead><tr><th scope="col">Observation</th><th scope="col">Reasonable conclusion</th><th scope="col">Conclusion you cannot make from this alone</th></tr></thead><tbody>
+<tr><td>Red emergency indication is on</td><td>The application reports the emergency input as open under the reviewed arrangement.</td><td>The cause is known, every moving part has stopped, or access is permitted.</td></tr>
+<tr><td>Red emergency indication goes off</td><td>The input has returned to its normal closed condition.</td><td>The original hazard has been removed or the job is ready to restart.</td></tr>
+<tr><td>Indication appears normal after reconnection</td><td>The current reported input is normal.</td><td>The previous interrupted setup, tool state and program position are still valid.</td></tr>
+</tbody></table>
+<h3>Releasing an emergency stop is not restarting the job</h3>
+<p>Do not release an emergency-stop device merely to make a warning disappear. First follow the machine's procedure for identifying the cause, controlling the situation and obtaining any required authorization. The person who clears the condition must know whether other people are still investigating or working at the machine.</p>
+<p>In the reviewed application behavior, return of the emergency input to normal does <strong>not automatically resume interrupted motion</strong>. A hold can remain while stopping completes. A later start requires an appropriate new command and valid conditions. Do not interpret a short wait as a reason to issue repeated commands.</p>
+<aside class="learning-example"><h3>The lamp clears, but the cause remains</h3><p>An emergency stop was used because the intended movement approached an obstruction. Releasing the device may clear the input indication. It does not remove the obstruction or correct the route. Those facts must be resolved before a restart is considered.</p></aside>
+<p>Record what was happening immediately before the event when it is safe to do so. Whether the machine was cutting, measuring or exchanging tools matters to recovery. The next action should address that actual situation, not simply restore the screen to the way it looked before.</p>
+
+</section>
+<section id="access" aria-labelledby="access-title">
+<h2 id="access-title">2.9 Distinguish a stopped machine from permission to enter</h2>
+
+<p>From the operator position, “nothing is moving” can describe several different conditions. The machine may be paused, waiting at zero feed, waiting for an auxiliary operation, or stopped after a command. These conditions have different restart behavior. None of those descriptions, by itself, tells you that reaching into the machine is permitted.</p>
+<p><strong>Energy isolation</strong> is a separate machine-specific process for controlling hazardous energy before work that requires it. A software Stop button, selector or guard interlock is not an energy-isolating device. Follow the authorized procedure for the actual task and machine; this distinction is explained in <a href="https://www.osha.gov/etools/lockout-tagout/hot-topics/energy-control-program/energy-control-circuitry-prohibition">OSHA guidance on control circuits and isolation</a>. This reference explains a principle, not which country's rules apply to your site.</p>
+<p>Electrical power is not the only possible source of movement or injury. Compressed air, stored mechanical energy and gravity can also matter. Do not improvise by disconnecting a supply: removing it can change how an assembly is held. Have trained, authorized personnel carry out the required isolation and control of stored energy. See <a href="https://www.osha.gov/control-hazardous-energy">OSHA's hazardous-energy overview</a> for the general background.</p>
+<h3>Why the distinction matters at the screen</h3>
+<p>The application can show zero motion while a spindle command remains active. A main program held by zero feed can move again when the feed setting changes. An interrupted tool exchange can leave the machine at an intermediate stage. The same still picture therefore does not mean the same physical condition in every case.</p>
+<aside class="learning-example"><h3>A loose piece near the cutter</h3><p>You notice a loose piece and the head appears stationary. Do not reach in because the position values have stopped changing. First use the applicable stopping and access procedure, including isolation when required. The screen cannot grant permission to retrieve the piece.</p></aside>
+<p>Normal loading, inspection, cleaning and servicing may have different approved procedures. Learn which one applies to your task. If an unexpected blockage or tool problem falls outside the procedure you were trained to perform, stop and request assistance. Do not turn a production interruption into an improvised maintenance operation.</p>
+<p>Likewise, closing the application or disconnecting communication is not a substitute for establishing a safe physical condition. A computer window concerns the operator interface. It does not verify every source of machine energy, the spindle's actual standstill or another person's control of the equipment.</p>
+<p>Before leaving the controls or handing them over, make the current condition clear to the next responsible person. State whether the job is paused, stopped, awaiting recovery or unavailable for use. In particular, identify any unresolved issue and any physical work in progress. An unexplained stationary machine invites a mistaken restart.</p>
+
+</section>
+<section id="first-motion" aria-labelledby="first-motion-title">
+<h2 id="first-motion-title">2.10 Make the first movement a deliberate operation</h2>
+
+<p>The first movement of a shift may be homing, a manual adjustment or another approved preparation action. It should have a clear purpose. “I want to see whether it moves” is not a sufficient plan on an unfamiliar real machine. Before using a control, be able to describe what you expect to move and how you will recognize completion.</p>
+<p>For the first movement, complete the physical pre-start checks and confirm the intended mode, connection and relevant readiness conditions. You do not have to pretend that the machine is already homed before asking it to home. You do have to use the homing procedure and establish that its search route is available. Commands that require completed homing must wait until that condition has actually been established.</p>
+<ol class="journey">
+<li><strong>Name the intended action.</strong><p>Decide whether you are homing, jogging, positioning, changing a tool or measuring. Similar-looking controls can have different purposes.</p></li>
+<li><strong>Check what the action will use.</strong><p>Consider the axes, route, destination and any auxiliary equipment involved. Confirm that the relevant preparation and safeguarding requirements have been met.</p></li>
+<li><strong>Read the values before confirming.</strong><p>For a manual move, check the selected mode, direction, distance or destination and speed as applicable. Distinguish a destination coordinate from a distance to travel.</p></li>
+<li><strong>Issue the intended command once and observe.</strong><p>Look for both the application's response and the expected physical behavior from the permitted operating position. Do not repeatedly click because movement has not started immediately.</p></li>
+<li><strong>Confirm completion before the next action.</strong><p>Check the reported result and actual condition. A rejected or interrupted action needs an explanation before you proceed.</p></li>
+</ol>
+<h3>Releasing a button does not stop every kind of move</h3>
+<p>With continuous jog, the held direction control requests continuing movement, and releasing it requests stopping that jog. A <strong>step move</strong> is different: it requests a finite distance. A <strong>position move</strong> requests travel to a destination. Those finite moves can continue after the button or key is released.</p>
+<p>For example, clicking a position command is more like telling the machine “go to this location” than holding a control that means “move only while I press.” If a finite move must be interrupted, use the applicable stopping control. Do not assume that letting go of the mouse cancels it. Immediate danger calls for the physical emergency procedure described earlier.</p>
+<p>The full-machine homing sequence in the supplied application homes Z first, then X and the paired Y gantry. This can move parts of the machine beyond the current job area. Successful completion should produce the expected homed state; the fact that one axis moved and stopped is not proof that the complete sequence succeeded.</p>
+<aside class="learning-example"><h3>The machine stops before the expected result</h3><p>You request homing, see movement and then see the machine become still, but the complete homed indication is absent. Treat the action as incomplete until its result is understood. Do not continue to a machining command simply because the movement looked approximately right.</p></aside>
+<p>The expected result is part of the procedure, not an optional final glance. It prevents an unsuccessful preparation step from becoming an unnoticed assumption in the next operation.</p>
+
+</section>
+<section id="before-cutting" aria-labelledby="before-cutting-title">
+<h2 id="before-cutting-title">2.11 Complete the final pre-run check and watch the start</h2>
+
+<p>Once machine preparation is complete, pause before pressing Run and compare the job information with the physical setup one last time. This is especially valuable after a conversation, a tool change or an interruption: attention may have moved on while the machine and application retained an earlier selection.</p>
+<p>Use the checklist below at the point where machining is about to begin. It summarizes the checks explained in this chapter; it does not replace the detailed setup, homing, tool and work-origin procedures. If an item is uncertain, resolve it before the start. Do not treat a tick as a substitute for knowing what was checked.</p>
+<table><caption>Table 2-8. Final check before the first machining start</caption><thead><tr><th scope="col">Check</th><th scope="col">What should be established</th></tr></thead><tbody>
+<tr><td>People and safeguards</td><td>The required clearance and safeguards are established; nobody is performing physical work on the machine.</td></tr>
+<tr><td>Mode and readiness</td><td>The intended mode and operational connection are confirmed; required homing is complete; unresolved alarms or warnings have been addressed.</td></tr>
+<tr><td>Job identity</td><td>The correct approved file and revision are loaded and preparation has completed.</td></tr>
+<tr><td>Material and holding</td><td>The material, dimensions, orientation and approved workholding match the job.</td></tr>
+<tr><td>Tool and length</td><td>The required tool, actual tooling, station information and established length agree.</td></tr>
+<tr><td>Work zero and entry</td><td>The selected work reference and intended starting point are correct for the current setup.</td></tr>
+<tr><td>Route</td><td>Preparation, approach, cutting and any departure movement have been considered.</td></tr>
+<tr><td>Operating values</td><td>Feed, spindle settings and overrides are appropriate under the approved job instructions. A retained zero override is understood.</td></tr>
+<tr><td>Operator readiness</td><td>You can observe the operation from the permitted position and know the ordinary and emergency stopping arrangements.</td></tr>
+</tbody></table>
+<p>When Run is accepted, the first visible action may be tool preparation or positioning rather than cutting. Watch the sequence as an operation with several possible stages. A short interval without cutting is not, by itself, a reason to press Run again or change the feed setting. Read the current status and compare it with the expected procedure.</p>
+<p>Pay particular attention to the first approach and the first cutting engagement. You are checking whether the actual operation agrees with the prepared job, not experimenting with unapproved speeds or depths. If a new or changed job requires an initial proving procedure, use the method and supervision specified by the machine owner. This chapter does not prescribe an arbitrary slow speed, clearance or dry-run method.</p>
+<p>Continue to monitor the operation as required by the site's procedure. Unexpected movement, unusual process behavior, a displaced workpiece or a message requiring attention should not be dismissed because the file loaded successfully. Use the appropriate stopping response for the seriousness of the situation and keep clear of the moving machine.</p>
+<p>At completion, establish what actually finished. Cutting completion may be followed by a configured parking movement. A finished progress indication is not permission to unload immediately; use the machine's unloading and access procedure after the relevant movements and spindle conditions have been addressed.</p>
+
+</section>
+<section id="unexpected" aria-labelledby="unexpected-title">
+<h2 id="unexpected-title">2.12 Respond when the result is different from what you expected</h2>
+
+<p>When something does not behave as expected, first distinguish an immediate danger from an ordinary rejected or incomplete operation. Immediate danger calls for the physical emergency response. If no immediate danger exists, stop issuing further operating commands, keep clear and read the available information before deciding what to do next.</p>
+<p>A message is evidence about a condition; it is not always a complete explanation of the cause. For example, “not ready” might occur during an unfinished operation or because a required condition is missing. The useful question is what the machine was doing and what changed just before the message appeared.</p>
+<table><caption>Table 2-9. A practical first response to unexpected conditions</caption><thead><tr><th scope="col">What you notice</th><th scope="col">What to do next</th><th scope="col">Avoid this shortcut</th></tr></thead><tbody>
+<tr><td>A command is disabled or rejected</td><td>Read its explanation and check whether another operation is still active. Follow the relevant procedure once the cause is understood.</td><td>Repeated clicking or changing settings simply to enable it.</td></tr>
+<tr><td>Movement differs from the expected direction or route</td><td>Use the appropriate stop response, remain clear and establish which command and values were accepted.</td><td>Trying opposite commands while the unexplained movement continues.</td></tr>
+<tr><td>A tool exchange or measurement stops part-way through</td><td>Treat the operation as incomplete. Establish the physical tool state and seek the required recovery assistance.</td><td>Assuming the requested tool is installed or repeatedly restarting the sequence.</td></tr>
+<tr><td>Communication is lost or the screen stops updating</td><td>Do not rely on the last displayed state. Use the machine's physical stopping or emergency procedure as the situation requires.</td><td>Assuming that a frozen picture means a stopped machine.</td></tr>
+<tr><td>The part moves, a tool appears damaged or the process changes unexpectedly</td><td>Stop as the situation requires, keep clear and obtain the required inspection before continuing.</td><td>Reaching in or adjusting a setting to continue an uncertain setup.</td></tr>
+<tr><td>A warning recurs after a reset or restart</td><td>Record the circumstances and escalate to the responsible person.</td><td>Treating repeated clearing as a repair.</td></tr>
+</tbody></table>
+<p>Some conditions are intentionally required before an operation can proceed. For example, the supplied tool-change behavior requires release confirmation for enabled rollers. If that confirmation is unavailable, the exchange must not be forced by changing a signal or disabling a check. The operator's task is to report the condition and follow authorized recovery, not to make the display look ready.</p>
+<h3>Give a useful report</h3>
+<p>Describe the action you requested, the stage reached, the exact message and what you could observe from a permitted position. “Tool exchange stopped while returning the current tool” is more useful than “the machine does not work.” Include the job file, requested tool, operating mode and any change made shortly before the problem.</p>
+<p>If it is safe and permitted, capture the message or write it down before dismissing it. Do not recreate a hazardous event for a photograph or a better description. Preserve uncertainty in your report: saying “I could not confirm which tool remained in the spindle” is useful information, not a failure to provide an answer.</p>
+<p>An ordinary operator is not expected to repair every condition. Configuration, password controls and diagnostic windows will be explained later in the manual, but access to a window does not make every change an appropriate recovery action. Stop at the limits of your training and assigned authority.</p>
+
+</section>
+<section id="restart" aria-labelledby="restart-title">
+<h2 id="restart-title">2.13 Recheck the setup before restarting or handing over</h2>
+
+<p>A restart is a new decision to allow movement. Before making that decision, establish why the machine stopped, whether the cause has been resolved and which parts of the previous setup can still be relied on. A cleared message is only one piece of that assessment.</p>
+<p>Begin with the interrupted operation. A pause during ordinary cutting, a Reset that rewinds the program's place, a failed measurement and an emergency interruption are different situations. They can leave different physical positions, tool states and starting conditions. Do not apply the same “press Run again” response to all of them.</p>
+<h3>Work from what changed</h3>
+<p>If the workpiece or its holding arrangement moved, the previous work zero and remaining cutting route need reassessment. If a cutter was replaced or disturbed, its identity and length need reassessment. If homing was lost or the machine's position is uncertain, follow the required reference-recovery procedure. You should not guess a corrective number merely because it brings a display close to yesterday's value.</p>
+<p>If nothing appears to have changed, still establish the program's intended starting place. Pause retains the main machining program's place, whereas Reset rewinds it after stopping. A separately selected start line can also affect a later Run. In the reviewed application, double-clicking a program line while stopped can select a restart location. Do not double-click a line casually while reviewing an interrupted job.</p>
+<aside class="learning-example"><h3>Two operators, two different assumptions</h3><p>The first operator presses Reset and leaves the machine. The next operator assumes it was paused and expects Run to continue the cut. The disagreement is about the program's starting place, even if neither person has moved the workpiece. A clear handover prevents that assumption.</p></aside>
+<p>Restarting from part-way through a job requires its own procedure. The selected line, required tool, work reference and approach to the remaining cut must agree. Seeing the expected line highlighted is not enough to authorize a restart. The detailed recovery and selected-start chapters explain those operations; until you have been trained in them, request assistance.</p>
+<table><caption>Table 2-10. Information to pass to the next operator or supervisor</caption><thead><tr><th scope="col">Record or explain</th><th scope="col">Useful detail</th></tr></thead><tbody>
+<tr><td>Job and setup</td><td>Job identity, file/revision, material and which setup checks are complete.</td></tr>
+<tr><td>Reason for stopping</td><td>Planned interruption, rejected action, fault or emergency event; exact message if available.</td></tr>
+<tr><td>Last operation</td><td>Cutting, positioning, homing, exchange or measurement; what was observed before it stopped.</td></tr>
+<tr><td>Program state</td><td>Paused, stopped/reset, zero-feed hold or selected restart location; identify uncertainty explicitly.</td></tr>
+<tr><td>Physical changes</td><td>Any moved material, altered workholding, changed tool or inspection still in progress.</td></tr>
+<tr><td>Permission to proceed</td><td>Outstanding checks, required assistance and who is responsible for releasing the machine for use.</td></tr>
+</tbody></table>
+<p>Only after the applicable checks and required authorization are complete should the next operating command be issued. Re-establish the normal operating position and observation arrangements, and watch the initial movement just as carefully as the first start of a new job.</p>
+
+</section>
+<section id="understanding" aria-labelledby="understanding-title">
+<h2 id="understanding-title">2.14 Check your understanding before operating independently</h2>
+
+<p>Use these examples to check whether you can connect the screen's information to the physical machine. You do not need to memorize technical terms. You should be able to explain the next sensible action in your own words. Discuss any uncertain answer with the person training you before operating independently.</p>
+<h3>1. The connection indication is on. Can you press Run?</h3>
+<p>Not on that fact alone. Connection answers a communication question. You still need the intended operating mode, required homing and readiness, the correct job, tool and work zero, and an approved physical setup. Explain how you would check those items on your actual machine.</p>
+<h3>2. The head is stationary because feed override is zero. Can a colleague reach into the work area?</h3>
+<p>Zero feed does not establish permission for access. The main operation can resume when the override is raised, and other hazards may remain. Use the machine's stopping and access procedure. Be able to explain why a stationary display and an isolated machine are different conditions.</p>
+<h3>3. You want to see which tools are available. Can you select one from the list without preparing for movement?</h3>
+<p>No. Accepting a list selection can request a real exchange. Reviewing information and committing an operating choice are different actions. Before accepting a choice, establish the intended tool and the conditions needed for the exchange.</p>
+<h3>4. You release the button after starting a position move. Why might movement continue?</h3>
+<p>The command requested travel to a destination. It is a finite move, not a continuous jog that depends on holding the direction control. Use the appropriate stopping response if it must be interrupted. Know this difference before using the controls.</p>
+<h3>5. An emergency indication clears. Is the interrupted job ready to continue?</h3>
+<p>Not automatically. Establish why the emergency condition occurred, whether the cause was resolved, whether people are clear and whether the setup and starting conditions are valid. Return of the input to normal does not itself resume motion in the reviewed application.</p>
+<h3>6. A clamp is outside the cutting outline. Is its position therefore acceptable?</h3>
+<p>The cutting outline is only part of the operation. Consider tool preparation, approach, the size of the holder and head, and departure or parking. Use the approved setup and check the complete route rather than relying on the visible shape alone.</p>
+<h3>7. The previous operator says “I stopped it.” What else do you need to know?</h3>
+<p>Ask which action was used, why the interruption occurred, what operation was in progress and what changed afterward. Establish the program's starting place, tool state, remaining checks and any physical work in progress. Do not turn an ambiguous handover into an assumed permission to start.</p>
+<div class="note"><strong>Your practical readiness check</strong><p>Before independent operation, be able to identify the physical emergency controls, explain the relevant access procedure, demonstrate the required pre-start checks under supervision and recognize when to ask for assistance. This reading check is not a substitute for practical assessment on the installed machine.</p></div>
+<p>Keep <a href="#before-cutting">the final pre-run checklist</a> and <a href="#stopping">the stopping-control comparison</a> available while learning. The <a href="index.html#chapter-03">next planned chapter</a> covers application startup, login, connection and shutdown. Those procedures build on the distinctions established here.</p>
+<aside class="source-note"><p><strong>Scope of this chapter.</strong> Application behavior was checked against the RouterXYZAC+TC implementation and supplied machine-control programs on 8 October 2026. Saved machine-specific programs, settings and installed hardware must be confirmed for the delivered machine. External safety references explain general principles; they do not certify this installation or determine the rules applicable at your site.</p></aside>
+
+</section>
+</div>
+<footer class="page-footer"><span>RouterXYZAC+TC · Operator Manual · Chapter 2</span><a href="index.html#chapter-02">Return to the contents</a></footer>
+</main>
+</body>
+</html>

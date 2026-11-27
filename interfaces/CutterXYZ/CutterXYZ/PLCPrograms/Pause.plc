@@ -1,0 +1,2 @@
+// Optional engineer extension for operator Pause.
+END_FUNCTION(Result := 0);

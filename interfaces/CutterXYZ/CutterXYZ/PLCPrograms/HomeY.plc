@@ -1,0 +1,248 @@
+// Independent Y/YG gantry homing for the Router-XYYZ machine.
+//
+// The sequence matches the Y/YG branches of Home Z-XYY. The normal coupled
+// gantry is decoupled before sensor search. Each axis stops when its sensor is
+// found and waits for the other axis. After both search edges have been found
+// and both axes have stopped, both axes start the reverse release move together.
+// Each axis then stops as soon as its own sensor is released. Once both sensors
+// are released and both axes are stopped, both coordinates are assigned, the
+// configured displacement is applied, and the gantry is coupled again.
+//
+// Result 0: both gantry axes homed and coupling was restored.
+// Result 1: either search, release, or stop phase timed out.
+// Result 2: an invalid HomeDirection (must be -1 or +1).
+// Result 3: the initial gantry topology is invalid or coupling timed out.
+CONST INTEGER MACHINE_PREPARE_GANTRY := 0;
+CONST INTEGER MACHINE_SEARCH_GANTRY := 1;
+CONST INTEGER MACHINE_WAIT_SEARCH_STOP := 2;
+CONST INTEGER MACHINE_RELEASE_GANTRY := 3;
+CONST INTEGER MACHINE_WAIT_RELEASE_STOP := 4;
+CONST INTEGER MACHINE_DISPLACE_GANTRY := 5;
+CONST INTEGER MACHINE_COUPLE_GANTRY := 6;
+CONST INTEGER MACHINE_RECOVER_GANTRY := 7;
+
+CONST INTEGER COUPLING_INDEPENDENT := 0;
+CONST INTEGER COUPLING_MASTER := 1;
+CONST INTEGER COUPLING_SLAVE := 2;
+INTEGER PHASE_TIMEOUT_MS := 120000;
+CONST INTEGER COUPLING_TIMEOUT_MS := 60000;
+
+// One immutable settings snapshot per activation; never reread live settings
+// after homing has started.
+REAL YHomePosition := 0.0;
+REAL YHomeDisplace := 0.0;
+REAL YHomeVelocity := 0.0;
+REAL YHomeReturnVelocity := 0.0;
+INTEGER YHomeDirection := -1;
+REAL YGHomePosition := 0.0;
+REAL YGHomeDisplace := 0.0;
+REAL YGHomeVelocity := 0.0;
+REAL YGHomeReturnVelocity := 0.0;
+INTEGER YGHomeDirection := -1;
+
+INTEGER MachinePhase := 0;
+INTEGER PendingResult := 0;
+REAL GantryDisplaceVelocity := 0.0;
+LOGIC YSensorSeen := FALSE;
+LOGIC YGSensorSeen := FALSE;
+LOGIC YSensorReleased := FALSE;
+LOGIC YGSensorReleased := FALSE;
+TIMER CouplingTimeout;
+TIMER SearchTimeout;
+TIMER ReleaseTimeout;
+
+// Step 1: Reset sensor latches and reject invalid
+// home directions before changing the gantry topology.
+IF SF.FirstScan THEN
+    PHASE_TIMEOUT_MS := Controller.HomeTimeout * 1000;
+    YHomePosition := Y.HomePosition;
+    YHomeDisplace := Y.HomeDisplace;
+    YHomeVelocity := Y.HomeVelocity;
+    YHomeReturnVelocity := Y.HomeReturnVelocity;
+    YHomeDirection := Y.HomeDirection;
+    YGHomePosition := YG.HomePosition;
+    YGHomeDisplace := YG.HomeDisplace;
+    YGHomeVelocity := YG.HomeVelocity;
+    YGHomeReturnVelocity := YG.HomeReturnVelocity;
+    YGHomeDirection := YG.HomeDirection;
+
+    MachinePhase := MACHINE_PREPARE_GANTRY;
+    PendingResult := 0;
+    YSensorSeen := FALSE;
+    YGSensorSeen := FALSE;
+    YSensorReleased := FALSE;
+    YGSensorReleased := FALSE;
+
+    IF (YHomeDirection <> -1 AND YHomeDirection <> 1)
+        OR (YGHomeDirection <> -1 AND YGHomeDirection <> 1) THEN
+        PendingResult := 2;
+        MachinePhase := MACHINE_RECOVER_GANTRY;
+    END_IF;
+END_IF;
+
+// Step 2: Supervise topology changes and both sensor-edge sequences.
+CouplingTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_PREPARE_GANTRY
+        OR MachinePhase = MACHINE_COUPLE_GANTRY,
+    PT := COUPLING_TIMEOUT_MS
+);
+SearchTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_SEARCH_GANTRY
+        OR MachinePhase = MACHINE_WAIT_SEARCH_STOP,
+    PT := PHASE_TIMEOUT_MS
+);
+ReleaseTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_RELEASE_GANTRY
+        OR MachinePhase = MACHINE_WAIT_RELEASE_STOP,
+    PT := PHASE_TIMEOUT_MS
+);
+
+IF CouplingTimeout.Q THEN
+    PendingResult := 3;
+    MachinePhase := MACHINE_RECOVER_GANTRY;
+ELSIF SearchTimeout.Q OR ReleaseTimeout.Q THEN
+    PendingResult := 1;
+    MachinePhase := MACHINE_RECOVER_GANTRY;
+END_IF;
+
+// Step 3: Open the normal coupling. Already independent axes are accepted,
+// while any partial or reversed topology enters recovery.
+IF MachinePhase = MACHINE_PREPARE_GANTRY THEN
+    IF Y.CouplingRole = COUPLING_MASTER AND YG.CouplingRole = COUPLING_SLAVE THEN
+        AXES_DECOUPLE(Y, YG);
+        MachinePhase := MACHINE_SEARCH_GANTRY;
+    ELSIF Y.CouplingRole = COUPLING_INDEPENDENT
+        AND YG.CouplingRole = COUPLING_INDEPENDENT THEN
+        MachinePhase := MACHINE_SEARCH_GANTRY;
+    ELSE
+        AXES_STOP(Y, YG);
+        PendingResult := 3;
+        MachinePhase := MACHINE_RECOVER_GANTRY;
+    END_IF;
+
+// Step 4: Search independently. Each axis stops on its own sensor and waits
+// for the other axis to find its sensor.
+ELSIF MachinePhase = MACHINE_SEARCH_GANTRY THEN
+    IF NOT YSensorSeen THEN
+        IF HomeSensorY THEN
+            YSensorSeen := TRUE;
+            AXES_STOP(Y);
+        ELSE
+            AXIS_HOME(Y := YHomeDirection, Velocity := YHomeVelocity);
+        END_IF;
+    ELSE
+        AXES_STOP(Y);
+    END_IF;
+
+    IF NOT YGSensorSeen THEN
+        IF HomeSensorYG THEN
+            YGSensorSeen := TRUE;
+            AXES_STOP(YG);
+        ELSE
+            AXIS_HOME(YG := YGHomeDirection, Velocity := YGHomeVelocity);
+        END_IF;
+    ELSE
+        AXES_STOP(YG);
+    END_IF;
+
+    IF YSensorSeen AND YGSensorSeen THEN
+        MachinePhase := MACHINE_WAIT_SEARCH_STOP;
+    END_IF;
+
+// Step 5: Do not begin the reverse release until both axes are fully stopped.
+ELSIF MachinePhase = MACHINE_WAIT_SEARCH_STOP THEN
+    AXES_STOP(Y, YG);
+    IF Y.Stopped AND YG.Stopped THEN
+        MachinePhase := MACHINE_RELEASE_GANTRY;
+    END_IF;
+
+// Step 6: Start both reverse moves together. Each axis stops when its own
+// sensor is released and then waits for the other axis.
+ELSIF MachinePhase = MACHINE_RELEASE_GANTRY THEN
+    IF NOT YSensorReleased THEN
+        IF NOT HomeSensorY THEN
+            YSensorReleased := TRUE;
+            AXES_STOP(Y);
+        ELSE
+            AXIS_HOME(Y := -YHomeDirection, Velocity := YHomeReturnVelocity);
+        END_IF;
+    ELSE
+        AXES_STOP(Y);
+    END_IF;
+
+    IF NOT YGSensorReleased THEN
+        IF NOT HomeSensorYG THEN
+            YGSensorReleased := TRUE;
+            AXES_STOP(YG);
+        ELSE
+            AXIS_HOME(YG := -YGHomeDirection, Velocity := YGHomeReturnVelocity);
+        END_IF;
+    ELSE
+        AXES_STOP(YG);
+    END_IF;
+
+    IF YSensorReleased AND YGSensorReleased THEN
+        MachinePhase := MACHINE_WAIT_RELEASE_STOP;
+    END_IF;
+
+// Step 7: After both release stops, assign both pre-displacement coordinates.
+ELSIF MachinePhase = MACHINE_WAIT_RELEASE_STOP THEN
+    AXES_STOP(Y, YG);
+    IF Y.Stopped AND YG.Stopped THEN
+        AXIS_SET_HOME(
+            Axis := Y,
+            Position := YHomePosition - YHomeDisplace
+        );
+        AXIS_SET_HOME(
+            Axis := YG,
+            Position := YGHomePosition - YGHomeDisplace
+        );
+
+        IF YHomeDisplace <> 0.0 OR YGHomeDisplace <> 0.0 THEN
+            MachinePhase := MACHINE_DISPLACE_GANTRY;
+        ELSE
+            MachinePhase := MACHINE_COUPLE_GANTRY;
+        END_IF;
+    END_IF;
+
+// Step 8: Apply both HomeDisplace values in one interpolated move, using the
+// lower captured search velocity so neither axis exceeds its homing speed.
+ELSIF MachinePhase = MACHINE_DISPLACE_GANTRY THEN
+    IF YHomeVelocity <= YGHomeVelocity THEN
+        GantryDisplaceVelocity := YHomeVelocity;
+    ELSE
+        GantryDisplaceVelocity := YGHomeVelocity;
+    END_IF;
+    TOOLPATH_SYNC_RUN(
+        Homing := TRUE,
+        Y := YHomePosition,
+        YG := YGHomePosition,
+        Velocity := GantryDisplaceVelocity
+    );
+    MachinePhase := MACHINE_COUPLE_GANTRY;
+
+// Step 9: Restore the configured Y-master/YG-slave coupling.
+ELSIF MachinePhase = MACHINE_COUPLE_GANTRY THEN
+    AXES_COUPLE(Y, YG);
+    END_FUNCTION(Result := 0);
+
+ELSE
+    // Failure recovery: keep the program active until both axes are stopped
+    // and the ordinary Y-master/YG-slave topology has been restored.
+    IF Y.Stopped AND YG.Stopped THEN
+        IF Y.CouplingRole = COUPLING_MASTER
+            AND YG.CouplingRole = COUPLING_SLAVE THEN
+            END_FUNCTION(Result := PendingResult);
+        ELSIF Y.CouplingRole = COUPLING_INDEPENDENT
+            AND YG.CouplingRole = COUPLING_INDEPENDENT THEN
+            AXES_COUPLE(Y, YG);
+            END_FUNCTION(Result := PendingResult);
+        END_IF;
+    ELSE
+        // Request the stop until stationary feedback permits coupling recovery.
+        AXES_STOP(Y, YG);
+    END_IF;
+END_IF;

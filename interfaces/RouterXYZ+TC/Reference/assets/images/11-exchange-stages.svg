@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="600" viewBox="0 0 1100 600" role="img" aria-labelledby="t d">
+<title id="t">Tool exchange stages and recorded tool state</title><desc id="d">For an exchange from tool 2 to tool 5: check readiness and rollers; approach and release tool 2; record empty and clear compensation; pick and clamp tool 5; record tool 5 and apply compensation; withdraw and return or continue. The new tool number is not the end of movement.</desc>
+<rect width="1100" height="600" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#173e4b">
+<text x="550" y="42" text-anchor="middle" font-size="26" font-weight="700">Example exchange: tool 2 to tool 5</text>
+<g fill="#e6f1f3" stroke="#8eafb7"><rect x="40" y="85" width="490" height="105" rx="10"/><rect x="570" y="85" width="490" height="105" rx="10"/><rect x="40" y="225" width="490" height="105" rx="10"/><rect x="570" y="225" width="490" height="105" rx="10"/><rect x="40" y="365" width="490" height="105" rx="10"/><rect x="570" y="365" width="490" height="105" rx="10"/></g>
+<text x="65" y="119" font-size="21" font-weight="700">1 · Confirm prerequisites and rollers</text><text x="65" y="153" font-size="18">No exchange movement before roller confirmation.</text>
+<text x="595" y="119" font-size="21" font-weight="700">2 · Store the old tool</text><text x="595" y="153" font-size="18">Spindle stop, station entry and release confirmation.</text>
+<text x="65" y="259" font-size="21" font-weight="700">3 · Record empty spindle</text><text x="65" y="293" font-size="18">Clear the old correction and await acceptance.</text>
+<text x="595" y="259" font-size="21" font-weight="700">4 · Pick up the new tool</text><text x="595" y="293" font-size="18">Approach tool 5, enter its station and confirm clamp.</text>
+<text x="65" y="399" font-size="21" font-weight="700">5 · Record tool 5</text><text x="65" y="433" font-size="18">Apply its correction and await acceptance.</text>
+<text x="595" y="399" font-size="21" font-weight="700">6 · Withdraw and finish the route</text><text x="595" y="433" font-size="18">Manual return or the approved program continuation.</text>
+<path d="M532 138H563M532 278H563M532 418H563" stroke="#316f7c" stroke-width="3"/><path d="M554 131L565 138L554 145M554 271L565 278L554 285M554 411L565 418L554 425" fill="none" stroke="#316f7c" stroke-width="3"/>
+<text x="550" y="519" text-anchor="middle" font-size="20" font-weight="700">Recorded state: tool 2 → empty → tool 5. Movement can continue after each update.</text>
+<text x="550" y="563" text-anchor="middle" font-size="18" fill="#576e77">Read numbered stages in order. Conceptual sequence; not a scale route drawing or access permission.</text>
+</g></svg>

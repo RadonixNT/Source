@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520" role="img" aria-labelledby="title desc">
+<title id="title">One diagonal step uses two axis distances</title><desc id="desc">Illustrative positive X and positive Y step: X increases by 2 millimetres and Y by 1 millimetre. The endpoint is the combination of both changes. The diagram does not prescribe the actual travel path.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#316f7c"/></marker></defs>
+<rect width="1000" height="520" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#173e4b">
+<text x="500" y="42" text-anchor="middle" font-size="26" font-weight="700">One diagonal command · two separate axis values</text>
+<path d="M100 400H535" fill="none" stroke="#869ba3" stroke-width="2" marker-end="url(#a)"/>
+<path d="M130 420V135" fill="none" stroke="#869ba3" stroke-width="2" marker-end="url(#a)"/>
+<text x="505" y="420" font-size="20">X+</text><text x="86" y="144" font-size="20">Y+</text>
+<path d="M150 355H450" stroke="#316f7c" stroke-width="3" marker-end="url(#a)"/><path d="M450 355V205" stroke="#316f7c" stroke-width="3" marker-end="url(#a)"/>
+<path d="M150 355V205H450" fill="none" stroke="#b0c4cb" stroke-width="2" stroke-dasharray="7 6"/>
+<circle cx="150" cy="355" r="7" fill="#173e4b"/><circle cx="450" cy="205" r="8" fill="#ad7320"/>
+<text x="146" y="450" font-size="19">Starting point</text>
+<text x="270" y="385" font-size="20">X step: +2 mm</text>
+<text x="280" y="175" font-size="20">Combined endpoint</text>
+<text x="465" y="286" font-size="19">Y: +1 mm</text>
+<rect x="610" y="130" width="350" height="255" rx="12" fill="#e4eff1" stroke="#94b0b9"/>
+<text x="635" y="169" font-size="22" font-weight="700">Read both axis rows</text>
+<text x="635" y="210" font-size="19">X has its own step and speed.</text>
+<text x="635" y="247" font-size="19">Y has its own step and speed.</text>
+<text x="635" y="291" font-size="19">The arrow icon does not</text>
+<text x="635" y="319" font-size="19">promise a 45° straight path</text>
+<text x="635" y="347" font-size="19">or simultaneous arrival.</text>
+<text x="500" y="493" text-anchor="middle" font-size="17" fill="#576e77">Arrows show coordinate changes, not a required route. Example only; not settings to enter.</text>
+</g></svg>

@@ -1,0 +1,266 @@
+// Measures an empty-spindle reference or the current tool contact position.
+// Managed code decides the mode and stores Tool.Length = ContactZ - ReferenceOffsetZ.
+// The spindle is stopped before motion and Z retracts to the approach clearance
+// before a successful result is published.
+// Pressure, thermal and drive-ready levels are required only when assigned.
+// This does not bypass ToolHeightSensor: measurement still needs its actual
+// contact/release sequence and returns a timeout if that sequence never arrives.
+//
+// Result 0: measured and retracted; 1: machine/path unavailable;
+// Result 2: invalid settings or target; 3: spindle-stop timeout;
+// Result 4: coarse-search timeout; 5: probe-release timeout;
+// Result 6: precision-search/final-stop timeout; 7: spindle health lost;
+// Result 8: return-to-start timeout.
+CONST INTEGER PHASE_WAIT_SPINDLE_STOP := 0;
+CONST INTEGER PHASE_POSITION := 1;
+CONST INTEGER PHASE_COARSE_SEARCH := 2;
+CONST INTEGER PHASE_WAIT_COARSE_STOP := 3;
+CONST INTEGER PHASE_RELEASE := 4;
+CONST INTEGER PHASE_WAIT_RELEASE_STOP := 5;
+CONST INTEGER PHASE_PRECISION_SEARCH := 6;
+CONST INTEGER PHASE_WAIT_FINAL_STOP := 7;
+CONST INTEGER PHASE_RETRACT := 8;
+CONST INTEGER PHASE_WAIT_RETRACT_STOP := 9;
+CONST INTEGER PHASE_RETURN_SAFE_Z := 10;
+CONST INTEGER PHASE_WAIT_RETURN_SAFE_Z := 11;
+CONST INTEGER PHASE_RETURN_XY := 12;
+CONST INTEGER PHASE_WAIT_RETURN_XY := 13;
+CONST INTEGER PHASE_RETURN_Z := 14;
+CONST INTEGER PHASE_WAIT_RETURN_Z := 15;
+CONST INTEGER PHASE_RECOVER := 16;
+
+INTEGER Phase := 0;
+INTEGER PendingResult := 0;
+INTEGER TimeoutMs := 0;
+REAL ProbeX := 0.0;
+REAL ProbeY := 0.0;
+REAL ProbeZ := 0.0;
+REAL ApproachZ := 0.0;
+REAL TraverseSpeed := 0.0;
+REAL CoarseSpeed := 0.0;
+REAL FineSpeed := 0.0;
+REAL ContactZ := 0.0;
+REAL StartX := 0.0;
+REAL StartY := 0.0;
+REAL StartZ := 0.0;
+LOGIC MoveXY := FALSE;
+TIMER SpindleStopTimeout;
+TIMER CoarseTimeout;
+TIMER ReleaseTimeout;
+TIMER PrecisionTimeout;
+TIMER ReturnTimeout;
+
+// This command remains the final writer for spindle motion requests throughout
+// the measurement. Background independently computes SpindleStopped from S3.
+SpindleCW := FALSE;
+SpindleCCW := FALSE;
+
+IF SF.FirstScan THEN
+    Phase := PHASE_WAIT_SPINDLE_STOP;
+    PendingResult := 0;
+    TimeoutMs := Controller.HomeTimeout * 1000;
+    ProbeX := ToolProbePosition.X;
+    ProbeY := ToolProbePosition.Y;
+    ProbeZ := ToolProbePosition.Z;
+    ApproachZ := ProbeZ + ToolProbeApproachClearance;
+    TraverseSpeed := General.TraverseVelocity;
+    CoarseSpeed := ToolSearchVelocity;
+    FineSpeed := ToolFineSearchVelocity;
+    StartX := X.ActualPosition;
+    StartY := Y.ActualPosition;
+    StartZ := Z.ActualPosition;
+    MoveXY := X.ActualPosition < ProbeX - 0.5 OR X.ActualPosition > ProbeX + 0.5
+        OR Y.ActualPosition < ProbeY - 0.5 OR Y.ActualPosition > ProbeY + 0.5;
+
+    IF NOT TP0.Idle
+        OR NOT TP1.Idle
+        OR NOT TP2.Idle
+        OR NOT TP2.Homed
+        OR NOT TP2.AxesIdle
+        OR NOT TP2.AxesReady
+        OR A.CommandPosition < -0.001 OR A.CommandPosition > 0.001
+        OR C.CommandPosition < -0.001 OR C.CommandPosition > 0.001
+        OR A.ActualPosition < -0.001 OR A.ActualPosition > 0.001
+        OR C.ActualPosition < -0.001 OR C.ActualPosition > 0.001 THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+
+    IF NOT (TraverseSpeed > 0.0 AND CoarseSpeed > 0.0 AND FineSpeed > 0.0
+        AND ToolProbeApproachClearance > 0.0
+        AND ProbeX >= X.MinCourse AND ProbeX <= X.MaxCourse
+        AND ProbeY >= Y.MinCourse AND ProbeY <= Y.MaxCourse
+        AND ProbeZ >= Z.MinCourse AND ProbeZ <= Z.MaxCourse
+        AND ApproachZ >= Z.MinCourse AND ApproachZ <= Z.MaxCourse) THEN
+        END_FUNCTION(Result := 2);
+    END_IF;
+END_IF;
+
+SpindleStopTimeout(
+    TYPE := TON,
+    IN := Phase = PHASE_WAIT_SPINDLE_STOP,
+    PT := SpindleOffTime + 1000 + SpindleFeedbackTimeout
+);
+CoarseTimeout(
+    TYPE := TON,
+    IN := Phase = PHASE_COARSE_SEARCH OR Phase = PHASE_WAIT_COARSE_STOP,
+    PT := TimeoutMs
+);
+ReleaseTimeout(
+    TYPE := TON,
+    IN := Phase = PHASE_RELEASE OR Phase = PHASE_WAIT_RELEASE_STOP,
+    PT := TimeoutMs
+);
+PrecisionTimeout(
+    TYPE := TON,
+    IN := Phase = PHASE_PRECISION_SEARCH OR Phase = PHASE_WAIT_FINAL_STOP,
+    PT := TimeoutMs
+);
+ReturnTimeout(
+    TYPE := TON,
+    IN := Phase >= PHASE_RETRACT AND Phase <= PHASE_WAIT_RETURN_Z,
+    PT := TimeoutMs
+);
+
+IF NOT SpindleFeedbackConfigured OR NOT (NOT ASSIGNED(PressureSensor) OR PressureSensor) OR NOT (NOT ASSIGNED(SpindleThermalOK) OR SpindleThermalOK)
+    OR NOT (NOT ASSIGNED(SpindleDriveReady) OR SpindleDriveReady) THEN
+    PendingResult := 7;
+    Phase := PHASE_RECOVER;
+ELSIF SpindleStopTimeout.Q THEN
+    PendingResult := 3;
+    Phase := PHASE_RECOVER;
+ELSIF CoarseTimeout.Q THEN
+    PendingResult := 4;
+    Phase := PHASE_RECOVER;
+ELSIF ReleaseTimeout.Q THEN
+    PendingResult := 5;
+    Phase := PHASE_RECOVER;
+ELSIF PrecisionTimeout.Q THEN
+    PendingResult := 6;
+    Phase := PHASE_RECOVER;
+ELSIF ReturnTimeout.Q THEN
+    PendingResult := 8;
+    Phase := PHASE_RECOVER;
+END_IF;
+
+IF Phase = PHASE_WAIT_SPINDLE_STOP THEN
+    IF SpindleStopped THEN Phase := PHASE_POSITION; END_IF;
+
+ELSIF Phase = PHASE_POSITION THEN
+    // Preserve the safe Z-first route when XY must move. When the spindle is
+    // already over the probe, avoid an unnecessary trip to the Z upper limit.
+    IF MoveXY THEN
+        TOOLPATH_SYNC_RUN(Z := Z.MaxCourse, Velocity := TraverseSpeed);
+        TOOLPATH_SYNC_RUN(X := ProbeX, Y := ProbeY, Velocity := TraverseSpeed);
+    END_IF;
+    TOOLPATH_SYNC_RUN(Z := ApproachZ, Velocity := TraverseSpeed);
+    Phase := PHASE_COARSE_SEARCH;
+
+ELSIF Phase = PHASE_COARSE_SEARCH THEN
+    IF ToolHeightSensor THEN
+        AXES_STOP(Z);
+        Phase := PHASE_WAIT_COARSE_STOP;
+    ELSE
+        AXIS_JOG(Z := Z.MinCourse, Velocity := CoarseSpeed);
+    END_IF;
+
+ELSIF Phase = PHASE_WAIT_COARSE_STOP THEN
+    AXES_STOP(Z);
+    IF Z.Stopped THEN Phase := PHASE_RELEASE; END_IF;
+
+ELSIF Phase = PHASE_RELEASE THEN
+    IF NOT ToolHeightSensor THEN
+        AXES_STOP(Z);
+        Phase := PHASE_WAIT_RELEASE_STOP;
+    ELSE
+        AXIS_JOG(Z := Z.MaxCourse, Velocity := CoarseSpeed);
+    END_IF;
+
+ELSIF Phase = PHASE_WAIT_RELEASE_STOP THEN
+    AXES_STOP(Z);
+    IF Z.Stopped THEN Phase := PHASE_PRECISION_SEARCH; END_IF;
+
+ELSIF Phase = PHASE_PRECISION_SEARCH THEN
+    IF ToolHeightSensor THEN
+        ContactZ := Z.ActualPosition;
+        AXES_STOP(Z);
+        Phase := PHASE_WAIT_FINAL_STOP;
+    ELSE
+        AXIS_JOG(Z := Z.MinCourse, Velocity := FineSpeed);
+    END_IF;
+
+ELSIF Phase = PHASE_WAIT_FINAL_STOP THEN
+    AXES_STOP(Z);
+    IF Z.Stopped THEN Phase := PHASE_RETRACT; END_IF;
+
+ELSIF Phase = PHASE_RETRACT THEN
+    // Z is still owned directly by this PLC activation after the search jogs.
+    // Keep that ownership for the retract instead of waiting for the internal
+    // ToolPath runner to acquire the same axis.
+    IF Z.ActualPosition >= ApproachZ THEN
+        AXES_STOP(Z);
+        Phase := PHASE_WAIT_RETRACT_STOP;
+    ELSE
+        AXIS_JOG(Z := ApproachZ, Velocity := TraverseSpeed);
+    END_IF;
+
+ELSIF Phase = PHASE_WAIT_RETRACT_STOP THEN
+    AXES_STOP(Z);
+    IF Z.Stopped THEN
+        IF MoveXY THEN
+            Phase := PHASE_RETURN_SAFE_Z;
+        ELSE
+            Phase := PHASE_RETURN_Z;
+        END_IF;
+    END_IF;
+
+ELSIF Phase = PHASE_RETURN_SAFE_Z THEN
+    IF Z.ActualPosition >= Z.MaxCourse - 0.001 THEN
+        AXES_STOP(Z);
+        Phase := PHASE_WAIT_RETURN_SAFE_Z;
+    ELSE
+        AXIS_JOG(Z := Z.MaxCourse, Velocity := TraverseSpeed);
+    END_IF;
+
+ELSIF Phase = PHASE_WAIT_RETURN_SAFE_Z THEN
+    AXES_STOP(Z);
+    IF Z.Stopped THEN Phase := PHASE_RETURN_XY; END_IF;
+
+ELSIF Phase = PHASE_RETURN_XY THEN
+    IF X.ActualPosition >= StartX - 0.001 AND X.ActualPosition <= StartX + 0.001 THEN
+        AXES_STOP(X);
+    ELSE
+        AXIS_JOG(X := StartX, Velocity := TraverseSpeed);
+    END_IF;
+    IF Y.ActualPosition >= StartY - 0.001 AND Y.ActualPosition <= StartY + 0.001 THEN
+        AXES_STOP(Y);
+    ELSE
+        AXIS_JOG(Y := StartY, Velocity := TraverseSpeed);
+    END_IF;
+    IF X.ActualPosition >= StartX - 0.001 AND X.ActualPosition <= StartX + 0.001
+        AND Y.ActualPosition >= StartY - 0.001 AND Y.ActualPosition <= StartY + 0.001 THEN
+        Phase := PHASE_WAIT_RETURN_XY;
+    END_IF;
+
+ELSIF Phase = PHASE_WAIT_RETURN_XY THEN
+    AXES_STOP(X, Y);
+    IF X.Stopped AND Y.Stopped THEN Phase := PHASE_RETURN_Z; END_IF;
+
+ELSIF Phase = PHASE_RETURN_Z THEN
+    IF Z.ActualPosition >= StartZ - 0.001 AND Z.ActualPosition <= StartZ + 0.001 THEN
+        AXES_STOP(Z);
+        Phase := PHASE_WAIT_RETURN_Z;
+    ELSE
+        AXIS_JOG(Z := StartZ, Velocity := TraverseSpeed);
+    END_IF;
+
+ELSIF Phase = PHASE_WAIT_RETURN_Z THEN
+    AXES_STOP(Z);
+    IF Z.Stopped THEN
+        MeasuredToolContactZ := ContactZ;
+        END_FUNCTION(Result := 0);
+    END_IF;
+
+ELSE
+    AXES_STOP(Z);
+    IF Z.Stopped THEN END_FUNCTION(Result := PendingResult); END_IF;
+END_IF;

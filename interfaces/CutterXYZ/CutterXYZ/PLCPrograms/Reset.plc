@@ -1,0 +1,2 @@
+// Optional engineer extension for operator Reset.
+END_FUNCTION(Result := 0);

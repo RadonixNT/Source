@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 33 — Daily Operating Checklists | RouterXYZ+TC</title><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"><style>
+.check-record{border:1px solid #aab7c4;padding:12px;margin:16px 0;line-height:2}.check-status{min-width:90px}
+@media print{section{break-before:page}thead{display:table-header-group}tr{break-inside:avoid}.table-scroll{overflow:visible}table{font-size:10pt}nav,.skip-link{display:none}.check-record{color:#000;background:#fff}h2,h3{break-after:avoid}}
+</style></head><body class="chapter-intro"><a class="skip-link" href="#use">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZ+TC · CHAPTER 33</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>Daily Operating Checklists</h1><p class="lead">Use repeatable checks at the start of a shift, before a job, after an interruption and when handing the machine over.</p><p class="review-status"><strong>Expanded draft for review.</strong> These printable working aids accompany the detailed procedures. The installed machine's approved physical checks and acceptance limits must be supplied by the responsible site.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-33">Manual contents</a> · <a href="32-troubleshooting.html">Previous chapter: Messages, Reports and Troubleshooting</a></nav></header><div class="body"><nav aria-label="In this chapter"><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#use">Use and record a checklist correctly</a></li>
+<li><a href="#shift">Start-of-shift and machine-readiness checklist</a></li>
+<li><a href="#job">Prepare a job and verify the first workpiece</a></li>
+<li><a href="#changes">Check tool changes and interrupted work before continuing</a></li>
+<!-- NAV -->
+</ol></nav>
+<section id="use" aria-labelledby="use-title"><h2 id="use-title">33.1 Use and record a checklist correctly</h2>
+
+<p>A checklist helps you avoid missing a familiar step when you are busy, interrupted or taking over from someone else. It is not a substitute for learning the procedure. If an item mentions homing, work references or tool measurement and you are unsure what to do, follow the linked chapter before completing the item. Do not guess simply to finish the sheet.</p>
+<p>Each checklist has a <strong>Result / note</strong> column for a handwritten or separately recorded result. These are printable forms, not live controls connected to the machine. Marking a row does not change software readiness or authorize motion. Use the browser's print preview to select the relevant pages; the layout starts each section on a new printed page and keeps table rows together where space permits. Check the preview for your selected paper size before printing.</p>
+<div class="table-scroll"><table><caption>Table 33-1. Recording a result</caption><thead><tr><th scope="col">Mark</th><th scope="col">Meaning</th><th scope="col">Required follow-up</th></tr></thead><tbody>
+<tr><td>OK</td><td>You performed the check and confirmed the stated condition.</td><td>Add a value or reference where it is useful, such as the program revision or tool number.</td></tr>
+<tr><td>HOLD</td><td>The condition is not satisfied or remains uncertain.</td><td>Do not proceed with the dependent operation. Record the reason and inform the responsible person.</td></tr>
+<tr><td>N/A</td><td>The item genuinely does not apply to this installed machine or approved job.</td><td>State why. Do not use N/A for a check you could not perform.</td></tr>
+</tbody></table></div>
+<h3>Check the condition, not just the button</h3>
+<p>“Homing checked” means the required homing procedure has completed and the resulting state is confirmed. It does not mean that you pressed Home. “Tool checked” means the installed tool and its required confirmation agree; it does not mean that a requested tool number appears in a selector. Record outcomes rather than intentions.</p>
+<p>A result is valid for the condition you checked. Changing the tool, moving the workpiece, editing the program, changing a reference or reconnecting the controller can invalidate earlier checks. Repeat the affected checks before continuing. You do not need to repeat unrelated paperwork merely because time has passed, but you must account for what changed.</p>
+<h3>Keep machine-specific requirements with the sheet</h3>
+<p>The machine supplier or site must define physical power-up, guarding, workholding, utilities, inspection limits and isolation procedures. This chapter cannot specify a pressure, clamp force, clearance or maintenance interval without the installed machine's requirements. Reference those requirements on the sheet rather than inventing a value.</p>
+<p>If an item cannot be confirmed from the normal operating position, use the approved inspection or isolation procedure. An indicator in the application is not a substitute for a required physical check. Conversely, a physically correct setup does not replace software preparation such as selecting the correct file and work reference.</p>
+<div class="check-record"><strong>Record header for every sheet</strong><br>Machine: ____________________ Date / shift: ____________________<br>Operator: ____________________ Job / part: ____________________<br>Applicable site procedure / revision: ____________________<br>Unresolved items and person notified: ________________________________________</div>
+<p>Retain completed sheets according to the site's recordkeeping practice. They are an operator record of checks, not an automatic machine log or a certificate that every possible fault has been excluded.</p>
+
+</section>
+<section id="shift" aria-labelledby="shift-title"><h2 id="shift-title">33.2 Start-of-shift and machine-readiness checklist</h2>
+
+<p>At the start of a shift, establish what condition the previous operator left behind. A machine that looks idle may have an interrupted program, a tool operation awaiting recovery or feed set to zero while an operation remains active. Read the handover before issuing a command. If no reliable handover is available, treat uncertain items as HOLD until they are resolved.</p>
+<p>Perform physical checks in the order required for the installed machine. Some checks belong before power-up; others require a connected controller or an approved test. The following list groups the questions to answer and does not replace that machine-specific order. Do not cycle equipment or test an emergency function by an improvised method.</p>
+<div class="table-scroll"><table><caption>Table 33-2. Start-of-shift record</caption><thead><tr><th scope="col">Check</th><th scope="col">Condition to confirm</th><th scope="col" class="check-status">Result / note</th></tr></thead><tbody>
+<tr><td>Handover and restrictions</td><td>Read the previous shift's notes. Identify unfinished work, faults, service restrictions and changed settings.</td><td>________</td></tr>
+<tr><td>Work area and equipment</td><td>Complete the site's required inspection of the operating area, guarding, workholding and installed auxiliary equipment.</td><td>________</td></tr>
+<tr><td>Utilities and physical startup</td><td>Follow the machine's approved power-up and utility checks using its specified limits.</td><td>________</td></tr>
+<tr><td>Application and access</td><td>Open the intended application and obtain operator access when requested. A visible screen alone does not establish permission to operate.</td><td>________</td></tr>
+<tr><td>Operating mode</td><td>Confirm the intended Normal or Simulation session. Do not use simulated indications as proof of hardware readiness.</td><td>________</td></tr>
+<tr><td>Connection result</td><td>Wait for the connection transition to finish and read its result. Record any rejected settings or startup message.</td><td>________</td></tr>
+<tr><td>Homing and readiness</td><td>Determine whether homing is required; perform it under the approved procedure and confirm all configured axes' required state.</td><td>________</td></tr>
+<tr><td>Tool and machine state</td><td>Establish the actual installed tool and any unfinished tool, positioning or unloading operation.</td><td>________</td></tr>
+<tr><td>Outstanding messages</td><td>Resolve or escalate blocking conditions. Record the relevant report and time rather than merely dismissing the message.</td><td>________</td></tr>
+</tbody></table></div>
+<h3>Connection is one stage of readiness</h3>
+<p>The application validates machine settings before attempting connection. A rejected configuration is not cured by repeatedly pressing Connect. Likewise, a successful connection does not establish the work reference, verify the loaded job or prove that all preparation has finished. Use <a href="03-startup.html">Chapter 3</a> for startup and <a href="06-homing.html">Chapter 6</a> for homing.</p>
+<p>The run-admission checks include connection, homing and the absence of conflicting operations. They help prevent inappropriate commands, but they do not inspect the workpiece or check part quality. Do not treat an enabled Run button as the final sign-off for the physical setup.</p>
+<h3>Example of a HOLD decision</h3>
+<p>The previous operator notes that a tool exchange was interrupted. The application opens and connects, but that does not finish the exchange. Record HOLD against tool state, retain the last confirmed stage and follow the approved recovery procedure before job preparation. Avoid changing the current-tool indication simply to make the screen agree with an assumption.</p>
+<div class="check-record">Shift readiness: OK / HOLD<br>Outstanding condition: __________________________________________________<br>Action owner / time informed: ____________________________________________</div>
+
+</section>
+<section id="job" aria-labelledby="job-title"><h2 id="job-title">33.3 Prepare a job and verify the first workpiece</h2>
+
+<p>A new job needs its own preparation even when the machine was used successfully earlier in the shift. The file, stock, workholding, origin, tools and entry plan must agree. The same file name can refer to revised contents, and the same tool number can contain a replacement cutter. Record enough information to distinguish this setup from the previous one.</p>
+<p>Use the detailed procedures in <a href="08-work-origins.html">Chapter 8</a>, <a href="14-opening-programs.html">Chapter 14</a>, <a href="15-program-preview.html">Chapter 15</a> and <a href="16-running-programs.html">Chapter 16</a>. A preview helps inspect the planned path but cannot prove that the physical stock, clamps or tools match it.</p>
+<div class="table-scroll"><table><caption>Table 33-3. Job preparation and first-workpiece record</caption><thead><tr><th scope="col">Check</th><th scope="col">Condition to confirm</th><th scope="col" class="check-status">Result / note</th></tr></thead><tbody>
+<tr><td>Job identity</td><td>Part, material, drawing or job revision and required program are identified.</td><td>________</td></tr>
+<tr><td>Workholding and stock</td><td>The stock is positioned and secured by the approved method; the setup matches the intended toolpath.</td><td>________</td></tr>
+<tr><td>Program loading</td><td>The intended file loaded successfully. Read warnings and blocking diagnostics; do not rely on the file appearing in a list.</td><td>________</td></tr>
+<tr><td>Program inspection</td><td>Review the preview and relevant source information, including planned tools, travel and approach, under the approved review procedure.</td><td>________</td></tr>
+<tr><td>Work reference</td><td>The selected work reference and required offsets match the actual setup. Verify them after moving the stock or changing the setup.</td><td>________</td></tr>
+<tr><td>Tool preparation</td><td>Required tools are available and identified; length/measurement information is valid for the actual installed tools.</td><td>________</td></tr>
+<tr><td>Entry and clearance</td><td>The intended start is understood and the preparation/positioning route is suitable for the actual stock and fixtures.</td><td>________</td></tr>
+<tr><td>Equipment and overrides</td><td>Required auxiliary equipment and the approved feed/spindle settings are confirmed. Any retained override is understood.</td><td>________</td></tr>
+<tr><td>First start</td><td>The area is clear under the site procedure. Observe tool preparation and the initial movement after the start is accepted.</td><td>________</td></tr>
+<tr><td>First-workpiece inspection</td><td>After the required stop and access conditions, inspect the part against the job's specified criteria before releasing repeated production.</td><td>________</td></tr>
+</tbody></table></div>
+<h3>A start request can include preparation before cutting</h3>
+<p>The application can accept a start while positioning or tool preparation is still pending. Watch the operation through those stages. A “Run accepted” report is not proof that cutting has begun. If a warning appears or the operation stops, preserve the details and establish the last confirmed stage before deciding what to do next.</p>
+<p>For an ordinary new job, follow the intended beginning of the program. Starting at a selected line requires the separate procedure in <a href="18-selected-start-line.html">Chapter 18</a>; it is not a shortcut around an unresolved preparation problem. Record any deliberately selected entry and its reason.</p>
+<h3>Release the process only after the required inspection</h3>
+<p>Program completion does not check dimensions, finish, depth or the suitability of the material. Use the site's first-workpiece inspection criteria and record the result separately from the software outcome. Do not invent an acceptance tolerance from the displayed coordinates.</p>
+<p>If a correction changes the program, reference, tool or workholding, repeat the affected preparation and first-piece checks. A previously acceptable part does not validate a changed setup. If the change is outside operator authority, leave the job on HOLD for the responsible person.</p>
+<div class="check-record">Program / revision: _____________________________________________________<br>Work reference / tool record: ____________________________________________<br>First-workpiece result and inspection record: ______________________________<br>Production release under site procedure: _________________________________</div>
+
+</section>
+<section id="changes" aria-labelledby="changes-title"><h2 id="changes-title">33.4 Check tool changes and interrupted work before continuing</h2>
+
+<p>Use this sheet whenever a tool is changed or measured, work is interrupted, the head is moved away, or an important setup condition changes. The question is not simply “can I press Run?” It is “what state remains, what changed, and which procedure now applies?” Record those answers before continuing.</p>
+<p><strong>Pause</strong> requests a stop while preserving the main program cursor. <strong>Reset</strong> also schedules a main-program reset after the relevant idle condition is reached. Both can cancel managed positioning, tool or unloading sequences. A tool operation interrupted by Pause is therefore not automatically a resumable ordinary cut. Use <a href="17-stopping-and-recovery.html">Chapter 17</a> to establish the recovery path.</p>
+<div class="table-scroll"><table><caption>Table 33-4. Change and interruption record</caption><thead><tr><th scope="col">Check</th><th scope="col">Condition to confirm</th><th scope="col" class="check-status">Result / note</th></tr></thead><tbody>
+<tr><td>Reason for interruption</td><td>Record whether this was planned, a fault, a tool action, an emergency condition or a communication/power loss.</td><td>________</td></tr>
+<tr><td>Command and result</td><td>Identify Pause, Reset, feed reduction or another action actually used. Confirm the resulting state rather than just command acceptance.</td><td>________</td></tr>
+<tr><td>Physical state</td><td>Confirm the required stop and access conditions under the machine procedure, including the spindle and relevant auxiliary equipment.</td><td>________</td></tr>
+<tr><td>Last confirmed tool stage</td><td>Identify release, clamp, measurement, compensation and return stages that are confirmed or still uncertain.</td><td>________</td></tr>
+<tr><td>Tool data</td><td>Actual tool identity and required length/measurement data agree. Selecting a tool is not proof of completed exchange.</td><td>________</td></tr>
+<tr><td>Changes to the setup</td><td>Record head movement, stock movement, reference changes, source edits, tool replacement and connection changes.</td><td>________</td></tr>
+<tr><td>Program state</td><td>Establish whether progress was retained, reset or deliberately reselected. Do not infer this from the file remaining open.</td><td>________</td></tr>
+<tr><td>Recovery and entry route</td><td>The approved continuation, return-to-work or selected-entry procedure is identified and its physical route checked.</td><td>________</td></tr>
+<tr><td>Verification</td><td>Observe the first resumed preparation/movement and record the result. Escalate a repeated or unexplained failure.</td><td>________</td></tr>
+</tbody></table></div>
+<h3>A tool number is only part of the evidence</h3>
+<p>The application can record a newly clamped tool before the complete return sequence has finished. The correct current-tool number does not establish that every compensation and positioning stage succeeded. Check the last confirmed stage in the report and follow <a href="11-tool-exchange.html">Chapter 11</a>. For measurement, use <a href="12-tool-measurement.html">Chapter 12</a> and confirm which measurement was performed and accepted.</p>
+<p>Do not remeasure or exchange tools merely to remove uncertainty about the previous event. First establish the physical state and an authorized recovery sequence. A sensor indication is evidence about a signal; it does not replace the required verification of the mechanism.</p>
+<h3>Record feed override explicitly</h3>
+<p>Zero feed is not the same as a completed Pause or Reset. An active operation can remain ready to move when its override is raised. If feed was reduced, write down the retained setting and operation state. Do not hand the machine over with the vague instruction “it is paused” when only the feed was changed.</p>
+<p>After an emergency or connection interruption, re-establish readiness and homing as required; releasing the emergency device or restoring communication is not a restart command. If a workpiece or reference moved, the original continuation plan may no longer be valid.</p>
+<div class="check-record">Interruption time / report: ______________________________________________<br>Last confirmed stage: ___________________________________________________<br>Changes made and recovery authority: _____________________________________<br>Continuation plan / result: ______________________________________________</div>
+
+</section>
+<!-- NEXT -->
+<aside class="source-note"><p><strong>Verification basis:</strong> Software-related checks were compared with connection and mode handling, run admission, Pause/Reset behavior, tool-operation readiness, completion/parking and application shutdown. Physical checks are site-procedure prompts, not a claim that the application verifies them. No machine was operated to prepare these forms.</p></aside></div><footer class="book-footer"><a href="32-troubleshooting.html">Previous chapter</a><a href="index.html#chapter-33">Contents</a><span>RouterXYZ+TC · 33</span></footer></main></body></html>

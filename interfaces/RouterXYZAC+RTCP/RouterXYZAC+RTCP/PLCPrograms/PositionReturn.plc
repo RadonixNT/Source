@@ -1,0 +1,24 @@
+// Machine-space return supplied by the interface. Each point settles before the next leg.
+// The interface rechecks the work pose before running TP0.
+PARAMETER REAL TargetX;
+PARAMETER REAL TargetY;
+PARAMETER REAL TargetZ;
+PARAMETER REAL TargetA;
+PARAMETER REAL TargetC;
+PARAMETER REAL SafeZ;
+PARAMETER REAL ZSpeed;
+PARAMETER REAL TraverseSpeed;
+PARAMETER LOGIC Retract;
+
+IF SF.FirstScan THEN
+    IF NOT TP0.Idle OR NOT TP0.AxesIdle OR NOT TP0.AxesReady OR NOT TP0.Homed THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+END_IF;
+
+IF Retract THEN
+    TOOLPATH_SYNC_RUN(Z := SafeZ, Velocity := ZSpeed);
+    TOOLPATH_SYNC_RUN(X := TargetX, Y := TargetY, A := TargetA, C := TargetC, Velocity := TraverseSpeed);
+END_IF;
+TOOLPATH_SYNC_RUN(Z := TargetZ, Velocity := ZSpeed);
+END_FUNCTION(Result := 0);

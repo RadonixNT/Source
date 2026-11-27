@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-labelledby="title desc">
+<title id="title">Different tool lengths at the same tip level</title><desc id="desc">A shorter tool and a longer tool have tips at the same example surface. The holder for the longer tool is drawn higher. This illustrates why the head coordinate must account for tool length; it is not a probing procedure.</desc><rect width="1000" height="430" fill="#f3f7f7"/>
+<g font-family="Segoe UI, Arial, sans-serif" fill="#22313a"><text x="35" y="43" font-size="27" font-weight="700">The tool tip and the controlled head are different points</text><text x="35" y="77" font-size="18">Conceptual side view — no dimensions or machine-axis directions are prescribed.</text>
+<text x="150" y="121" font-size="21" font-weight="700">Shorter assembly</text><text x="590" y="121" font-size="21" font-weight="700">Longer assembly</text>
+<rect x="195" y="173" width="150" height="48" rx="6" fill="#ccdce1" stroke="#155765" stroke-width="2"/><rect x="635" y="139" width="150" height="48" rx="6" fill="#ccdce1" stroke="#155765" stroke-width="2"/>
+<path d="M258 221H282V305L270 319L258 305Z" fill="#155765"/><path d="M698 187H722V305L710 319L698 305Z" fill="#155765"/>
+<path d="M70 321H930" stroke="#ad7424" stroke-width="4"/><text x="82" y="352" font-size="18">Same example tip level</text>
+<path d="M352 197H605M352 163H626" stroke="#96aab1" stroke-dasharray="5 5" stroke-width="2"/><text x="385" y="242" font-size="17">Different head positions</text><text x="385" y="268" font-size="17">can give the same tip level.</text>
+<text x="35" y="396" font-size="17">Tool measurement and work-zero setting have separate purposes. Use their approved procedures.</text></g></svg>

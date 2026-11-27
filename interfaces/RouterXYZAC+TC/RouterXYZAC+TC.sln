@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouterXYZAC+TC", "RouterXYZAC+TC\RouterXYZAC+TC.csproj", "{33CE3929-E85F-4BD1-BED9-A5B230318239}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouterXYZAC+TC.Simulation.Tests", "RouterXYZAC+TC.Simulation.Tests\RouterXYZAC+TC.Simulation.Tests.csproj", "{B47CF50C-1C77-40B1-A972-17BD90C7931E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{33CE3929-E85F-4BD1-BED9-A5B230318239}.Debug|x64.ActiveCfg = Debug|x64
+		{33CE3929-E85F-4BD1-BED9-A5B230318239}.Debug|x64.Build.0 = Debug|x64
+		{33CE3929-E85F-4BD1-BED9-A5B230318239}.Release|x64.ActiveCfg = Release|x64
+		{33CE3929-E85F-4BD1-BED9-A5B230318239}.Release|x64.Build.0 = Release|x64
+		{B47CF50C-1C77-40B1-A972-17BD90C7931E}.Debug|x64.ActiveCfg = Debug|x64
+		{B47CF50C-1C77-40B1-A972-17BD90C7931E}.Debug|x64.Build.0 = Debug|x64
+		{B47CF50C-1C77-40B1-A972-17BD90C7931E}.Release|x64.ActiveCfg = Release|x64
+		{B47CF50C-1C77-40B1-A972-17BD90C7931E}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

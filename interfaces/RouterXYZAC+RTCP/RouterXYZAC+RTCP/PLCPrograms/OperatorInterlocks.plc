@@ -1,0 +1,4 @@
+// Application-owned NC Pause gate, scanned after Background.
+// One writer combines Emergency and Pause, avoiding per-scan Hold toggles.
+// Native Hold blocks managed and PLC motion starts and never resumes on release.
+CONTROLLER.HOLD := NOT EmergencySwitch OR (ASSIGNED(PauseSwitch) AND NOT PauseSwitch);

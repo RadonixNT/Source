@@ -1,0 +1,27 @@
+// Stop in parallel with the safe approach. WaitSpindle checks this exchange's latched handshake.
+// Result 2: interlocks unavailable; 3: stop-feedback timeout.
+TIMER StopTime;
+IF NOT TP2.Running OR NOT ToolChangeActive THEN END_FUNCTION(Result := 1); END_IF;
+IF SF.FirstScan THEN
+    ToolChangeSpindleStopped := FALSE;
+    SpindleGripCycleActive := FALSE;
+    SpindleReleaseConfirmed := FALSE;
+    SpindleClampConfirmed := CurrentTool <> 0;
+END_IF;
+SpindleCW := FALSE;
+SpindleCCW := FALSE;
+IF NOT SpindleToolChangeConfigured OR ToolChangeFault <> 0 THEN
+    IF ToolChangeFault = 0 THEN ToolChangeFault := 2; END_IF;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 2);
+END_IF;
+StopTime(TYPE := TON, IN := TRUE, PT := SpindleOffTime);
+IF StopTime.Q AND SpindleStopped THEN
+    ToolChangeSpindleStopped := TRUE;
+    END_FUNCTION(Result := 0);
+END_IF;
+IF SF.Time >= SpindleOffTime + 1000 + SpindleFeedbackTimeout THEN
+    ToolChangeFault := 3;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 3);
+END_IF;

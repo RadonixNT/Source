@@ -1,0 +1,10 @@
+.toc-list .toc-subsections{margin:0 0 16px 46px;font-size:14px}
+.toc-subsections summary{cursor:pointer;color:var(--accent);padding:4px 0 8px}
+.toc-subsections summary:focus-visible{outline:3px solid #bb7700;outline-offset:3px}
+.toc-subsections ol{list-style:none;padding:0;margin:0;columns:2;column-gap:28px}
+.toc-list .toc-subsections li{border:0;break-inside:avoid}
+.toc-list .toc-subsections a{display:block;padding:5px 0;text-decoration:underline}
+.chapter-plan ol{list-style:none;padding-left:0}
+.chapter-plan ol li{margin:5px 0}
+@media(max-width:720px){.toc-list .toc-subsections{margin-left:38px}.toc-subsections ol{columns:1}}
+@media print{.toc-list .toc-subsections{margin-left:0}.toc-subsections ol{columns:1}.toc-list .toc-subsections a{padding:2px 0}.toc-part{break-inside:auto}}

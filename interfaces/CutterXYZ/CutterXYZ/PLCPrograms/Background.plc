@@ -1,0 +1,4 @@
+// Z brake: only actual drive enable feedback permits release.
+Brake := Z.Existing AND Z.PdoMapped AND Z.ServoOnCommand AND Z.ReadyToMove
+    AND NOT Z.Fault AND NOT Z.CouplingFault;
+

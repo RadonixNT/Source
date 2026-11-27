@@ -1,0 +1,5 @@
+// Operator Pause extension. Clear spindle run/direction without waiting.
+// Preserve the S/analog speed setpoint and loader vacuum.
+SpindleCW := FALSE;
+SpindleCCW := FALSE;
+END_FUNCTION(Result := 0);

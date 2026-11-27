@@ -1,0 +1,39 @@
+// Energized output requests release. Wait for S2 ON and S1 OFF continuously.
+// Each assigned grip sensor must agree before the full settling delay starts.
+// With no grip sensors assigned, the same delay starts after the release command.
+// Taper blow is an optional output, not a completion input.
+// Result 2: interlock loss; 3: stop not confirmed; 4: release feedback/settling timeout.
+TIMER ReleaseSettled;
+IF NOT TP2.Running OR NOT ToolChangeActive THEN END_FUNCTION(Result := 1); END_IF;
+IF SF.FirstScan THEN
+    IF NOT ToolChangeSpindleStopped OR NOT SpindleStopped THEN
+        ToolChangeFault := 3;
+        TOOLPATH_STOP(TOOLPATH := 2);
+        END_FUNCTION(Result := 3);
+    END_IF;
+    SpindleReleaseConfirmed := FALSE;
+    SpindleClampConfirmed := FALSE;
+END_IF;
+IF NOT SpindleReleasePermitted OR ToolChangeFault <> 0 THEN
+    IF ToolChangeFault = 0 THEN ToolChangeFault := 2; END_IF;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 2);
+END_IF;
+// The stop check has completed. Ignore S3 through mechanical grip operations;
+// Background continues to reject run commands and monitor the grip/health inputs.
+SpindleGripCycleActive := TRUE;
+SpindleToolRelease := TRUE;
+IF ASSIGNED(SpindleTaperBlow) THEN SpindleTaperBlow := TRUE; END_IF;
+ReleaseSettled(TYPE := TON,
+    IN := NOT SF.FirstScan AND (NOT ASSIGNED(SpindleToolReleased) OR SpindleToolReleased)
+        AND (NOT ASSIGNED(SpindleToolClamped) OR NOT SpindleToolClamped),
+    PT := ToolReleaseTime);
+IF ReleaseSettled.Q THEN
+    SpindleReleaseConfirmed := TRUE;
+    END_FUNCTION(Result := 0);
+END_IF;
+IF SF.Time >= ToolReleaseTime + ToolFeedbackTimeout THEN
+    ToolChangeFault := 4;
+    TOOLPATH_STOP(TOOLPATH := 2);
+    END_FUNCTION(Result := 4);
+END_IF;

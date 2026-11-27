@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 20 — Simulation Mode | RouterXYZBC+TC</title><meta name="description" content="A practical operator guide to identifying simulation, changing runtime mode, practising machine workflows and returning to real-machine operation."><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZBC+TC · CHAPTER 20</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>Simulation Mode</h1><p class="lead">Learn the operating sequence on a simulated machine, recognize what the displayed results mean, and make a deliberate transition back to the physical machine.</p><p class="review-status"><strong>Expanded draft for review.</strong> The exercises teach the controls and operating decisions. Simulation results must be kept separate from acceptance of a physical machine, tool or workpiece.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-20">Manual contents</a> · <a href="19-editing-gcode.html">Previous chapter: Editing a G-code file</a></nav></header><div class="body"><aside class="document-status"><strong>XYZBC update — 10 November 2026.</strong> Training Home now uses short relative sensor travel on every activation, including repeated or cancelled Home. PLC search and release phases remain active. See the <a href="XYZBC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Understand what Simulation does and what it cannot prove</a></li>
+<li><a href="#identity">Identify the selected mode and the actual connected session</a></li>
+<li><a href="#readiness">Prepare an idle session before changing mode</a></li>
+<li><a href="#change-mode">Change mode once and follow the reconnection to its result</a></li>
+<li><a href="#setup">Establish the simulated machine and protect the real setup data</a></li>
+<li><a href="#program-practice">Practise a complete job with deliberate observation points</a></li>
+<li><a href="#equipment">Understand the simulated tool, spindle, probe and roller responses</a></li>
+<li><a href="#problems">Recognize a simulation problem and report the right evidence</a></li>
+<li><a href="#normal">Return to Normal with a fresh physical-machine review</a></li>
+<li><a href="#practice">Complete a supervised exercise and record what it established</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">20.1 Understand what Simulation does and what it cannot prove</h2>
+
+<p>Simulation lets you practise operating the application with a software model of the machine. The application still processes commands, follows operating sequences and displays positions and status. Modelled feedback takes the place of selected physical responses, allowing activities such as homing and tool preparation to be exercised without treating the display as evidence of real machinery moving.</p>
+<p>For a new operator, its main value is familiarity. You can learn where to look after pressing a control, recognize a waiting operation, follow a tool sequence and explain why a command is unavailable. The objective is to understand the sequence and its indications before performing that sequence under supervision on the physical machine.</p>
+<h3>Distinguish three different activities</h3>
+<div class="table-scroll"><table><caption>Table 20-1. Preview, simulation and physical operation</caption><thead><tr><th scope="col">Activity</th><th scope="col">What you are doing</th><th scope="col">What the result means</th></tr></thead><tbody>
+<tr><td>Inspecting the program preview</td><td>Reading prepared geometry and source, rotating or zooming the view.</td><td>You have inspected the displayed job. Moving the camera does not execute it.</td></tr>
+<tr><td>Running in Simulation</td><td>Issuing operating commands to a connected simulated session.</td><td>The configured software and model have responded to that exercise.</td></tr>
+<tr><td>Operating in Normal</td><td>Using the controller in the real-machine operating mode.</td><td>Commands can have physical consequences and require the normal machine checks.</td></tr>
+</tbody></table></div>
+<p>A visible toolpath is not an indication that Simulation is active. The same application provides a preview during ordinary machine operation. Likewise, a stationary physical machine is not proof that commands are simulated: a real session may simply be idle or waiting for another condition.</p>
+<h3>The model represents selected behavior</h3>
+<p>The supplied model covers home-switch responses, spindle and tool-grip feedback, tool-probe contact, roller feedback and a healthy emergency-circuit input. These responses help the ordinary machine-control sequences progress. They do not reproduce every possible physical fault, every accessory or every consequence of cutting material.</p>
+<p>In particular, the emergency input supplied by the model represents a healthy circuit. It is not a test of a physical emergency-stop button, relay, contactor or stopping system. A successful exercise cannot be recorded as an emergency-circuit inspection.</p>
+<p>Simulation also does not establish that a cutter clears a clamp, that the actual holder is seated correctly, that air pressure is sufficient, or that the real spindle stops within a particular time. The toolpath display is not a complete model of all objects in the work area. Those checks belong to the real-machine setup and acceptance procedure.</p>
+<div class="learning-example"><h3>Example: the virtual tool exchange completes</h3><p>The simulated sequence releases one tool, visits the configured holder and confirms another tool. This is useful evidence that the exercise progressed through its expected stages. It does not demonstrate that the physical holder is in the same position or that its actual gripping mechanism works correctly.</p></div>
+<p>Use a defined question for each exercise: “Can I identify the current mode?”, “Can I pause and continue this approved training job?” or “Can I recognize a failed preparation?” Record the observed answer. Avoid the broader conclusion “the machine is safe” when the exercise only tested your understanding of a displayed sequence.</p>
+<p>Before using any movement or equipment command for practice, establish that the active connected session really is Simulation. The next section explains how to make that distinction using both the selected mode and the actual connection indication.</p>
+
+</section>
+<section id="identity" aria-labelledby="identity-title"><h2 id="identity-title">20.2 Identify the selected mode and the actual connected session</h2>
+
+<p>The mode setting and the connection indication answer different questions. The setting tells the application which type of session to request. The connection state tells you whether a session has actually connected. You need both pieces of information before deciding that a training command belongs to Simulation.</p>
+<p>In Configuration, the Controller group contains Mode with two choices: Simulation and Normal. Simulation is the initial default in the supplied configuration. However, the choice is a saved setting. Do not assume that every launch returns to Simulation or that another operator left the same mode selected.</p>
+<h3>Read the main-window indication in context</h3>
+<p>The Simulation lamp lights when the simulated session is operational. In Normal mode the Online lamp reports physical MM detection.</p>
+<p>Use Controller / Mode and the completed connection result to identify a simulation session.</p>
+<div class="table-scroll"><table><caption>Table 20-2. Reading mode and connection together</caption><thead><tr><th scope="col">What you observe</th><th scope="col">Interpretation</th><th scope="col">Operator action</th></tr></thead><tbody>
+<tr><td>Simulation selected, connection still starting</td><td>A simulated session has been requested but is not yet confirmed ready.</td><td>Wait for the final connection result.</td></tr>
+<tr><td>Simulation connection confirmed in the report</td><td>The connected runtime is simulated.</td><td>Check the exercise prerequisites before issuing commands.</td></tr>
+<tr><td>Online lamp illuminated</td><td>The physical MM is present.</td><td>Check the connection result and axis readiness before motion.</td></tr>
+<tr><td>Simulation requested with a failed connection</td><td>The simulated runtime is unavailable.</td><td>Read the connection state and reported problem.</td></tr>
+<tr><td>Selected value and observed result seem inconsistent</td><td>The transition or result has not been understood.</td><td>Resolve the state before movement or equipment commands.</td></tr>
+</tbody></table></div>
+<p>The application can show an informational Simulation notice when the main window first appears with Simulation selected. Treat it as a useful reminder of the selected mode at startup. It does not replace checking the current connected session after a later mode change, failed connection or restart.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 20-1</div><h3>Selected mode and confirmed simulated connection</h3><p>Capture the delivered application's Controller/Mode selection and a separate main-window view of the reported simulation connection result. Annotate which image shows the requested setting and which shows the actual connected result. Keep the controller stationary and use an approved training installation.</p><p>Suggested asset: <code>assets/images/20-mode-and-connection.png</code>.</p><figcaption>Reserved screenshots showing the two observations needed to identify the session.</figcaption></figure>
+<div class="learning-example"><h3>Example: the startup message has been dismissed</h3><p>You remember seeing a Simulation notice earlier, but another mode change has since been requested. Your memory of that notice does not establish the present mode. Read the current setting and active connection indication again before starting the exercise.</p></div>
+<p>Make this check a habit at the start of training, after reconnecting and whenever you return to a workstation used by someone else. The appearance of a familiar file, toolpath or coordinate display is not a substitute for identifying the session that will receive the next command.</p>
+
+</section>
+<section id="readiness" aria-labelledby="readiness-title"><h2 id="readiness-title">20.3 Prepare an idle session before changing mode</h2>
+
+<p>Changing mode is an operating action. It changes the type of controller session and initiates a connection transition. It is not a display preference and should not be used as a quick escape from a paused job, an unfinished tool exchange or a problem you have not yet understood.</p>
+<p>First identify what the application is doing. A program may be active while no axis is moving, for example during a pause or equipment wait. Homing, positioning and tool operations also have their own progress and completion conditions. Wait for a normal completion or use the relevant stopping and recovery procedure before attempting a mode change.</p>
+<h3>Conditions checked by the application</h3>
+<div class="table-scroll"><table><caption>Table 20-3. Readiness for a mode change</caption><thead><tr><th scope="col">Condition</th><th scope="col">What the operator should establish</th></tr></thead><tbody>
+<tr><td>Operator access</td><td>The required operating access has been granted for this application session.</td></tr>
+<tr><td>No program preparation</td><td>A file is not currently loading or being prepared.</td></tr>
+<tr><td>No active program or motion</td><td>The main program and motion are no longer active; a pause alone is insufficient.</td></tr>
+<tr><td>No managed machine operation</td><td>Home, head positioning and tool operations have finished or been resolved through their proper procedures.</td></tr>
+<tr><td>No connection transition</td><td>The application is not already connecting, disconnecting or changing mode.</td></tr>
+<tr><td>Suitable connection state</td><td>The controller is in a settled Online, Offline or Failed state, rather than an intermediate transition.</td></tr>
+</tbody></table></div>
+<p>If the mode control is disabled, treat that as information about readiness. Repeatedly pressing a shortcut does not remove the unmet condition. Check the program state, current operation, loading status and access requirements. Where the state is unclear, retain the displayed message and seek help with that condition.</p>
+<h3>Finish the old activity deliberately</h3>
+<p>If a production job is interrupted, record the work already performed and the intended recovery before leaving its session. Changing mode does not carry an approved recovery decision into a new simulated machine. Follow <a href="17-stopping-and-recovery.html">Chapter 17</a> for the distinction between an ordinary pause, Stop and a new start.</p>
+<p>For a tool operation, record which stage finished and whether the actual tool state is known. A mode change is not a method of completing a partly released holder or acknowledging an unknown tool. Resolve the equipment condition under its own procedure first.</p>
+<p>Prepare the training exercise as well. Identify the approved file, required tool and work-reference setup, and the action you intend to practise. If training requires different settings, have the responsible person define and control those changes. Simulation uses the application's machine configuration; it is not a promise of a separate disposable copy of every setting.</p>
+<div class="learning-example"><h3>Example: the preview has stopped advancing</h3><p>The operator wants to change mode because the displayed path is no longer moving. The program is actually paused and remains active. The correct response is to decide whether to continue or stop that job through its normal controls, then verify the resulting state. A stationary preview does not by itself make the mode control available.</p></div>
+<p>Entering Configuration may have a separate access requirement from ordinary operation. Do not confuse permission to change mode with permission to change all configuration values in the same window. Use only the mode control for this task; other settings retain their own access and operating rules.</p>
+<p>Once the old activity is settled, the exercise is identified and the mode command is available, make one intentional selection and observe its result. The next section follows that transition from selection through confirmed connection.</p>
+
+</section>
+<section id="change-mode" aria-labelledby="change-mode-title"><h2 id="change-mode-title">20.4 Change mode once and follow the reconnection to its result</h2>
+
+<p>With the previous activity settled, use Controller &gt; Mode in Configuration to select Simulation. Use the control's normal value-selection and commit action, then observe the connection transition. The change is applied immediately; it does not wait for you to close Configuration with OK.</p>
+<p>The application also provides the ChangeMode command. Its default shortcut is Ctrl+Shift+Alt+Space. It toggles the existing selection between Simulation and Normal, so it must not be treated as a dedicated “enter Simulation” shortcut. Check the current value before using it and the result afterwards. An installed configuration may assign a different shortcut.</p>
+<h3>Follow the transition step by step</h3>
+<ol class="steps">
+<li><strong>Identify the destination mode.</strong> For a training exercise, the intended value is Simulation. Verify the current selection before changing it.</li>
+<li><strong>Make one request.</strong> Select the value or use the configured ChangeMode command once. Do not repeatedly toggle while waiting for a response.</li>
+<li><strong>Wait for the old session to disconnect.</strong> If a session is connected, the application waits for its disconnect result before opening the requested session.</li>
+<li><strong>Allow the connection checks to complete.</strong> The machine settings are validated and applied before the new session is requested. Invalid settings can prevent connection even when Simulation is selected.</li>
+<li><strong>Read the final result.</strong> Confirm an active simulated connection or investigate the reported failure. A changed setting is not itself confirmation of successful connection.</li>
+<li><strong>Recheck readiness.</strong> Establish the new session's homing, tool, reference and job state before beginning the exercise.</li>
+</ol>
+<div class="table-scroll"><table><caption>Table 20-4. What changing Mode does</caption><thead><tr><th scope="col">Operator action or event</th><th scope="col">Practical consequence</th></tr></thead><tbody>
+<tr><td>Commit a different Mode value</td><td>Requests an immediate reconnect into that mode when the operating conditions permit it.</td></tr>
+<tr><td>Use ChangeMode</td><td>Toggles the selected value; it can lead toward Normal as well as Simulation.</td></tr>
+<tr><td>Press Configuration Cancel afterwards</td><td>Does not undo this live mode operation or reconnect to the previous mode.</td></tr>
+<tr><td>Connection validation fails</td><td>The requested session is not established; resolve the stated settings problem.</td></tr>
+<tr><td>Connection completes successfully</td><td>The new session can be assessed for its own operating readiness.</td></tr>
+</tbody></table></div>
+<h3>Configuration Cancel is not a return-to-mode button</h3>
+<p>Mode is deliberately treated as a live operation in the Configuration window. If you select Simulation and then cancel Configuration, do not expect the former normal connection to reappear. To return to another mode, make a separate deliberate mode change after verifying that the session is idle and the destination is appropriate.</p>
+<p>This distinction is especially important during training. A person may open Configuration, change Mode, then press Cancel believing that all activity has been abandoned. The connection operation has already been requested. Read the actual connection indication before interpreting any later command.</p>
+<div class="learning-example"><h3>Example: an accidental second shortcut press</h3><p>The first request successfully selects Simulation. After the transition finishes, another press of the same toggle shortcut can request Normal. Waiting for completion and checking the result is more reliable than pressing the shortcut repeatedly until the screen looks familiar.</p></div>
+<p>If the request fails, note whether the problem occurred while disconnecting, validating the configuration or connecting. Keep the actual message and technical details. Do not assume that a failed change has automatically restored the earlier connection, and do not use a production-mode attempt simply to make a training failure disappear.</p>
+<p>Once Simulation is confirmed connected, proceed with a fresh readiness review. The application has changed sessions; it has not certified that every value visible on the screen is suitable for the next training command.</p>
+
+</section>
+<section id="setup" aria-labelledby="setup-title"><h2 id="setup-title">20.5 Establish the simulated machine and protect the real setup data</h2>
+
+<p>A connected simulated session is the starting point for preparation, not the end of it. Inspect the current state, complete the required homing procedure and identify the tools and work reference used by the exercise. Use the same habit of checking the result after each command that you will need on the physical machine.</p>
+<p>Begin with Home as described in <a href="06-homing.html">Chapter 6</a>, when the training procedure calls for establishing machine position. The model produces home-switch feedback according to axis position. Wait for the homing sequence to finish and inspect the aggregate Homed indication; do not infer completion from one axis stopping or one coordinate becoming zero.</p>
+<h3>Machine coordinates and work coordinates still have different purposes</h3>
+<p>Machine position describes the established machine travel system. The work reference places the job relative to that system. Setting a work zero is not a replacement for Home. Conversely, completing Home does not determine where an approved sample part should be located.</p>
+<p>Use <a href="05-coordinates.html">Chapter 5</a> and <a href="08-work-origins.html">Chapter 8</a> to prepare the approved training reference. Before changing a value, confirm which reference is selected and what the exercise expects. A convenient-looking number is not sufficient reason to overwrite a production setup value.</p>
+<div class="table-scroll"><table><caption>Table 20-5. Preparation of a training session</caption><thead><tr><th scope="col">Item</th><th scope="col">Training check</th><th scope="col">Keep separate from</th></tr></thead><tbody>
+<tr><td>Connected mode</td><td>The actual session is confirmed Simulation.</td><td>A remembered startup notice.</td></tr>
+<tr><td>Home result</td><td>The homing sequence has finished and all required motors report homed.</td><td>The displayed position of one axis.</td></tr>
+<tr><td>Work reference</td><td>The selected origin and values belong to the exercise.</td><td>The physical production stock datum.</td></tr>
+<tr><td>Tools and stations</td><td>The required training tools and configured stations are coherent.</td><td>Proof that physical holders occupy those locations.</td></tr>
+<tr><td>Job file</td><td>The correct training source and revision are identified.</td><td>A production file with a similar name.</td></tr>
+<tr><td>Changed values</td><td>Every intentional setup change has an approved record and disposition.</td><td>An assumption that leaving Simulation discards all edits.</td></tr>
+</tbody></table></div>
+<h3>Simulation is not an automatic copy of your settings</h3>
+<p>The simulation is built from the machine settings used by this application. Mode itself is persisted, and the ordinary setting and file workflows continue to apply. Do not assume that changing a work reference, tool value or source file becomes temporary merely because Simulation is active.</p>
+<p>If a practice exercise needs a different setup, agree with the responsible person how that configuration will be prepared, identified and restored or retained. Keep the approved original values available through the shop's existing records. This manual does not ask an operator to invent a separate controller configuration or alter mappings to make an exercise pass.</p>
+<div class="learning-example"><h3>Example: a training work zero is entered</h3><p>The operator enters a convenient work reference for a sample and finishes the exercise. Returning to Normal does not establish that this value matches the actual stock. The reference must be reviewed against the real setup before production, whether the value is still displayed or has changed during the transition.</p></div>
+<p>After Home, practise a small approved step movement using <a href="07-manual-motion.html">Chapter 7</a>. Identify the selected axis, direction and step before the command, then compare the resulting coordinate change. This connects the control you pressed with the display you should observe, without turning the exercise into uncontrolled exploration.</p>
+<p>Finish this preparation stage with a short verbal check: connected Simulation, required Home completed, correct training reference, known tool setup and identified file. Only then proceed to a full program exercise.</p>
+
+</section>
+<section id="program-practice" aria-labelledby="program-practice-title"><h2 id="program-practice-title">20.6 Practise a complete job with deliberate observation points</h2>
+
+<p>Choose a small approved training program whose expected operations are understood. A short, familiar job makes it easier to connect the source, preview, coordinates and equipment indications. A long production file with unfamiliar tool changes is a poor first exercise even if it loads without an error.</p>
+<p>State the objective before loading: for example, identify the start sequence, pause during an ordinary cutting move, continue from that pause and observe completion. Do not combine a first program exercise with unfamiliar source editing or a new tool-station configuration. Learn one operating decision at a time.</p>
+<h3>Load and review before Run</h3>
+<p>Use <a href="14-opening-programs.html">Chapter 14</a> to open the intended file and wait for preparation. Read diagnostics rather than relying only on the appearance of geometry. Then use <a href="15-program-preview.html">Chapter 15</a> to inspect the program dimensions, references, tools and route.</p>
+<p>Simulation does not make a rejected program acceptable. If loading reports a source, geometry or configuration problem, resolve it through the appropriate procedure before the exercise continues. Do not edit away an unfamiliar equipment instruction simply to produce a moving preview.</p>
+<div class="table-scroll"><table><caption>Table 20-6. Observation points for a first program exercise</caption><thead><tr><th scope="col">Stage</th><th scope="col">What to identify before proceeding</th></tr></thead><tbody>
+<tr><td>File preparation</td><td>Correct file identity, final preparation result and relevant diagnostics.</td></tr>
+<tr><td>Pre-run review</td><td>Intended start, required tool, work reference and expected first movement.</td></tr>
+<tr><td>Start sequence</td><td>Any tool preparation or positioning before the main cutting path.</td></tr>
+<tr><td>Ordinary program motion</td><td>The relationship between source progression, position and displayed path.</td></tr>
+<tr><td>Pause</td><td>The stopped movement and retained active-job state.</td></tr>
+<tr><td>Continue</td><td>The expected continuation after checking the current conditions.</td></tr>
+<tr><td>Completion</td><td>The final program state, rather than only a familiar endpoint on the screen.</td></tr>
+</tbody></table></div>
+<h3>Use the controls as operating decisions</h3>
+<ol class="steps">
+<li><strong>Confirm Simulation again.</strong> Check the active connection indication immediately before starting the exercise.</li>
+<li><strong>Review the current feed setting.</strong> Use the value specified for the exercise. Do not assume a previous operator left the intended percentage.</li>
+<li><strong>Request Run once.</strong> Observe preparation and approach before expecting the ordinary machining path to advance.</li>
+<li><strong>Practise Pause at the agreed point.</strong> Wait for the resulting state and explain what is retained. Do not use a mode change to end the pause.</li>
+<li><strong>Continue under the exercise plan.</strong> For the first exercise, leave the head and setup unchanged while paused. More advanced return-to-work practice belongs in a separate supervised exercise.</li>
+<li><strong>Observe the end.</strong> Record whether the job completed, was stopped or encountered a fault. Those outcomes are different.</li>
+</ol>
+<p>Use <a href="16-running-programs.html">Chapter 16</a> for the full Run procedure and <a href="17-stopping-and-recovery.html">Chapter 17</a> for stopping and continuation. In a separate exercise, practise Reset and explain why its following reset differs from an ordinary retained pause. Do not describe Reset as merely another Pause button.</p>
+<div class="learning-example"><h3>Example: a wait before the path advances</h3><p>After Run, the main cutting path has not yet moved because the operation is preparing a tool or an entry position. Look at the reported operation and expected sequence. Repeated Run requests do not establish what stage is pending.</p></div>
+<p>When the exercise is complete, write down what you actually observed. “Paused and continued the approved sample in Simulation” is a useful result. “The production part is ready” goes beyond what this exercise established.</p>
+
+</section>
+<section id="equipment" aria-labelledby="equipment-title"><h2 id="equipment-title">20.7 Understand the simulated tool, spindle, probe and roller responses</h2>
+
+<p>Equipment exercises are useful once you can identify the session and operate a basic job. They let you follow the order of actions and confirmations that accompany a tool change or measurement. Use an approved training configuration with known tool stations and probe position; the model depends on those values.</p>
+<p>The ordinary control sequences remain important. Simulation does not mean that every equipment request immediately succeeds or that a missing prerequisite is ignored. An incoherent station, an unavailable signal or an unfinished operation can still prevent the sequence from reaching the expected result.</p>
+<div class="table-scroll"><table><caption>Table 20-7. Equipment represented by the supplied model</caption><thead><tr><th scope="col">Modelled item</th><th scope="col">What the exercise can demonstrate</th><th scope="col">What remains a physical check</th></tr></thead><tbody>
+<tr><td>Home switches</td><td>Position-dependent switch responses during Home.</td><td>Actual switch wiring, mounting and repeatability.</td></tr>
+<tr><td>Tool release and clamp</td><td>Delayed feedback and pickup at a configured enabled holder.</td><td>Holder seating, grip force and real release mechanics.</td></tr>
+<tr><td>Spindle rotation</td><td>Simulated rotation feedback and a modelled coast-down response.</td><td>Actual speed, direction and stopping time.</td></tr>
+<tr><td>Tool probe</td><td>Contact based on simulated position and a modelled tool length.</td><td>Probe calibration, physical tool length and measurement accuracy.</td></tr>
+<tr><td>Roller feedback</td><td>Delayed responses associated with roller outputs.</td><td>Actual roller position, clearance, pressure and sensor operation.</td></tr>
+<tr><td>Healthy equipment inputs</td><td>The normal sequence under the model's supplied healthy conditions.</td><td>Real fault detection and the machine's safety inspection.</td></tr>
+</tbody></table></div>
+<h3>Follow the tool-change stages</h3>
+<p>For a supervised exchange exercise, use <a href="11-tool-exchange.html">Chapter 11</a>. Identify the present and requested tools, observe the route and wait for the final result. The model establishes pickup from the configured holder location and its enabled state. Merely requesting a tool number does not make every station arrangement coherent.</p>
+<p>Watch the difference between release, pickup and final confirmation. The exercise should teach you to wait for the confirmed result rather than deciding that an exchange is complete because the head has reached the holder. If the operation fails, retain the stage and message for review instead of repeatedly commanding another exchange.</p>
+<h3>Treat probe results as training data</h3>
+<p>For measurement practice, follow <a href="12-tool-measurement.html">Chapter 12</a>. The model evaluates contact using the probe location, simulated axis positions and a tool length captured for the simulated session. It does not physically touch a real cutter.</p>
+<p>A nonzero value returned by a simulated measurement is therefore not an approved measurement of the actual installed tool. Also, do not assume that measurement-related values are disposable simply because they were obtained during practice. Include them in the record of data that must be reviewed before returning to production.</p>
+<div class="learning-example"><h3>Example: measurement repeats successfully</h3><p>The same training tool gives a repeatable result in Simulation. This shows that the exercise can follow the modelled contact sequence. It does not establish the real probe's repeatability or the actual length of the cutter mounted at the machine.</p></div>
+<p>For spindle and roller exercises, follow <a href="10-spindle.html">Chapter 10</a> and <a href="13-machine-equipment.html">Chapter 13</a>. Observe the command and its feedback as separate events. The model includes delays; an output request and a confirmed state need not appear at exactly the same moment.</p>
+<p>Do not alter timing, mappings or saved machine-control programs to force a training success. If the supplied configuration and the expected exercise disagree, have the responsible person resolve that mismatch. The operator's task is to recognize and report the discrepancy accurately.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">20.8 Recognize a simulation problem and report the right evidence</h2>
+
+<p>A training session can fail to connect, reject a command, wait for equipment feedback or report a simulation-model failure. These are different situations. Begin by identifying the stage at which progress stopped rather than treating every problem as “Simulation does not work.”</p>
+<p>Read the current message before dismissing it. Record the selected mode, actual connection state, requested action and last completed stage. If a file was involved, record its identity and preparation result. This gives the person investigating the issue a specific sequence to examine.</p>
+<h3>Separate an unavailable command from a failed operation</h3>
+<div class="table-scroll"><table><caption>Table 20-8. Common situations during training</caption><thead><tr><th scope="col">Observation</th><th scope="col">First check</th><th scope="col">Appropriate response</th></tr></thead><tbody>
+<tr><td>Mode cannot be changed</td><td>Access, program activity, loading and connection transition.</td><td>Resolve the current activity or access condition.</td></tr>
+<tr><td>Simulation selected but not connected</td><td>The final connection message and settings validation result.</td><td>Investigate connection rather than issuing motion commands.</td></tr>
+<tr><td>Program preparation rejected</td><td>The source or geometry diagnostic.</td><td>Use the approved file-correction procedure.</td></tr>
+<tr><td>Tool or probe operation waits or fails</td><td>The reported stage, configured station/probe and required feedback.</td><td>Record the mismatch and follow the operation's recovery procedure.</td></tr>
+<tr><td>A simulation module failure is reported</td><td>The named model and exact error details.</td><td>End the exercise through the appropriate controls and seek configuration or support review.</td></tr>
+<tr><td>A familiar display remains after a problem</td><td>Whether the session and operation are still valid.</td><td>Do not treat old geometry or a retained number as confirmation of success.</td></tr>
+</tbody></table></div>
+<p>The application validates machine settings before connecting. Simulation does not bypass this validation. Similarly, its feedback models depend on the configured signal arrangement. A fixed or unsupported input assignment can be incompatible with a model that needs to change that input during the exercise.</p>
+<p>As an operator, you do not need to diagnose the internal signal implementation. You do need to preserve the exact message and explain which action caused it. Do not change input mappings, force values or edit machine-control logic to suppress a symptom unless that work has been specifically assigned to the responsible qualified person.</p>
+<h3>A model failure does not mean the exercise completed</h3>
+<p>If one of the simulation models throws an error, the simulation host stops its updates, resets its driven inputs and reports the model failure. Do not interpret this as an orderly completion of the machining or tool sequence. Establish the operation state and use its proper stopping and recovery controls before deciding what to do next.</p>
+<p>A reconnect rebuilds the simulated session and resets model history. That can be part of a reviewed recovery, but it is not an explanation of the original problem. Record the evidence first. Otherwise, repeated reconnects can erase the sequence you needed to describe without resolving its cause.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 20-2</div><h3>A reported simulation problem</h3><p>Capture an approved training example showing the exact status or report message and enough context to identify the connection mode and requested operation. Use an existing controlled example; do not deliberately interrupt a production operation or corrupt a configuration to obtain this image.</p><p>Suggested asset: <code>assets/images/20-simulation-diagnostic.png</code>.</p><figcaption>Reserved example of useful evidence for reporting a training-session problem.</figcaption></figure>
+<div class="learning-example"><h3>Example: the tool setter never confirms contact</h3><p>The useful report identifies the training tool, measurement stage, probe setup and displayed message. “The tool was moving down” alone does not show whether the modelled probe location and the exercise were consistent. Keep the exercise stopped while that discrepancy is reviewed.</p></div>
+<p>Resume only after the cause and recovery are understood, then repeat the specific failed step under the approved plan. A successful retry should be recorded as a new observation, not used to erase the earlier failure from the training record.</p>
+
+</section>
+<section id="normal" aria-labelledby="normal-title"><h2 id="normal-title">20.9 Return to Normal with a fresh physical-machine review</h2>
+
+<p>Returning to Normal deserves the same deliberate preparation as starting the physical machine. End the training exercise, establish that the session is idle and review what changed during practice. The simulated machine's apparent success does not establish the condition of the real machine waiting beside the computer.</p>
+<p>Do not change to Normal merely to see whether an unresolved training error disappears. Normal is the mode intended for real-machine operation. Before requesting its connection, follow the machine builder's startup requirements and confirm that the physical work area is ready for the controller to connect.</p>
+<h3>Review what the exercise changed</h3>
+<p>Check the source files, selected program, work references, tool values, measurement results and any settings intentionally changed. Decide which values are approved for retention and which require restoration through the shop's procedure. Neither a mode change nor closing Configuration with Cancel provides a general rollback of training work.</p>
+<div class="table-scroll"><table><caption>Table 20-9. Checks when returning to the physical machine</caption><thead><tr><th scope="col">Item</th><th scope="col">Required real-machine review</th></tr></thead><tbody>
+<tr><td>Controller connection</td><td>Normal was intentionally selected and the actual normal connection is confirmed.</td></tr>
+<tr><td>Machine reference</td><td>Complete the required physical Home procedure and verify its result.</td></tr>
+<tr><td>Installed tool</td><td>Identify the real tool and holder; reconcile the recorded tool state.</td></tr>
+<tr><td>Tool measurement and compensation</td><td>Use approved physical tool data, not an assumed simulated measurement.</td></tr>
+<tr><td>Stock and work reference</td><td>Verify clamping, physical datum and selected work origin.</td></tr>
+<tr><td>Equipment</td><td>Check actual pressure, spindle, rollers, sensors and other required equipment.</td></tr>
+<tr><td>Program and start intention</td><td>Prepare the approved revision and review its intended entry again.</td></tr>
+<tr><td>Clearance</td><td>Inspect the actual approach, tool-change and cutting routes against the physical setup.</td></tr>
+</tbody></table></div>
+<figure class="concept-figure"><img src="assets/images/20-return-to-normal.svg" alt="Finish simulated training, review changed data, prepare the physical machine, connect in Normal, perform real setup checks and separately request the approved operation."><figcaption>Figure 20-3. Returning to Normal requires a new review of the physical machine and job.</figcaption></figure>
+<h3>Make and confirm the transition</h3>
+<p>Use the same idle-state requirements and deliberate mode-change procedure described earlier, this time selecting Normal. Wait for the simulated session to close and the normal connection result to appear. Confirm the normal runtime connection result, the physical MM and the machine readiness indications.</p>
+<p>If connection fails, investigate that failure under the normal startup procedure. Do not treat the previously successful simulated connection as evidence that the physical network, controller or equipment is healthy. The two sessions obtain their operating feedback differently.</p>
+<p>After connection, follow <a href="03-startup.html">Chapter 3</a> and the relevant Home, tool and work-reference chapters. Establish readiness from current observations. Numbers retained on screen, a familiar file name or a previous training checklist do not replace those physical checks.</p>
+<div class="learning-example"><h3>Example: the training tool and real tool differ</h3><p>The exercise used a modelled tool, but the physical spindle contains another cutter. Even if the displayed program and tool number look familiar, reconcile the actual holder and approved tool data before any production motion. The simulated result cannot identify the physical object in the spindle.</p></div>
+<p>Finally, review the job as a real operation using <a href="16-running-programs.html">Chapter 16</a>. Switching mode is not a Run request, and successful connection is not permission to begin cutting. The next motion command should have a known purpose, a verified setup and an understood first movement.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">20.10 Complete a supervised exercise and record what it established</h2>
+
+<p>Use this final exercise to bring the chapter together. The trainer should supply a known sample file, a coherent training setup and an expected sequence. The operator should be able to explain each decision in ordinary language without needing to understand the internal machine-control program.</p>
+<p>The exercise is complete when the intended observations have been made and recorded, the session has been left in a known state and any changed data has a clear disposition. Completing a simulated job is one part of that result. It is not the only measure of successful training.</p>
+<h3>Use a staged practice plan</h3>
+<ol class="steps">
+<li><strong>Identify the session.</strong> Point out the selected Mode and actual connection indication. Explain why the word Simulation on its own is insufficient when the controller is disconnected.</li>
+<li><strong>Explain a mode change.</strong> Describe the idle-state requirements, the reconnect sequence and why Configuration Cancel does not reverse the operation. A physical transition to Normal is not required merely to answer this question.</li>
+<li><strong>Prepare the exercise.</strong> Complete the approved Home and work-reference preparation. Identify the required tool and file, and record any setup values changed.</li>
+<li><strong>Practise basic movement.</strong> Make the approved small step movement and explain the coordinate result. Identify which display represents machine position and which represents work position.</li>
+<li><strong>Run the sample.</strong> Review the prepared job, follow its start sequence and perform the planned ordinary Pause and Continue exercise.</li>
+<li><strong>Practise the distinct Reset decision.</strong> In a separately planned run, observe Reset and its resulting reset. Explain why a new start decision is required.</li>
+<li><strong>Add equipment practice when ready.</strong> Perform only the approved tool or measurement exercises appropriate to the supplied setup.</li>
+<li><strong>Close the exercise.</strong> Record the outcome, unresolved problems and changed values. Leave a clear handover stating the selected and connected modes.</li>
+</ol>
+<div class="table-scroll"><table><caption>Table 20-10. Suggested training record</caption><thead><tr><th scope="col">Record</th><th scope="col">Information to retain</th></tr></thead><tbody>
+<tr><td>Operator, trainer and date</td><td>Who performed and reviewed the exercise.</td></tr>
+<tr><td>Training identity</td><td>Application/setup identification and the exact sample file or approved revision.</td></tr>
+<tr><td>Session confirmation</td><td>Selected Simulation and observed connected result.</td></tr>
+<tr><td>Exercises completed</td><td>Home, step movement, loading, Run, Pause/Continue, Reset, and any approved equipment practice.</td></tr>
+<tr><td>Observed outcomes</td><td>Expected results obtained, unexpected behavior and relevant messages.</td></tr>
+<tr><td>Data changed</td><td>Files, work references, tool values or settings changed and their approved final disposition.</td></tr>
+<tr><td>Handover</td><td>The final mode, connection and operation state, plus work that still requires review.</td></tr>
+</tbody></table></div>
+<p>This is a suggested record for the shop's existing training process, not an automatically generated application report. Keep observations specific. “Correctly identified a paused active program” is more useful than a general tick beside “knows simulation.”</p>
+<h3>Questions the operator should be able to answer</h3>
+<p>If Simulation is selected but connection has failed, can you begin the exercise? No: establish a working simulated connection first. If an exercise finishes successfully, has it verified physical clamp clearance? No: that requires examination of the actual setup.</p>
+<p>If the shortcut changes Mode, does pressing it again always select Simulation? No: it toggles the current value. If you close Configuration with Cancel after changing Mode, does the old session automatically return? No: Mode is a live operation. If a simulated tool measurement produces a number, is that the approved length of the real cutter? No: it is a model-derived training result.</p>
+<p>Finally, explain what must happen before returning to production: settle the exercise, review changed data, prepare the real machine, intentionally select and confirm Normal, then complete the physical startup and job checks. If any step remains unclear, repeat that part with the trainer before using the corresponding command on the physical machine.</p>
+<p>The next chapter covers the Configuration window. It builds on the distinction introduced here between inspecting a value, editing a setting and invoking an operation that takes effect immediately.</p>
+
+</section>
+<details class="source-note"><summary>Documentation basis</summary><p>Checked against the source available on 9 October 2026. No physical machine or live simulated session was operated for this documentation review. The delivered configuration and saved PLC programs affect the behavior. Marked screenshot locations require capture from the delivered application.</p><ul><li><code>MainForm.Connection.cs</code></li><li><code>MainForm.Runtime.cs</code></li><li><code>MachineCommandAvailability.cs</code></li><li><code>MainForm.Bindings.cs</code></li><li><code>Configuration/Controller/ToolPathLinks.cs</code></li><li><code>Configuration/GeneralLinks.cs</code></li><li><code>Configuration/Controller/ControllerLinks.cs</code></li><li><code>Configuration/KeyboardLinks.cs</code></li><li><code>Simulation/SimulationHost.cs</code></li><li><code>Simulation/ControllerSimulationRuntime.cs</code></li><li><code>Simulation/PositionSwitchSimulation.cs</code></li><li><code>Simulation/SpindleSimulation.cs</code></li><li><code>Simulation/ToolProbeSimulation.cs</code></li><li><code>Simulation/DigitalFeedbackSimulation.cs</code></li></ul></details></div><footer class="page-footer"><a href="19-editing-gcode.html">Previous chapter</a><a href="index.html">Manual contents</a><span>RouterXYZBC+TC · 20</span></footer></main></body></html>

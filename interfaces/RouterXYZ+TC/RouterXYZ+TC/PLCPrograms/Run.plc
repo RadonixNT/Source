@@ -1,0 +1,3 @@
+// Optional engineer extension after an accepted operator Run request.
+// No automatic spindle start: normal program S/M3/M4 commands own that policy.
+END_FUNCTION(Result := 0);

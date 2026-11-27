@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 22 — Configuration Reference | RouterXYZBC+TC</title><meta name="description" content="Operator reference to settings groups, motion parameters, spindle and tool data, measurement, rollers and work references."><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#reading">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZBC+TC · CHAPTER 22</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>Configuration Reference</h1><p class="lead">Understand what a setting describes, which operation uses it and what must be reviewed when it changes.</p><p class="review-status"><strong>Expanded draft for review.</strong> Names and behavior follow the reviewed application. Example defaults identify the supplied software, not recommended values for a particular machine or cutting job.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-22">Manual contents</a> · <a href="21-configuration-window.html">Previous chapter: Using the Configuration window</a></nav></header><div class="body"><aside class="document-status"><strong>XYZBC update — 10 November 2026.</strong> Jog velocity, step, destination and machine settings persist; Jog page and Step Jog mode do not. See the <a href="XYZBC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#reading">Read a parameter reference without mistaking defaults for setup instructions</a></li>
+<li><a href="#preferences">Display preferences and window behavior</a></li>
+<li><a href="#general">General movement, jogging, parking and start preferences</a></li>
+<li><a href="#controller">Controller identity, connection mode and hardware configuration</a></li>
+<li><a href="#axes">Axis identity, scaling, travel and motion limits</a></li>
+<li><a href="#home">Homing direction, speeds, displacement and timeout</a></li>
+<li><a href="#paths">Coordinated-motion settings and program rebuilding</a></li>
+<li><a href="#spindle">Spindle speed scaling, timing and live inverter values</a></li>
+<li><a href="#tools">Tool-changer timing, station geometry and compensation</a></li>
+<li><a href="#probe">Tool-length measurement geometry and reference results</a></li>
+<li><a href="#router">Router geometry, rollers and unloader settings</a></li>
+<li><a href="#references">Work references and the final review of a settings change</a></li>
+</ol></nav>
+<section id="reading" aria-labelledby="reading-title"><h2 id="reading-title">22.1 Read a parameter reference without mistaking defaults for setup instructions</h2>
+
+<p>A setting is a stored or live value used by the application. Its name identifies the item, but its group determines the context. Velocity under a tool changer is not the same setting as an axis VelocityLimit or an operator JogVelocity. Read the complete path before deciding what a value means.</p>
+<p>This chapter is an operator reference to the main settings families. Use <a href="21-configuration-window.html">Chapter 21</a> for navigation, entering values, OK, Cancel and direct menu operations. The tables here explain the meaning of settings; they do not authorize an operator to select new engineering values without approved machine information.</p>
+<h3>Four questions to ask about every value</h3>
+<div class="table-scroll"><table><caption>Table 22-1. How to interpret the reference tables</caption><thead><tr><th scope="col">Question</th><th scope="col">What to establish</th><th scope="col">Example distinction</th></tr></thead><tbody>
+<tr><td>What does it describe?</td><td>The physical component, operation or display preference.</td><td>Tool-station position versus work origin.</td></tr>
+<tr><td>What is its unit?</td><td>Distance, speed, acceleration, time, percentage or a named choice.</td><td>Milliseconds versus seconds; normalized speed versus RPM.</td></tr>
+<tr><td>When is it used?</td><td>Immediately, by the next operation, after acceptance/rebuild, or at a new connection.</td><td>Changing a live drive request differs from editing a motion profile.</td></tr>
+<tr><td>Who should change it?</td><td>The task authority and current application access/readiness.</td><td>A visible writable row is not proof that the operator should recalibrate it.</td></tr>
+</tbody></table></div>
+<p>Where the chapter calls a value an engineering setup item, that describes the responsibility involved. It is not a promise that every such field has an Engineering-only software permission. Actual edit access depends on the configured account, inherited access and current machine state. Always follow the restrictions shown by the application.</p>
+<p>The supplied router uses millimetres for its linear axes. Distances and linear speeds in these tables are therefore described in mm and mm/s; acceleration is described in mm/s². A raw controller setting can be expressed in an axis's engineering units. Changing a Unit label is not a procedure for converting the whole machine to another measurement system.</p>
+<h3>Defaults and permitted ranges have different meanings</h3>
+<p>A software default is the value supplied before installation-specific settings replace it. It is not a measurement of this machine. A permitted numeric range is the editor's acceptance boundary, not a recommended operating range for a cutter, motor or mechanism. Large allowed ranges often accommodate many configurations.</p>
+<p>For that reason, this chapter lists selected defaults only where they clarify a choice or behavior. Obtain actual travel limits, tool coordinates, timing and cutting conditions from the commissioned machine record. Do not reset an entire group simply to make its values resemble an example in the manual.</p>
+<div class="learning-example"><h3>Example: a delay is accepted by the editor</h3><p>A shorter delay fits the field's numerical range, but the physical mechanism may need longer to settle. The accepted number proves only that the input was retained. It does not prove the mechanism will complete safely within that time.</p></div>
+<p>Record both the original and replacement value for an approved change, then inspect the result at the stage that actually uses it. Some changes need a fresh program preparation or connection; others affect a live request. The sections below identify these distinctions so that the next operating decision is based on the right evidence.</p>
+
+</section>
+<section id="preferences" aria-labelledby="preferences-title"><h2 id="preferences-title">22.2 Display preferences and window behavior</h2>
+
+<p>Theme, Language and Monitoring Refresh Rate appear at the settings root rather than inside the Controller branch. They affect how the operator interface is presented. They do not define the physical travel, tool geometry or cutting conditions.</p>
+<p>Select the root to inspect these values, then use General for its window-layout preference. Labels can change with the selected language or installed translation overrides. The English names below identify the settings in the reviewed interface.</p>
+<div class="table-scroll"><table><caption>Table 22-2. Interface preferences</caption><thead><tr><th scope="col">Location / setting</th><th scope="col">Choices or unit</th><th scope="col">Meaning and effect</th></tr></thead><tbody>
+<tr><td>Root / Theme</td><td>Light, Dark</td><td>Changes the interface theme when the value changes. Availability follows the application's window-command conditions.</td></tr>
+<tr><td>Root / Language</td><td>Published language names</td><td>Changes the active interface language. It does not translate or rewrite the machining source file.</td></tr>
+<tr><td>Root / Monitoring Refresh Rate</td><td>High, Low</td><td>Selects the interface refresh interval: High uses 40 ms and Low uses 100 ms in the reviewed application.</td></tr>
+<tr><td>General / SaveWindowLayout</td><td>On/off</td><td>Controls supported window placement/layout persistence. It is not a command to save machine parameters.</td></tr>
+</tbody></table></div>
+<h3>Monitoring refresh is a display preference</h3>
+<p>The refresh preference controls how frequently the interface performs its scheduled refresh work. It is not the controller's motion-cycle setting, a feed override or a spindle-speed adjustment. Choosing High does not make a machining program run faster, and choosing Low does not reduce commanded cutting speed.</p>
+<p>Use the setting to suit the approved workstation configuration. If the display seems slow, distinguish screen-update behavior from an actual machine wait. A less frequently refreshed coordinate display does not mean that physical movement has stopped.</p>
+<h3>Language selection and translation editing are different</h3>
+<p>Language selects the language used by the interface. The separate Translations tool changes the wording available for a language. An ordinary operator selecting a preferred language does not need to edit the translation catalog.</p>
+<p>After a language change, use group context and the meaning of the fields rather than relying on their former screen position. Units, machine identities and source commands still require precise interpretation. If an installed translation is unclear, record the affected item instead of guessing its meaning.</p>
+<p>Theme and other ordinary tracked preference edits can become visible before the Configuration window closes. Follow the OK/Cancel rules from Chapter 21 to accept or abandon those tracked changes. A visible change in appearance is not itself proof that the entire settings session has been saved successfully.</p>
+<div class="learning-example"><h3>Example: the screen becomes dark during editing</h3><p>The theme changes as the preference changes. This lets the operator see the appearance, but the final Configuration decision still matters. A later Cancel can restore a tracked preference; it does not undo unrelated live operations performed during the same visit.</p></div>
+<p>Window-layout persistence concerns the presentation of supported windows. It does not preserve a machining continuation point or identify a workpiece setup. Likewise, a remembered tree selection is a navigation convenience, not evidence that the selected value has been reviewed for the current job.</p>
+<p>For a first settings exercise, these display preferences are more appropriate than machine geometry, provided the trainer identifies the intended field and final value. Keep the task limited to that preference and verify the resulting display after acceptance.</p>
+
+</section>
+<section id="general" aria-labelledby="general-title"><h2 id="general-title">22.3 General movement, jogging, parking and start preferences</h2>
+
+<p>The General branch contains operator movement preferences and selected program behaviors. Its axis subgroups refer to the main operator axes X, Y and Z. These values should not be confused with the controller's axis calibration or maximum motion limits.</p>
+<p>Before editing a motion-related preference, identify which operation consumes it. A jog step changes the distance of a step request; a parking position specifies a destination; a traverse speed affects prepared rapid movement. None of those settings is simply another name for the cutting feed written in a program.</p>
+<div class="table-scroll"><table><caption>Table 22-3. General operating settings</caption><thead><tr><th scope="col">Setting</th><th scope="col">Unit / interpretation</th><th scope="col">Use and review</th></tr></thead><tbody>
+<tr><td>TraverseVelocity</td><td>mm/s</td><td>Speed used for G0 traverse blocks and other routes that use the general traverse setting. Accepted changes can require program rebuild.</td></tr>
+<tr><td>X, Y, Z / JogVelocity</td><td>mm/s</td><td>Base jog speed for the selected axis, combined with the jog percentage.</td></tr>
+<tr><td>X, Y, Z / JogStep</td><td>mm</td><td>Distance for one incremental jog request. It is not encoder scale.</td></tr>
+<tr><td>X, Y, Z / JogPosition</td><td>Absolute machine coordinate, mm</td><td>Destination used by the corresponding GoTo request; entering the value alone is not that movement request.</td></tr>
+<tr><td>X, Y, Z / Park Position</td><td>Absolute machine coordinate, mm</td><td>Parking destination captured when parking starts and checked against travel.</td></tr>
+<tr><td>Park Enabled</td><td>On/off</td><td>Allows automatic parking after successful main-program completion; not after manual Reset, fault or an unknown stop result.</td></tr>
+<tr><td>JogMode</td><td>Continuous Jog / Step Jog</td><td>Selects hold-to-move or one-step behavior. Verify the actual mode before a jog request.</td></tr>
+<tr><td>JogPage</td><td>0 continuous page; 1 step page</td><td>Operator page selection. Read the active controls as well as the page value.</td></tr>
+<tr><td>StartFromNextCuttingLine</td><td>On/off</td><td>Changes selected-entry resolution toward a cutting entry. Review the resulting entry and required earlier equipment actions.</td></tr>
+</tbody></table></div>
+<h3>Keep the different kinds of speed separate</h3>
+<p>For example, a base jog speed of 20 mm/s with a jog percentage of 50% requests 10 mm/s before other applicable motion limits. This arithmetic explains the percentage; it is not a recommended speed for approaching a part or fixture.</p>
+<p>The main-window Jog and Feed sliders start at 100%. Their defaults and ranges come from the form design. Changing an axis VelocityLimit is a different engineering adjustment. If the observed movement is slower than expected, first identify which operation and speed source are involved rather than increasing several unrelated values.</p>
+<h3>Parking and selected starts require an operating decision</h3>
+<p>A park position is expressed in machine coordinates. It is not the same as a work-origin coordinate or a tool-station position. Check the entire parking route and actual clearance using <a href="09-positioning.html">Chapter 9</a>. The automatic parking preference does not take ownership of spindle shutdown; spindle control remains part of the machining program.</p>
+<p>StartFromNextCuttingLine affects how an intended entry is resolved. It is not a general instruction to skip every move before a cut without consequence. Use <a href="18-selected-start-line.html">Chapter 18</a> to inspect the resolved entry and required tool/equipment preparation. Do not change the preference merely to avoid understanding an interrupted job.</p>
+<div class="learning-example"><h3>Example: a remembered work coordinate is entered as Park Position</h3><p>The same number can identify a different physical location when interpreted as an absolute machine coordinate. Read the field's coordinate system and compare it with the approved machine position before requesting parking.</p></div>
+<p>Jog parameter edits are gated by the application's operating state. Make approved changes while the relevant operations are settled, verify the retained values and inspect the next request's axis, direction and mode before acting.</p>
+
+</section>
+<section id="controller" aria-labelledby="controller-title"><h2 id="controller-title">22.4 Controller identity, connection mode and hardware configuration</h2>
+
+<p>The Controller branch combines connection choices, read-only information and engineering configuration. It also contains the Axes, Inverters, Tool Paths and PLC branches. Use its information fields to describe the installation accurately when reporting a problem; do not try to correct a hardware fault by changing an identity or topology value.</p>
+<p>Mode in this branch means the controller's Simulation or Normal session. Mode inside an individual axis or module has a different meaning: Physical or Virtual device configuration. These similarly named settings are not interchangeable.</p>
+<div class="table-scroll"><table><caption>Table 22-4. Controller and hardware reference</caption><thead><tr><th scope="col">Location / item</th><th scope="col">Meaning</th><th scope="col">Access or effect to recognize</th></tr></thead><tbody>
+<tr><td>Controller / Mode</td><td>Simulation or Normal.</td><td>Live reconnect operation when allowed; parent Configuration Cancel does not reverse it.</td></tr>
+<tr><td>Controller / MAC</td><td>Address used by the runtime network link layer.</td><td>Read-only information; Not available is not a fabricated address.</td></tr>
+<tr><td>Controller / Active Axis Count</td><td>Physical servo-axis count detected by the runtime.</td><td>Read-only; not a control for adding axes.</td></tr>
+<tr><td>Controller / License File</td><td>Signed Radonix .ntlic package imported through its editor.</td><td>Engineering access; takes effect on the next connection. Do not type an arbitrary license string.</td></tr>
+<tr><td>Controller / Acontis License</td><td>Whether the key was accepted during the latest connection attempt.</td><td>Read-only state, separate from importing a package.</td></tr>
+<tr><td>PLC / MM UID</td><td>Reported controller-board identifier.</td><td>Read-only identification, not an editable board assignment.</td></tr>
+<tr><td>PLC / Modules / module</td><td>Mode, UID, Name and Type describe a configured I/O module.</td><td>Engineering hardware definition; session restrictions apply.</td></tr>
+<tr><td>PLC / I/O Mapping</td><td>Associates machine signal names with input/output destinations.</td><td>Use the dedicated mapping procedure; a displayed signal value is not its assignment.</td></tr>
+<tr><td>PLC / source and shared-value groups</td><td>Machine-control programs and their associated data.</td><td>Distinguish source, configuration and live values before editing.</td></tr>
+</tbody></table></div>
+<h3>Physical and Virtual describe a device definition</h3>
+<p>A Physical device requires its hardware relationship. A Virtual definition retains a logical device without that physical requirement. Changing a missing component to Virtual is not a routine way to repair the machine. It changes what the application expects and must be reviewed against the actual design.</p>
+<p>Module UID identifies the intended module. Engineering can edit and save it while connected, but the new identity takes effect on the next connection. Module Mode requires an inactive session. Name and Type are read-only values derived from the supplied module profile. Incorrect assignments can associate a machine signal with the wrong hardware; numerical acceptance does not prove that an identity matches the installed component.</p>
+<h3>Use state messages to distinguish configured and active values</h3>
+<p>Some hardware-related changes require an inactive controller session and a new connection. Read pending-change and state messages in the relevant branch. A value displayed in Configuration can represent a configured choice that has not yet become the active session's hardware definition.</p>
+<p>For a connection-mode task, follow <a href="20-simulation.html">Chapter 20</a>. For hardware configuration, obtain the commissioned module and axis records and use the responsible technician's procedure. Do not disconnect a partly completed operation solely to make an otherwise unavailable row editable.</p>
+<div class="learning-example"><h3>Example: fewer physical axes are reported than expected</h3><p>Changing the displayed axis count is not an available repair because it is a reading. Record the count, connection state and message, then have the hardware/configuration discrepancy investigated.</p></div>
+<p>The later mapping and PLC chapters explain those branches in detail. This chapter identifies their role so an operator can find and report them without confusing a configuration field with an ordinary operating control.</p>
+
+</section>
+<section id="axes" aria-labelledby="axes-title"><h2 id="axes-title">22.5 Axis identity, scaling, travel and motion limits</h2>
+
+<p>Under Controller &gt; Axes, each axis group describes a controller axis. The base router has X, Y and Z. X Gantry, Y Gantry and Z Gantry add XG, YG and ZG respectively; all default to Disabled. Normal mode requires licensed capacity for every configured motor. Simulation permits the simulator capacity when no license is supplied. Edit topology offline with cleared ToolPaths; acceptance saves the changes and Cancel restores the draft. Identify the axis by its configured name before reading or reporting its settings.</p>
+<p>These parameters describe how controller motion relates to the mechanism. They belong to commissioning and approved engineering adjustment. An operator should understand their purpose and recognize a mismatch, but should not use them as substitutes for work-zero adjustment or a temporary reduction in operating speed.</p>
+<div class="table-scroll"><table><caption>Table 22-5. Axis settings</caption><thead><tr><th scope="col">Setting</th><th scope="col">Meaning / unit</th><th scope="col">Effect or restriction</th></tr></thead><tbody>
+<tr><td>Name</td><td>Program identity of the axis.</td><td>Change only with an inactive connection; other configuration depends on the axis catalog.</td></tr>
+<tr><td>Mode</td><td>Physical or Virtual.</td><td>Device-definition choice, available when the connection is inactive.</td></tr>
+<tr><td>Direction</td><td>Positive or Negative logical direction.</td><td>Engineering relationship to feedback/motion; inactive session required.</td></tr>
+<tr><td>Step</td><td>Positive engineering-unit distance per encoder count.</td><td>Calibration scale; inactive session required. Different from JogStep.</td></tr>
+<tr><td>Unit</td><td>Axis engineering-unit label; supplied linear axes use mm.</td><td>Not a complete machine unit-conversion procedure.</td></tr>
+<tr><td>MinCourse / MaxCourse</td><td>Minimum and maximum permitted command position.</td><td>Travel limits, not stock dimensions or work origins.</td></tr>
+<tr><td>VelocityLimit</td><td>Axis velocity limit; mm/s for the supplied linear axes.</td><td>A coupled group uses its master's limit.</td></tr>
+<tr><td>Acceleration / Deceleration</td><td>Rate of velocity change; mm/s² for linear axes.</td><td>The coupled group uses its master's values, including controlled stopping.</td></tr>
+<tr><td>Smoothness</td><td>Controller motion-smoothing amount.</td><td>Engineering motion-profile parameter, not a part-finish guarantee.</td></tr>
+<tr><td>CouplingMaster</td><td>Master axis or None.</td><td>Inactive-session topology setting; an enabled YG follows Y; XG and ZG follow their respective masters.</td></tr>
+<tr><td>MaxCouplingError</td><td>Permitted gantry following error in axis engineering units.</td><td>Inactive-session protection setting, not a routine way to silence an alarm.</td></tr>
+</tbody></table></div>
+<h3>Do not confuse scale, step movement and work position</h3>
+<p>Step determines how a feedback count represents engineering distance. JogStep determines the distance requested by a manual incremental move. A work reference determines where the job origin lies. Adjusting one to correct a problem in another can hide the symptom while making the underlying configuration less accurate.</p>
+<p>For example, if the part appears displaced relative to the stock, first investigate the selected origin and setup. Changing axis scale or direction is not an appropriate ordinary correction for an incorrectly established work zero.</p>
+<h3>Travel and coupling need physical knowledge</h3>
+<p>Travel bounds must represent the approved mechanism limits. Increasing a limit does not create physical clearance beyond a stop, holder or fixture. A permitted destination also does not prove that the route to it avoids every obstacle.</p>
+<p>Coupling settings relate the gantry motors. Do not make YG independent or raise its tolerated error to continue after a gantry problem. Record the reported condition and use the machine's service procedure. The related Controller &gt; PLC &gt; CouplingErrorCountLimit controls the number of net out-of-tolerance one-millisecond samples before a controlled group stop; it is an engineering protection setting applied with an inactive session.</p>
+<p>Accepted changes under the Axes branch can require rebuilding the prepared path. Read any progress-reset warning and review the resulting program before another start. For session-dependent settings, also verify the new connection and required Home procedure. Seeing the configured value in the table does not prove every active controller value has already changed.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 22-1</div><h3>One identified axis and its parameter descriptions</h3><p>Capture an English axis group with its name, representative motion fields and description area visible. Annotate Step versus JogStep by reference, and identify any inactive-session restriction. Use the actual delivered configuration; do not label example values as approved settings for every machine.</p><p>Suggested asset: <code>assets/images/22-axis-reference.png</code>.</p><figcaption>Reserved axis-reference screenshot with installation-specific values.</figcaption></figure>
+
+</section>
+<section id="home" aria-labelledby="home-title"><h2 id="home-title">22.6 Homing direction, speeds, displacement and timeout</h2>
+
+<p>Home establishes the machine coordinate reference through a defined sensor-based sequence. Its settings describe the search, release and final coordinate behavior. They are different from the work origin used to place a part and from an ordinary request to move to machine zero.</p>
+<p>Most Home parameters are under the relevant Controller &gt; Axes group. The shared HomeTimeout is under Controller &gt; PLC. Read the full location when comparing values, especially where X, Y, YG and Z have different mechanical arrangements.</p>
+<div class="table-scroll"><table><caption>Table 22-6. Homing settings</caption><thead><tr><th scope="col">Setting</th><th scope="col">Unit / meaning</th><th scope="col">When or how it matters</th></tr></thead><tbody>
+<tr><td>HomeDirection</td><td>Positive or Negative sensor-search direction.</td><td>Used for the next Home activation; sensor release moves oppositely.</td></tr>
+<tr><td>HomeVelocity</td><td>Search speed, mm/s for linear axes.</td><td>Controls the approach during the sensor search.</td></tr>
+<tr><td>HomeReturnVelocity</td><td>Sensor-release speed, mm/s.</td><td>Used when moving away from the triggered sensor.</td></tr>
+<tr><td>HomeDisplace</td><td>Signed physical displacement after sensor homing, mm.</td><td>Inactive-session change; part of establishing the final home position.</td></tr>
+<tr><td>HomePosition</td><td>Final assigned machine coordinate, mm.</td><td>Inactive-session change; not itself the sensor-search distance.</td></tr>
+<tr><td>PLC / HomeTimeout</td><td>Seconds; supplied default 120.</td><td>Timeout for search/release/stop phases, captured at Home activation.</td></tr>
+</tbody></table></div>
+<h3>Direction of search and final coordinate are separate</h3>
+<p>HomeDirection identifies which way the mechanism searches for its sensor. HomePosition identifies the coordinate assigned by the completed procedure. A negative search does not imply that the final coordinate must be negative. These values serve different purposes.</p>
+<p>HomeDisplace describes physical movement after sensor homing, while HomePosition describes the final coordinate. Do not use either as an ordinary correction for a misplaced workpiece. Changing the machine's reference relationship can affect every job, tool station and parking position that relies on machine coordinates.</p>
+<h3>Timeout is not a substitute for a working sensor</h3>
+<p>If Home times out, record the axis, phase and observed sensor behavior. Increasing HomeTimeout may simply allow a fault to persist longer. The cause could be an incorrect search direction, signal assignment, mechanical problem or a sequence that never reaches its required state.</p>
+<p>The field uses seconds, unlike many tool and spindle timing fields that use milliseconds. For example, 2 seconds is 2000 milliseconds. This conversion illustrates why the unit must be checked; it is not a recommendation for a homing timeout.</p>
+<div class="learning-example"><h3>Example: search completes but release does not</h3><p>The sensor has been reached, yet the return/release phase fails. Increasing the search speed addresses a different part of the sequence. Report the actual failing phase and have its direction, feedback and mechanics checked.</p></div>
+<p>An enabled gantry sequence also depends on valid coupling and both motors' readiness. A successful indication on only one motor is not the complete Home result. Use <a href="06-homing.html">Chapter 6</a> to follow the operating procedure and aggregate completion indication.</p>
+<p>After an approved change, perform the required controlled Home verification and recheck machine-coordinate destinations before ordinary operation. A successful Configuration save does not prove that the next search will move toward the correct physical sensor. Saved PLC source can also alter the supplied sequence, so unexplained behavior must be checked against the installed machine program.</p>
+
+</section>
+<section id="paths" aria-labelledby="paths-title"><h2 id="paths-title">22.7 Coordinated-motion settings and program rebuilding</h2>
+
+<p>The Controller &gt; Tool Paths branch contains separate coordinated-motion groups. In the supplied router, Tool Path 0 handles the main machining program, Tool Path 1 supports positioning and Tool Path 2 supports tool operations. They are motion contexts, not three independent workpieces.</p>
+<p>Each group has the same named planning parameters, but an adjustment to one path must be reviewed in the context of its purpose. Do not copy all values between groups merely because their tables look alike.</p>
+<div class="table-scroll"><table><caption>Table 22-7. Coordinated-motion parameters</caption><thead><tr><th scope="col">Setting</th><th scope="col">Unit / supplied behavior</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>AccelerationCoefficient</td><td>Multiplier, 0.001–1; supplied default 1.</td><td>Scales coordinated acceleration and deceleration. It is not the main feed-percentage control.</td></tr>
+<tr><td>StopVelocity</td><td>Velocity threshold; mm/s for the supplied linear paths.</td><td>Junction speeds below the threshold become complete stops. It does not raise a planned speed.</td></tr>
+<tr><td>MinimumLength</td><td>Distance, mm. Zero selects an automatic threshold based on the path axes' step lengths.</td><td>Minimum accepted line-movement distance, not minimum stock thickness or cutter diameter.</td></tr>
+<tr><td>ContourTolerance</td><td>Distance, mm; supplied default 0.01.</td><td>Maximum contour deviation used by smooth automatic junction planning. It is not a complete part-tolerance guarantee.</td></tr>
+</tbody></table></div>
+<h3>Understand the planning purpose</h3>
+<p>A machining path is built from movements that meet at junctions. The controller must decide how to change speed and direction within the permitted motion behavior. These parameters influence that planning; they do not specify an operator's desired production rate directly.</p>
+<p>For example, increasing a stop threshold does not make the machine travel faster through a corner. Its stated role is to turn sufficiently low planned junction speeds into full stops. Similarly, a contour-tolerance number does not promise that the actual finished part will have that exact accuracy: tool deflection, calibration, material and setup still matter.</p>
+<p>MinimumLength is concerned with acceptance of individual line movements. Its zero value has a defined automatic meaning; it does not mean that every arbitrarily tiny line must be accepted. Have the responsible person review the program and motion configuration together when short-segment behavior is the issue.</p>
+<h3>Changes affect prepared work</h3>
+<p>Accepted Tool Paths edits are among the changes that can rebuild the prepared program. Axis edits and General TraverseVelocity can also trigger that path. A confirmation about resetting program progress is therefore relevant even when you changed a single numeric field.</p>
+<p>Before accepting, decide what will happen to any partly machined workpiece and previously selected start. After the rebuild, inspect the final preparation result, source/preview relationship and intended entry. Do not resume on the strength of an old screenshot or recorded line number.</p>
+<div class="learning-example"><h3>Example: a smoother-looking preview is expected</h3><p>The operator is asked to change a planning parameter. The approved change should specify the intended effect and review method. A visually familiar preview alone cannot show whether the new speed planning meets the machine's requirements.</p></div>
+<p>Use the main feed control for an approved live operating adjustment, and the engineering procedure for changes to these planning values. They serve different purposes. If the current job must retain its continuation state, resolve that requirement before accepting a configuration change that rebuilds it.</p>
+<p>Read the individual group's state message as well as its settings. A group marked ready, active or idle describes its present motion state, not certification that its parameter values are appropriate for every job.</p>
+
+</section>
+<section id="spindle" aria-labelledby="spindle-title"><h2 id="spindle-title">22.8 Spindle speed scaling, timing and live inverter values</h2>
+
+<p>Router &gt; Spindle contains the speed setpoint, range, manual step, start/stop timing and feedback timeout. Controller &gt; Inverters exposes live drive requests and state.</p>
+<p>The main operator spindle controls are explained in <a href="10-spindle.html">Chapter 10</a>. The Configuration values below describe how those operations are configured or reported. They are not a request to start the spindle while inspecting the reference.</p>
+<div class="table-scroll"><table><caption>Table 22-8. Spindle and inverter reference</caption><thead><tr><th scope="col">Location / setting</th><th scope="col">Unit / meaning</th><th scope="col">Effect or limitation</th></tr></thead><tbody>
+<tr><td>Router / Spindle / Current Spindle Speed</td><td>RPM; supplied default 1000.</td><td>Last requested speed, clamped to the configured range and saved for the next connection.</td></tr>
+<tr><td>Router / Spindle / Minimum Spindle Speed</td><td>RPM; supplied default 1000.</td><td>Lower limit for the slider and retained speed.</td></tr>
+<tr><td>Router / Spindle / Spindle Speed Step</td><td>RPM; supplied default 100.</td><td>Increment for manual slider adjustments.</td></tr>
+<tr><td>Router / Spindle / Maximum Spindle Speed</td><td>RPM; supplied default 24000.</td><td>Scale used to convert requested RPM to a normalized output. Must match the approved drive/spindle setup.</td></tr>
+<tr><td>Router / Spindle / Spindle Feedback Timeout</td><td>Milliseconds; supplied default 5000.</td><td>Maximum additional wait for speed/stop feedback in the supplied sequence.</td></tr>
+<tr><td>Router / Spindle / Spindle On Time</td><td>Milliseconds; supplied default 3000.</td><td>Minimum wait after M3/M4 starts the spindle; does not measure RPM.</td></tr>
+<tr><td>Router / Spindle / Spindle Off Time</td><td>Milliseconds; supplied default 3000.</td><td>Deceleration wait before the supplied background logic begins its additional quiet check.</td></tr>
+<tr><td>Controller / Inverters / Inverter Count</td><td>0–2; default 0.</td><td>Engineering setting; disconnect and clear all ToolPaths. Mapping or PLC references block removal. Saved on acceptance; Cancel restores the draft.</td></tr>
+<tr><td>Controller / Inverters / INV0 or INV1 / SPEED</td><td>Normalized request, 0–1.</td><td>Live value: 0.5 requests half scale. It is not a measured RPM value.</td></tr>
+<tr><td>Controller / Inverters / INV0 or INV1 / RUN</td><td>On/off request.</td><td>Live operating/disable request; parent Cancel is not its undo.</td></tr>
+<tr><td>Controller / Inverters / INV0 or INV1 / STATE</td><td>Observed device-state value.</td><td>Read-only. An enabled state does not prove attained spindle speed.</td></tr>
+</tbody></table></div>
+<p>Fresh settings contain no inverter. Spindle CW defaults to DM0.OUT0 and Spindle Speed to AM0.OUT0. Saved mappings are preserved; changing a factory default does not rewrite a commissioned assignment.</p><h3>Separate a requested speed from a measured result</h3>
+<p>In the supplied control program, requested RPM is divided by MaximumSpindleSpeed and limited to the normalized range. For illustration, 12000 RPM against a 24000 RPM scale gives 0.5. This arithmetic does not show that a physical spindle has reached 12000 RPM.</p>
+<p>Changing the maximum-speed scale to make a displayed percentage look convenient can change the relationship between a program's speed request and the drive output. It is a configuration adjustment, not a substitute for selecting approved cutting speed. Resolve discrepancies against the actual spindle and drive documentation.</p>
+<h3>Wait times and feedback have different roles</h3>
+<p>A minimum start wait allows time for the commanded action, while feedback checks observe the configured signal conditions. A stop delay alone is not proof of standstill. The supplied stop monitoring includes an additional quiet interval after the deceleration wait; the configured sensors and saved control program determine the actual installed behavior.</p>
+<p>Do not reduce a timeout to speed up a cycle or extend it merely to hide a repeated failure. Record the action, elapsed stage and feedback message. The responsible person must establish whether the mechanism, sensor assignment or approved timing needs attention.</p>
+<div class="learning-example"><h3>Example: RUN is true but the required speed has not been confirmed</h3><p>The request indicates that operation was asked for. It is not a speed measurement. Follow the spindle sequence and diagnostics rather than treating the request bit as evidence that cutting may begin.</p></div>
+<p>Live inverter edits require a connected controller and are unavailable during PLC application. Their effects are separate from ordinary deferred Configuration edits. Use the normal spindle operating controls unless direct drive interaction is explicitly part of the assigned procedure. After any approved configuration change, verify the requested direction, speed behavior and stopping response through the machine's physical acceptance procedure.</p>
+
+</section>
+<section id="tools" aria-labelledby="tools-title"><h2 id="tools-title">22.9 Tool-changer timing, station geometry and compensation</h2>
+
+<p>The Tool Changer group combines current tool information, automatic-exchange behavior, exchange timing and individual tool-station data. Its Tools branch contains the supplied tool slots T01 through T32. These are configured stations and tool records; their existence does not prove that every physical pocket is populated.</p>
+<p>Read <a href="11-tool-exchange.html">Chapter 11</a> for operating the changer. This reference explains the stored values that the sequence uses. Do not enter a current tool number as a substitute for physically confirming which holder is in the spindle.</p>
+<div class="table-scroll"><table><caption>Table 22-9. Tool-changer and per-tool fields</caption><thead><tr><th scope="col">Setting</th><th scope="col">Unit / meaning</th><th scope="col">Review before use</th></tr></thead><tbody>
+<tr><td>Tool Changer / CurrentTool</td><td>Recorded spindle tool; 0 means empty.</td><td>Must agree with physical reality; editing a record is not a tool exchange.</td></tr>
+<tr><td>Tool Changer / Enabled</td><td>AutomaticToolChange on/off.</td><td>Controls automatic M6 exchange behavior; manual changes remain available when disabled.</td></tr>
+<tr><td>Tool Changer / Velocity</td><td>mm/s.</td><td>Used on the specified storage moves from PickP to Position and Position to PlaceP; other changer moves use TraverseVelocity.</td></tr>
+<tr><td>Release Time / Clamp Time</td><td>Milliseconds; supplied defaults 500 each.</td><td>Continuous confirmed-state settling times, not a substitute for required feedback.</td></tr>
+<tr><td>FeedbackTimeout</td><td>Milliseconds; supplied default 5000.</td><td>Additional sensor wait beyond release/clamp settling time.</td></tr>
+<tr><td>Tools / Tnn / Enabled</td><td>Whether the tool is installed and selectable.</td><td>The currently recorded spindle tool is kept enabled and its toggle is unavailable.</td></tr>
+<tr><td>Tools / Tnn / Position</td><td>XYZ holder position in machine coordinates, mm.</td><td>The actual commissioned holder location.</td></tr>
+<tr><td>Tools / Tnn / PlaceVector</td><td>XYZ displacement relative to Position, mm.</td><td>Placement exit and pickup entry point offset.</td></tr>
+<tr><td>Tools / Tnn / PickVector</td><td>XYZ displacement relative to Position, mm.</td><td>Placement entry and pickup exit point offset.</td></tr>
+<tr><td>Tools / Tnn / Length</td><td>Measured physical tool length, mm.</td><td>Relative to the empty-spindle reference; not the holder location.</td></tr>
+<tr><td>Tools / Tnn / Offset</td><td>Additional XYZ correction, mm.</td><td>Z correction is added to Length for main-path compensation.</td></tr>
+</tbody></table></div>
+<h3>A position and a vector are not interchangeable</h3>
+<p>Position is an absolute machine-coordinate point. PlaceVector and PickVector are displacements added to that point. For example, a vector component of 10 mm means 10 mm relative to the station along that axis, not an absolute machine coordinate of 10 mm.</p>
+<p>Both the sign and the axis matter. Review the complete approach and withdrawal routes, not just the holder point. A correct station coordinate with an incorrect vector can still produce an unsuitable movement through the magazine.</p>
+<h3>Keep geometry separate from tool compensation</h3>
+<p>Length describes the measured tool. Offset provides an additional correction used for machining. Neither is a repair for an incorrect magazine position. Conversely, moving the station position is not the proper way to compensate a tool's cutting length.</p>
+<p>The requested next tool used by the manual operation is an operation argument, not another persisted station definition. Distinguish the current physical-tool record, the requested tool and the configuration of that tool's slot.</p>
+<div class="learning-example"><h3>Example: a pocket is empty because its tool is in the spindle</h3><p>That is different from a disabled or uninstalled tool. Do not disable the current tool record to describe an empty pocket. Follow the normal changer procedure and confirm the actual holder state.</p></div>
+<p>After any approved geometry or timing change, perform the machine builder's controlled exchange verification. Successful editing, a plausible preview or a completed simulation is not a physical clearance test. Review every affected station and route before automatic use.</p>
+
+</section>
+<section id="probe" aria-labelledby="probe-title"><h2 id="probe-title">22.10 Tool-length measurement geometry and reference results</h2>
+
+<p>Tool Changer &gt; Tool Length Measurement contains the geometry and search parameters used by the tool setter. It also displays the captured empty-spindle reference. These settings belong to the tool-measurement system, not to the workpiece zero.</p>
+<p>Use <a href="12-tool-measurement.html">Chapter 12</a> for the measurement procedure. This section helps you identify the values when preparing or reporting a measurement problem. A successful sensor contact alone is not enough to establish that the entire reference and tool setup is correct.</p>
+<div class="table-scroll"><table><caption>Table 22-10. Tool-length measurement fields</caption><thead><tr><th scope="col">Setting</th><th scope="col">Unit / role</th><th scope="col">What to verify</th></tr></thead><tbody>
+<tr><td>ProbePosition</td><td>XYZ position in machine coordinates, mm.</td><td>Correct tool-setter location. In Simulation, Z describes the model's empty-spindle contact position.</td></tr>
+<tr><td>SearchVelocity</td><td>mm/s; supplied default 10.</td><td>First downward contact search and upward probe release.</td></tr>
+<tr><td>FineSearchVelocity</td><td>mm/s; supplied default 1.</td><td>Final precision contact search.</td></tr>
+<tr><td>ApproachClearance</td><td>Positive Z clearance, mm; supplied default 100.</td><td>Clearance above the empty-spindle contact used for approach and final withdrawal.</td></tr>
+<tr><td>ReferenceOffsetZ</td><td>Measured empty-spindle contact coordinate, mm.</td><td>Read-only result, not a field for inventing a reference.</td></tr>
+<tr><td>ReferenceValid</td><td>Not measured / Measured.</td><td>Read-only indication that the empty-spindle measurement completed.</td></tr>
+<tr><td>Tools / Tnn / Length</td><td>Resulting tool length, mm.</td><td>The selected tool's measurement result belongs to its own record.</td></tr>
+</tbody></table></div>
+<h3>The empty-spindle reference is an observed result</h3>
+<p>ReferenceOffsetZ records where the empty spindle contacts the setter during the approved reference procedure. ReferenceValid reports completion of that reference measurement. They are deliberately read-only in Configuration. Typing a convenient value elsewhere does not create a valid measured reference.</p>
+<p>Do not confuse ProbePosition.Z with the measured ReferenceOffsetZ. One is part of the configured geometry; the other records the measurement result. In the simulation model, the configured Z value helps define modelled contact, which is still different from physically measuring the actual machine.</p>
+<h3>Review clearance and search speed together</h3>
+<p>ApproachClearance must suit the actual arrangement and the tool being measured. The supplied default is not evidence that a particular cutter clears the probe or surrounding fixtures. Similarly, a permissible search speed can still be inappropriate for a specific setter.</p>
+<p>If contact is not found or release is not confirmed, identify the failing stage. Do not change the reference result, search speed and probe coordinates together in an attempt to make the message disappear. A focused report is more useful than an unrecorded series of adjustments.</p>
+<div class="learning-example"><h3>Example: measurement is repeatable in Simulation</h3><p>The software model may repeatedly return the expected value, but that result does not calibrate the physical setter. On the real machine, establish the reference and tool measurements using the physical procedure and approved setup.</p></div>
+<p>A completed measurement can write and save its result through the measurement operation itself. Parent Configuration Cancel is not a universal restoration of results obtained through other operations. Keep the measured tool number, result and any calibration changes in the setup record.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 22-2</div><h3>Configured probe values and read-only reference results</h3><p>Capture the Tool Length Measurement group in English. Identify the editable geometry/search fields and the read-only reference result fields. Use a training installation and label displayed values as installation-specific, not recommended defaults.</p><p>Suggested asset: <code>assets/images/22-probe-reference.png</code>.</p><figcaption>Reserved view distinguishing configuration from measured results.</figcaption></figure>
+
+</section>
+<section id="router" aria-labelledby="router-title"><h2 id="router-title">22.11 Router geometry, rollers and unloader settings</h2>
+
+<p>The Router branch contains machine-specific settings for the bridge arrangement, roller geometry, spindle timing and unloader. The spindle timing fields were covered earlier in this chapter. Here the focus is on the relationship between the configured mechanism and the movement/equipment sequence.</p>
+<p>Use <a href="13-machine-equipment.html">Chapter 13</a> for ordinary equipment operation. Configuring where a roller sits or how long an actuator settles is different from commanding that equipment during a job.</p>
+<div class="table-scroll"><table><caption>Table 22-11. Router equipment parameters</caption><thead><tr><th scope="col">Location / setting</th><th scope="col">Unit / meaning</th><th scope="col">Review requirement</th></tr></thead><tbody>
+<tr><td>Router / On-Bridge Axis</td><td>X or Y; supplied default X.</td><td>Axis travelling on the bridge. Rollers are parallel to it.</td></tr>
+<tr><td>Roller / Roller 1 Enabled, Roller 2 Enabled</td><td>On/off configuration.</td><td>Declares the roller available for the configured sequence; does not prove free-position feedback.</td></tr>
+<tr><td>Roller / Roller1Offset, Roller2Offset</td><td>Signed roller position minus spindle position, mm.</td><td>Measured along Y when On-Bridge Axis is X, or along X when it is Y.</td></tr>
+<tr><td>Roller / Release Timeout</td><td>Milliseconds; supplied default 5000.</td><td>Maximum wait to confirm enabled rollers free before tool-change motion.</td></tr>
+<tr><td>Unloader / UpTime, DownTime</td><td>Milliseconds; supplied defaults 500 each.</td><td>Configured settling delays made available to the machine-control sequence.</td></tr>
+<tr><td>Unloader / Start Position, End Position</td><td>Millimetres.</td><td>Configured unloader positions; operation depends on the installed control sequence.</td></tr>
+</tbody></table></div>
+<h3>Changing orientation does not convert an offset</h3>
+<p>On-Bridge Axis selects the geometry interpretation. With X selected, a roller's offset is along Y. With Y selected, the offset is along X. The application retains the numeric offset when orientation changes; it does not measure the mechanism again or rotate the stored value into a newly calibrated position.</p>
+<p>Therefore, an orientation change needs a full review of both roller offsets and the actual machine arrangement. A familiar offset number is not sufficient evidence that it now describes the correct side or distance from the spindle.</p>
+<p>For illustration, if the relevant spindle coordinate is 100 mm and the roller coordinate is 130 mm, the signed roller-minus-spindle offset is +30 mm. Reversing which object is subtracted reverses the sign. Use measured, approved coordinates rather than a visual estimate of the distance.</p>
+<h3>Availability and feedback are separate</h3>
+<p>The tool-change sequence requires enabled rollers to confirm their free position through the configured physical sensors. Enabling a roller in Configuration does not itself provide that confirmation. Increasing Release Timeout cannot repair a sensor that never indicates the required position.</p>
+<p>During tool changing, the supplied background logic inhibits roller outputs, and the exchange sequence waits for the required free-position feedback before motion. A timeout or lost confirmation is an operating fault to investigate. Do not disable a roller simply to bypass an unresolved clearance condition.</p>
+<div class="learning-example"><h3>Example: the orientation is changed but offsets are retained</h3><p>The same number is now interpreted along a different axis. The operator must not assume that previous successful operation proves the new geometry. The physical arrangement and signed offsets need engineering review.</p></div>
+<p>Unloader settings describe available parameters, not a guarantee that a complete automatic unloading cycle is configured. Their use depends on the installed machine-control program. Do not infer an axis, route or automatic action solely from the names Start Position and End Position.</p>
+<p>Record equipment geometry and timing changes together with their physical verification. These values should be reviewed against the actual machine, not adjusted to make a screen indication look convenient.</p>
+
+</section>
+<section id="references" aria-labelledby="references-title"><h2 id="references-title">22.12 Work references and the final review of a settings change</h2>
+
+<p>The Reference branch contains six stored work origins, G54 through G59. Each row contains coordinates in the main path's axis order. These values place a machining job relative to the machine; they do not move the stock, change the holder geometry or recalibrate an axis.</p>
+<p>Use <a href="08-work-origins.html">Chapter 8</a> for establishing and checking an origin. When viewing the same data in Configuration, identify the selected row and the axis before entering a correction. A program can use more than one reference, so the currently selected row is not necessarily the only row relevant to the job.</p>
+<div class="table-scroll"><table><caption>Table 22-12. Work-reference and final-review checklist</caption><thead><tr><th scope="col">Item</th><th scope="col">Meaning or review</th></tr></thead><tbody>
+<tr><td>Reference / CurrentReference</td><td>0 = G54, 1 = G55, 2 = G56, 3 = G57, 4 = G58, 5 = G59.</td></tr>
+<tr><td>Reference / G54–G59 / axis</td><td>Stored origin coordinate for that axis, in the configured engineering unit.</td></tr>
+<tr><td>Reference validation</td><td>Invalid saved coordinates remain visible for correction and can be marked as errors; they are not silently replaced with a convenient origin.</td></tr>
+<tr><td>Active-row editing</td><td>Uses the controller's coordinate-acceptance rules and current operation restrictions.</td></tr>
+<tr><td>Change identity</td><td>Record full setting path, original value, requested value and retained value.</td></tr>
+<tr><td>Application stage</td><td>Identify immediate effect, next-operation use, rebuild or reconnect requirements.</td></tr>
+<tr><td>Job review</td><td>Check the resulting origin, prepared path and next start intention.</td></tr>
+<tr><td>Physical review</td><td>Check actual stock, tools, equipment and clearance affected by the change.</td></tr>
+</tbody></table></div>
+<h3>Origin correction is not machine calibration</h3>
+<p>If the stock datum was established incorrectly, the relevant correction may belong to the work reference. That is different from changing HomePosition, axis Step or a tool's Length. Determine the cause before deciding which value to adjust.</p>
+<p>The application checks reference coordinates against its rules and axis travel information. A valid coordinate is still not proof that the real stock is clamped at that datum or that every movement clears fixtures. Review the physical setup and prepared program together.</p>
+<figure class="concept-figure"><img src="assets/images/22-coordinate-settings.svg" alt="Machine calibration, machine-coordinate destinations, work references and tool compensation are separate categories even when all use millimetres."><figcaption>Figure 22-3. Similar units do not make different settings interchangeable.</figcaption></figure>
+<div class="learning-example"><h3>Example: the same position number appears in two groups</h3><p>A tool-station Position and a G54 coordinate happen to contain the same number. They still describe different things. Changing the station coordinate to correct the part origin would alter an unrelated machine operation.</p></div>
+<h3>Close the change with evidence</h3>
+<p>Before accepting an approved adjustment, identify every affected field and compare the retained values with the instruction. Read any pending-change message and any request to reset program progress. Use <a href="21-configuration-window.html">Chapter 21</a> for the exact acceptance and cancellation behavior.</p>
+<p>After acceptance, inspect the stage that uses the setting. A preference needs a display check; a prepared-motion change needs a preparation review; a session-dependent hardware value needs the appropriate reconnection and machine checks. A measured result needs identification of the actual tool or reference to which it belongs.</p>
+<p>If the change is cancelled, verify what was restored and account separately for any live operation, measurement, direct save, export, import or reset already performed. The Configuration window does not provide a universal undo for all of those actions.</p>
+<p>Keep the change record with the machine or job documentation so another operator knows what was changed and what remains to be verified. Do not describe a parameter as “tested” when only its input format was accepted. State the actual check performed and the observed result.</p>
+<p>The next chapter examines I/O configuration and signal mapping. That subject connects named machine functions to their physical or configured signals; it should be approached with the same distinction between an accepted value and a verified physical result.</p>
+
+</section>
+<section id="zone-settings"><h2>Zone configuration</h2><p>Zone &gt; Enabled defaults to false. Zone Count defaults to 8 and accepts 0–64. Edit while disconnected with empty ToolPaths; hidden zones retain their settings and mappings. Cancel restores the draft.</p><p>Each enabled zone selects Extraction or Workholding and requires a unique enabled digital-module output under PLC &gt; Mapping. Extraction requires MinX &lt; MaxX and MinY &lt; MaxY. It follows homed X/Y actual position during active TP0 machining; overlapping regions may activate together.</p><p>Workholding uses Selected and the explicit Clamp Zones / Release Zones commands. Its latch survives Pause, Stop and tool exchange until released. A new connection clears owned outputs before admitting clamp commands. These are output requests, not vacuum or clamp feedback.</p><p>Application cycle notifications manage zone policy; there is no cyclic ZoneControl PLC program. Only changed output masks are queued. Disabled or zero-count zones create no zone cycle subscription. The nominal 50 Hz update is not a hard real-time guarantee: verify region widths and physical delays. PLC programs must not write outputs owned by zone management.</p></section>
+<details class="source-note"><summary>Documentation basis</summary><p>Topology, inverter, spindle defaults and zone sections reviewed against source on 9 November 2026; other sections retain their original review scope. No controller connection or machine operation was performed for this chapter. Saved settings and control-program sources can differ from the supplied configuration. Reserved screenshots require capture from the delivered application.</p><ul><li><code>Configuration/GeneralLinks.cs</code></li><li><code>Configuration/ReferenceLinks.cs</code></li><li><code>Configuration/RouterLinks.cs</code></li><li><code>Configuration/Controller/ControllerLinks.cs</code></li><li><code>Configuration/Controller/AxesLinks.cs</code></li><li><code>Configuration/Controller/ToolPathLinks.cs</code></li><li><code>Configuration/Controller/PLCLinks.cs</code></li><li><code>Configuration/Controller/PLCModules.cs</code></li><li><code>Configuration/Controller/PLCMapping.cs</code></li><li><code>Configuration/Controller/InverterLinks.cs</code></li><li><code>Configuration/Controller/SpindleLinks.cs</code></li><li><code>Machining/ToolChanger/ToolChangerLinks.cs</code></li><li><code>Machining/ToolChanger/Tool.cs</code></li><li><code>Machining/ToolChanger/ToolOffsetMeasurement.cs</code></li></ul></details></div><footer class="page-footer"><a href="21-configuration-window.html">Previous chapter</a><a href="index.html">Manual contents</a><span>RouterXYZBC+TC · 22</span></footer></main></body></html>

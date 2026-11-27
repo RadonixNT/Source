@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="570" viewBox="0 0 1100 570" role="img" aria-labelledby="title desc">
+<title id="title">Program preparation has three stages before review</title><desc id="desc">Opening and interpreting is displayed from zero to fifty percent, path preparation from fifty to one hundred percent, and preview preparation stays at one hundred percent. Only after completion do the normal controls return and the bar change to execution progress at zero. None of these stages starts the job.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#155765"/></marker></defs>
+<rect width="1100" height="570" fill="#f7fafb"/>
+<g font-family="Arial, sans-serif" fill="#203943"><text x="35" y="45" font-size="26" font-weight="bold">Read the stage as well as the percentage</text><text x="35" y="77" font-size="18">Conceptual loading guide — not a screenshot or a time scale</text>
+<g fill="white" stroke="#b8cbd1"><rect x="35" y="110" width="315" height="176" rx="10"/><rect x="393" y="110" width="315" height="176" rx="10"/><rect x="751" y="110" width="315" height="176" rx="10"/></g>
+<g stroke="#155765" stroke-width="3" marker-end="url(#arrow)"><path d="M358 198H383"/><path d="M716 198H741"/><path d="M908 297V336"/></g>
+<g font-size="21" font-weight="bold"><text x="57" y="149">1. Opening G-code</text><text x="415" y="149">2. Preparing ToolPath</text><text x="773" y="149">3. Preparing preview</text></g>
+<g font-size="18"><text x="57" y="186">Read and interpret the file.</text><text x="415" y="186">Prepare the job's path.</text><text x="773" y="186">Build and fit the view.</text><text x="57" y="239">Displayed range: 0–50%</text><text x="415" y="239">Displayed range: 50–100%</text><text x="773" y="239">Bar stays at 100%.</text><text x="773" y="266">Preparation is still active.</text></g>
+<rect x="35" y="348" width="1031" height="132" rx="10" fill="#e5f1ee" stroke="#99b6af"/>
+<text x="58" y="384" font-size="22" font-weight="bold">After successful preparation: review the accepted job</text>
+<g font-size="18"><text x="58" y="417">Open file returns. Read the file path, diagnostics, dimensions and setup information.</text><text x="58" y="449">The same bar now shows execution progress and starts at 0%.</text></g>
+<text x="35" y="522" font-size="19" font-weight="bold">100% during loading does not mean machining is complete — or ready to start.</text><text x="35" y="550" font-size="18">Run remains a separate operator request after the job and machine checks.</text></g></svg>

@@ -1,0 +1,26 @@
+// Lower the unloader. Result 0: confirmed/delay elapsed; 1: TP0 active;
+// 2: output unassigned; 3: down-sensor timeout; 4: TP1 interrupted.
+// Sensor feedback replaces delay. This stage belongs to the TP1 Unload route.
+INTEGER Delay := 0;
+IF NOT TP1.Running OR TP1.Stopping THEN
+    UnloaderDown := FALSE;
+    END_FUNCTION(Result := 4);
+END_IF;
+IF TP0.ProgramActive THEN
+    UnloaderDown := FALSE;
+    END_FUNCTION(Result := 1);
+END_IF;
+IF NOT ASSIGNED(UnloaderDown) THEN
+    END_FUNCTION(Result := 2);
+END_IF;
+IF SF.FirstScan THEN Delay := UnloaderDownTime; END_IF;
+UnloaderDown := TRUE;
+IF ASSIGNED(UnloaderDownSensor) THEN
+    IF UnloaderDownSensor THEN END_FUNCTION(Result := 0); END_IF;
+    IF SF.Time >= 3 * Delay THEN
+        UnloaderDown := FALSE;
+        END_FUNCTION(Result := 3);
+    END_IF;
+ELSIF SF.Time >= Delay THEN
+    END_FUNCTION(Result := 0);
+END_IF;

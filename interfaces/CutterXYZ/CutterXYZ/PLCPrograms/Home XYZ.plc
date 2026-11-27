@@ -1,0 +1,405 @@
+// Sequential Router-XYYZ homing.
+//
+// Z homes first. X and the Y/YG gantry then home concurrently. The gantry
+// axes stop independently when their own sensors are found. The reverse
+// release move starts only after both axes have stopped, and each axis stops
+// again when its own sensor is released. The Y/YG HomeDisplace move is one
+// interpolated toolpath move, after which YG is coupled to Y as the slave.
+//
+// Per-axis application settings:
+//   <Axis>.HomeVelocity       sensor-search and displacement velocity
+//   <Axis>.HomeReturnVelocity sensor-release velocity only
+//   <Axis>.HomeDisplace       signed physical displacement after sensor homing
+//
+// After each sensor edge is found, the axis coordinate is assigned to
+// HomePosition - HomeDisplace. Moving to HomePosition then produces exactly
+// the configured signed displacement and leaves the final displayed coordinate
+// equal to HomePosition without a second SetHome operation.
+//
+// Result 0: all axes homed and the Y/YG gantry coupled successfully.
+// Result 1: Z search, release, or stop timeout.
+// Result 2: X, Y, or YG search, release, or stop timeout.
+// Result 3: the initial gantry topology is invalid or coupling times out.
+// Result 4: an invalid HomeDirection (must be -1 or +1).
+CONST INTEGER PHASE_SEARCH := 0;
+CONST INTEGER PHASE_RELEASE := 1;
+CONST INTEGER PHASE_STOPPING := 2;
+CONST INTEGER PHASE_DONE := 3;
+
+CONST INTEGER GANTRY_SEARCH := 0;
+CONST INTEGER GANTRY_WAIT_SEARCH_STOP := 1;
+CONST INTEGER GANTRY_RELEASE := 2;
+CONST INTEGER GANTRY_WAIT_RELEASE_STOP := 3;
+CONST INTEGER GANTRY_DONE := 4;
+
+CONST INTEGER MACHINE_PREPARE_GANTRY := 0;
+CONST INTEGER MACHINE_HOME_Z := 1;
+CONST INTEGER MACHINE_DISPLACE_Z := 2;
+CONST INTEGER MACHINE_HOME_XYY := 3;
+CONST INTEGER MACHINE_DISPLACE_X := 4;
+CONST INTEGER MACHINE_DISPLACE_YY := 5;
+CONST INTEGER MACHINE_COUPLE_GANTRY := 6;
+CONST INTEGER MACHINE_RECOVER_GANTRY := 7;
+
+CONST INTEGER COUPLING_INDEPENDENT := 0;
+CONST INTEGER COUPLING_MASTER := 1;
+CONST INTEGER COUPLING_SLAVE := 2;
+INTEGER PHASE_TIMEOUT_MS := 120000;
+CONST INTEGER COUPLING_TIMEOUT_MS := 60000;
+
+// One immutable settings snapshot per activation; never reread live settings
+// after homing has started.
+REAL XHomePosition := 0.0;
+REAL XHomeDisplace := 0.0;
+REAL XHomeVelocity := 0.0;
+REAL XHomeReturnVelocity := 0.0;
+INTEGER XHomeDirection := -1;
+REAL YHomePosition := 0.0;
+REAL YHomeDisplace := 0.0;
+REAL YHomeVelocity := 0.0;
+REAL YHomeReturnVelocity := 0.0;
+INTEGER YHomeDirection := -1;
+REAL YGHomePosition := 0.0;
+REAL YGHomeDisplace := 0.0;
+REAL YGHomeVelocity := 0.0;
+REAL YGHomeReturnVelocity := 0.0;
+INTEGER YGHomeDirection := -1;
+REAL ZHomePosition := 0.0;
+REAL ZHomeDisplace := 0.0;
+REAL ZHomeVelocity := 0.0;
+REAL ZHomeReturnVelocity := 0.0;
+INTEGER ZHomeDirection := 1;
+
+INTEGER MachinePhase := 0;
+INTEGER ZPhase := 0;
+INTEGER XPhase := 0;
+INTEGER GantryPhase := 0;
+INTEGER PendingResult := 0;
+REAL GantryDisplaceVelocity := 0.0;
+LOGIC YSensorSeen := FALSE;
+LOGIC YGSensorSeen := FALSE;
+LOGIC YSensorReleased := FALSE;
+LOGIC YGSensorReleased := FALSE;
+TIMER CouplingTimeout;
+TIMER ZTimeout;
+TIMER XTimeout;
+TIMER GantrySearchTimeout;
+TIMER GantryReleaseTimeout;
+
+// Step 1: Reset the state machine and validate every configured
+// home direction before any axis is allowed to move.
+IF SF.FirstScan THEN
+    PHASE_TIMEOUT_MS := Controller.HomeTimeout * 1000;
+    XHomePosition := X.HomePosition;
+    XHomeDisplace := X.HomeDisplace;
+    XHomeVelocity := X.HomeVelocity;
+    XHomeReturnVelocity := X.HomeReturnVelocity;
+    XHomeDirection := X.HomeDirection;
+    YHomePosition := Y.HomePosition;
+    YHomeDisplace := Y.HomeDisplace;
+    YHomeVelocity := Y.HomeVelocity;
+    YHomeReturnVelocity := Y.HomeReturnVelocity;
+    YHomeDirection := Y.HomeDirection;
+    YGHomePosition := YG.HomePosition;
+    YGHomeDisplace := YG.HomeDisplace;
+    YGHomeVelocity := YG.HomeVelocity;
+    YGHomeReturnVelocity := YG.HomeReturnVelocity;
+    YGHomeDirection := YG.HomeDirection;
+    ZHomePosition := Z.HomePosition;
+    ZHomeDisplace := Z.HomeDisplace;
+    ZHomeVelocity := Z.HomeVelocity;
+    ZHomeReturnVelocity := Z.HomeReturnVelocity;
+    ZHomeDirection := Z.HomeDirection;
+
+    MachinePhase := MACHINE_PREPARE_GANTRY;
+    ZPhase := PHASE_SEARCH;
+    XPhase := PHASE_SEARCH;
+    GantryPhase := GANTRY_SEARCH;
+    PendingResult := 0;
+    YSensorSeen := FALSE;
+    YGSensorSeen := FALSE;
+    YSensorReleased := FALSE;
+    YGSensorReleased := FALSE;
+
+    IF (XHomeDirection <> -1 AND XHomeDirection <> 1)
+        OR (YHomeDirection <> -1 AND YHomeDirection <> 1)
+        OR (YGHomeDirection <> -1 AND YGHomeDirection <> 1)
+        OR (ZHomeDirection <> -1 AND ZHomeDirection <> 1) THEN
+        PendingResult := 4;
+        MachinePhase := MACHINE_RECOVER_GANTRY;
+    END_IF;
+END_IF;
+
+// Supervise every motion and coupling stage. A timeout always enters the
+// common recovery path, where all axes are stopped and the gantry is coupled.
+CouplingTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_PREPARE_GANTRY
+        OR MachinePhase = MACHINE_COUPLE_GANTRY,
+    PT := COUPLING_TIMEOUT_MS
+);
+ZTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_HOME_Z AND (
+        (ZPhase = PHASE_SEARCH AND NOT HomeSensorZ)
+        OR (ZPhase = PHASE_RELEASE AND HomeSensorZ)
+        OR (ZPhase = PHASE_STOPPING AND NOT Z.Stopped)
+    ),
+    PT := PHASE_TIMEOUT_MS
+);
+XTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_HOME_XYY AND (
+        (XPhase = PHASE_SEARCH AND NOT HomeSensorX)
+        OR (XPhase = PHASE_RELEASE AND HomeSensorX)
+        OR (XPhase = PHASE_STOPPING AND NOT X.Stopped)
+    ),
+    PT := PHASE_TIMEOUT_MS
+);
+GantrySearchTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_HOME_XYY
+        AND (GantryPhase = GANTRY_SEARCH
+            OR GantryPhase = GANTRY_WAIT_SEARCH_STOP),
+    PT := PHASE_TIMEOUT_MS
+);
+GantryReleaseTimeout(
+    TYPE := TON,
+    IN := MachinePhase = MACHINE_HOME_XYY
+        AND (GantryPhase = GANTRY_RELEASE
+            OR GantryPhase = GANTRY_WAIT_RELEASE_STOP),
+    PT := PHASE_TIMEOUT_MS
+);
+
+IF CouplingTimeout.Q THEN
+    PendingResult := 3;
+    MachinePhase := MACHINE_RECOVER_GANTRY;
+ELSIF ZTimeout.Q THEN
+    PendingResult := 1;
+    MachinePhase := MACHINE_RECOVER_GANTRY;
+ELSIF XTimeout.Q OR GantrySearchTimeout.Q OR GantryReleaseTimeout.Q THEN
+    PendingResult := 2;
+    MachinePhase := MACHINE_RECOVER_GANTRY;
+END_IF;
+
+// Step 2: Open the normal Y-master/YG-slave coupling before homing. Already
+// independent axes are accepted, but every other topology is rejected.
+IF MachinePhase = MACHINE_PREPARE_GANTRY THEN
+    IF Y.CouplingRole = COUPLING_MASTER AND YG.CouplingRole = COUPLING_SLAVE THEN
+        AXES_DECOUPLE(Y, YG);
+        MachinePhase := MACHINE_HOME_Z;
+    ELSIF Y.CouplingRole = COUPLING_INDEPENDENT
+        AND YG.CouplingRole = COUPLING_INDEPENDENT THEN
+        MachinePhase := MACHINE_HOME_Z;
+    ELSE
+        AXES_STOP(Y, YG);
+        PendingResult := 3;
+        MachinePhase := MACHINE_RECOVER_GANTRY;
+    END_IF;
+
+// Step 3: Search for the Z sensor, reverse until it is released, stop, and
+// assign the coordinate that precedes the configured HomeDisplace move.
+ELSIF MachinePhase = MACHINE_HOME_Z THEN
+    IF ZPhase = PHASE_SEARCH THEN
+        IF HomeSensorZ THEN
+            ZPhase := PHASE_RELEASE;
+            AXIS_HOME(Z := -ZHomeDirection, Velocity := ZHomeReturnVelocity);
+        ELSE
+            AXIS_HOME(Z := ZHomeDirection, Velocity := ZHomeVelocity);
+        END_IF;
+    ELSIF ZPhase = PHASE_RELEASE THEN
+        IF NOT HomeSensorZ THEN
+            ZPhase := PHASE_STOPPING;
+            AXES_STOP(Z);
+        ELSE
+            AXIS_HOME(Z := -ZHomeDirection, Velocity := ZHomeReturnVelocity);
+        END_IF;
+    ELSE
+        AXES_STOP(Z);
+        IF Z.Stopped THEN
+            AXIS_SET_HOME(
+                Axis := Z,
+                Position := ZHomePosition - ZHomeDisplace
+            );
+            ZPhase := PHASE_DONE;
+            IF ZHomeDisplace = 0.0 THEN
+                MachinePhase := MACHINE_HOME_XYY;
+            ELSE
+                MachinePhase := MACHINE_DISPLACE_Z;
+            END_IF;
+        END_IF;
+    END_IF;
+
+// Step 4: Apply the signed Z HomeDisplace at the captured search velocity
+// and finish at Z.HomePosition.
+ELSIF MachinePhase = MACHINE_DISPLACE_Z THEN
+    TOOLPATH_SYNC_RUN(Homing := TRUE, Z := ZHomePosition, Velocity := ZHomeVelocity);
+    MachinePhase := MACHINE_HOME_XYY;
+
+// Step 5: Home X while the two independent gantry axes execute a synchronized
+// two-barrier sensor sequence.
+ELSIF MachinePhase = MACHINE_HOME_XYY THEN
+    // X uses its own edge sequence and may finish before or after the gantry.
+    IF XPhase = PHASE_SEARCH THEN
+        IF HomeSensorX THEN
+            XPhase := PHASE_RELEASE;
+            AXIS_HOME(X := -XHomeDirection, Velocity := XHomeReturnVelocity);
+        ELSE
+            AXIS_HOME(X := XHomeDirection, Velocity := XHomeVelocity);
+        END_IF;
+    ELSIF XPhase = PHASE_RELEASE THEN
+        IF NOT HomeSensorX THEN
+            XPhase := PHASE_STOPPING;
+            AXES_STOP(X);
+        ELSE
+            AXIS_HOME(X := -XHomeDirection, Velocity := XHomeReturnVelocity);
+        END_IF;
+    ELSIF XPhase = PHASE_STOPPING THEN
+        AXES_STOP(X);
+        IF X.Stopped THEN
+            AXIS_SET_HOME(
+                Axis := X,
+                Position := XHomePosition - XHomeDisplace
+            );
+            XPhase := PHASE_DONE;
+        END_IF;
+    END_IF;
+
+    // Barrier 1: each gantry axis stops on its own search edge. Neither axis
+    // starts the reverse release move until both search edges have been found
+    // and both physical axes report Stopped.
+    IF GantryPhase = GANTRY_SEARCH THEN
+        IF NOT YSensorSeen THEN
+            IF HomeSensorY THEN
+                YSensorSeen := TRUE;
+                AXES_STOP(Y);
+            ELSE
+                AXIS_HOME(Y := YHomeDirection, Velocity := YHomeVelocity);
+            END_IF;
+        ELSE
+            AXES_STOP(Y);
+        END_IF;
+
+        IF NOT YGSensorSeen THEN
+            IF HomeSensorYG THEN
+                YGSensorSeen := TRUE;
+                AXES_STOP(YG);
+            ELSE
+                AXIS_HOME(YG := YGHomeDirection, Velocity := YGHomeVelocity);
+            END_IF;
+        ELSE
+            AXES_STOP(YG);
+        END_IF;
+
+        IF YSensorSeen AND YGSensorSeen THEN
+            GantryPhase := GANTRY_WAIT_SEARCH_STOP;
+        END_IF;
+
+    ELSIF GantryPhase = GANTRY_WAIT_SEARCH_STOP THEN
+        AXES_STOP(Y, YG);
+        IF Y.Stopped AND YG.Stopped THEN
+            GantryPhase := GANTRY_RELEASE;
+        END_IF;
+
+    // Barrier 2: both axes start releasing from rest. Each one stops on its
+    // own release edge, and coordinates are assigned only after both stop.
+    ELSIF GantryPhase = GANTRY_RELEASE THEN
+        IF NOT YSensorReleased THEN
+            IF NOT HomeSensorY THEN
+                YSensorReleased := TRUE;
+                AXES_STOP(Y);
+            ELSE
+                AXIS_HOME(Y := -YHomeDirection, Velocity := YHomeReturnVelocity);
+            END_IF;
+        ELSE
+            AXES_STOP(Y);
+        END_IF;
+
+        IF NOT YGSensorReleased THEN
+            IF NOT HomeSensorYG THEN
+                YGSensorReleased := TRUE;
+                AXES_STOP(YG);
+            ELSE
+                AXIS_HOME(YG := -YGHomeDirection, Velocity := YGHomeReturnVelocity);
+            END_IF;
+        ELSE
+            AXES_STOP(YG);
+        END_IF;
+
+        IF YSensorReleased AND YGSensorReleased THEN
+            GantryPhase := GANTRY_WAIT_RELEASE_STOP;
+        END_IF;
+
+    ELSIF GantryPhase = GANTRY_WAIT_RELEASE_STOP THEN
+        AXES_STOP(Y, YG);
+        IF Y.Stopped AND YG.Stopped THEN
+            AXIS_SET_HOME(
+                Axis := Y,
+                Position := YHomePosition - YHomeDisplace
+            );
+            AXIS_SET_HOME(
+                Axis := YG,
+                Position := YGHomePosition - YGHomeDisplace
+            );
+            GantryPhase := GANTRY_DONE;
+        END_IF;
+    END_IF;
+
+    IF XPhase = PHASE_DONE AND GantryPhase = GANTRY_DONE THEN
+        IF XHomeDisplace <> 0.0 THEN
+            MachinePhase := MACHINE_DISPLACE_X;
+        ELSIF YHomeDisplace <> 0.0 OR YGHomeDisplace <> 0.0 THEN
+            MachinePhase := MACHINE_DISPLACE_YY;
+        ELSE
+            MachinePhase := MACHINE_COUPLE_GANTRY;
+        END_IF;
+    END_IF;
+
+// Step 6: Apply the X HomeDisplace at the captured search velocity after both
+// X and gantry sensor sequences.
+ELSIF MachinePhase = MACHINE_DISPLACE_X THEN
+    TOOLPATH_SYNC_RUN(Homing := TRUE, X := XHomePosition, Velocity := XHomeVelocity);
+    IF YHomeDisplace <> 0.0 OR YGHomeDisplace <> 0.0 THEN
+        MachinePhase := MACHINE_DISPLACE_YY;
+    ELSE
+        MachinePhase := MACHINE_COUPLE_GANTRY;
+    END_IF;
+
+// Step 7: Apply both gantry HomeDisplace values in one interpolated move. The
+// lower captured search velocity keeps both axes within their homing speeds.
+ELSIF MachinePhase = MACHINE_DISPLACE_YY THEN
+    IF YHomeVelocity <= YGHomeVelocity THEN
+        GantryDisplaceVelocity := YHomeVelocity;
+    ELSE
+        GantryDisplaceVelocity := YGHomeVelocity;
+    END_IF;
+    TOOLPATH_SYNC_RUN(
+        Homing := TRUE,
+        Y := YHomePosition,
+        YG := YGHomePosition,
+        Velocity := GantryDisplaceVelocity
+    );
+    MachinePhase := MACHINE_COUPLE_GANTRY;
+
+// Step 8: Restore the configured gantry coupling only after all home moves.
+ELSIF MachinePhase = MACHINE_COUPLE_GANTRY THEN
+    AXES_COUPLE(Y, YG);
+    END_FUNCTION(Result := 0);
+
+ELSE
+    // Recovery: keep the program active until every axis is stopped and the
+    // ordinary Y-master/YG-slave topology has been restored.
+    IF X.Stopped AND Y.Stopped AND YG.Stopped AND Z.Stopped THEN
+        IF Y.CouplingRole = COUPLING_MASTER
+            AND YG.CouplingRole = COUPLING_SLAVE THEN
+            END_FUNCTION(Result := PendingResult);
+        ELSIF Y.CouplingRole = COUPLING_INDEPENDENT
+            AND YG.CouplingRole = COUPLING_INDEPENDENT THEN
+            AXES_COUPLE(Y, YG);
+            END_FUNCTION(Result := PendingResult);
+        END_IF;
+    ELSE
+        // Request the stop until stationary feedback permits coupling recovery.
+        AXES_STOP(X, Y, YG, Z);
+    END_IF;
+END_IF;

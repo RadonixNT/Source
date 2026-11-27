@@ -1,0 +1,82 @@
+// Return to TP0.LastPosition in its configured XYZ order.
+// LastPosition already includes Reference, acknowledged Offset and LiveOffset.
+// Router-XYYZ: keep Y/YG coupled throughout ordinary positioning.
+// RunAfterReturn: 0 = position only; 1 = position, then start/resume TP0.
+// Result 0: completed; 1: axes/path busy or not ready;
+// Result 2: invalid course, step or speed; 3: destination outside course.
+// Result 4: invalid RunAfterReturn; 5: path destination changed during return.
+PARAMETER INTEGER RunAfterReturn;
+REAL TargetX := 0.0;
+REAL TargetY := 0.0;
+REAL TargetZ := 0.0;
+REAL SafeZ := 0.0;
+REAL Speed := 0.0;
+REAL StepX := 0.0;
+REAL StepY := 0.0;
+REAL StepZ := 0.0;
+REAL DeltaX := 0.0;
+REAL DeltaY := 0.0;
+REAL DeltaZ := 0.0;
+LOGIC MoveXY := FALSE;
+
+IF SF.FirstScan THEN
+    IF RunAfterReturn <> 0 AND RunAfterReturn <> 1 THEN
+        END_FUNCTION(Result := 4);
+    END_IF;
+    IF NOT TP0.Idle
+        OR NOT TP1.AxesIdle
+        OR NOT TP1.AxesReady THEN
+        END_FUNCTION(Result := 1);
+    END_IF;
+
+    // Capture once: later setting/reference edits cannot redirect this move.
+    TargetX := TP0.LastPosition[0];
+    TargetY := TP0.LastPosition[1];
+    TargetZ := TP0.LastPosition[2];
+    SafeZ := Z.MaxCourse;
+    Speed := General.TraverseVelocity;
+    StepX := X.Step;
+    StepY := Y.Step;
+    StepZ := Z.Step;
+    IF StepX < 0.0 THEN StepX := -StepX; END_IF;
+    IF StepY < 0.0 THEN StepY := -StepY; END_IF;
+    IF StepZ < 0.0 THEN StepZ := -StepZ; END_IF;
+
+    // Course is the live, read-only MaxCourse - MinCourse expression.
+    IF NOT (X.Course >= 0.0 AND Y.Course >= 0.0 AND Z.Course >= 0.0
+        AND StepX > 0.0 AND StepY > 0.0 AND StepZ > 0.0 AND Speed > 0.0) THEN
+        END_FUNCTION(Result := 2);
+    END_IF;
+    IF NOT (TargetX >= X.MinCourse AND TargetX <= X.MaxCourse
+        AND TargetY >= Y.MinCourse AND TargetY <= Y.MaxCourse
+        AND TargetZ >= Z.MinCourse AND TargetZ <= Z.MaxCourse) THEN
+        END_FUNCTION(Result := 3);
+    END_IF;
+
+    DeltaX := X.CommandPosition - TargetX;
+    DeltaY := Y.CommandPosition - TargetY;
+    IF DeltaX < 0.0 THEN DeltaX := -DeltaX; END_IF;
+    IF DeltaY < 0.0 THEN DeltaY := -DeltaY; END_IF;
+    MoveXY := NOT (DeltaX < StepX AND DeltaY < StepY);
+END_IF;
+
+// Each synchronous point waits for completion before issuing the next leg.
+IF MoveXY THEN
+    TOOLPATH_SYNC_RUN(Z := SafeZ, Velocity := Speed);
+    TOOLPATH_SYNC_RUN(X := TargetX, Y := TargetY, Velocity := Speed);
+END_IF;
+TOOLPATH_SYNC_RUN(Z := TargetZ, Velocity := Speed);
+IF RunAfterReturn = 1 THEN
+    // A new reference, offset or reset must not start an unaligned path.
+    DeltaX := X.CommandPosition - TP0.LastPosition[0];
+    DeltaY := Y.CommandPosition - TP0.LastPosition[1];
+    DeltaZ := Z.CommandPosition - TP0.LastPosition[2];
+    IF DeltaX < 0.0 THEN DeltaX := -DeltaX; END_IF;
+    IF DeltaY < 0.0 THEN DeltaY := -DeltaY; END_IF;
+    IF DeltaZ < 0.0 THEN DeltaZ := -DeltaZ; END_IF;
+    IF NOT (DeltaX <= StepX AND DeltaY <= StepY AND DeltaZ <= StepZ) THEN
+        END_FUNCTION(Result := 5);
+    END_IF;
+    TOOLPATH_RUN(TOOLPATH := 0);
+END_IF;
+END_FUNCTION(Result := 0);

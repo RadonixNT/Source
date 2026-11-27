@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" role="img" aria-labelledby="t d">
+<title id="t">The two-contact measuring sequence</title><desc id="d">After spindle stop and approach: first search down to contact, move up to release the setter, search down at precision speed and capture actual machine Z. Then retract, return, accept the result and synchronize tool correction.</desc>
+<rect width="1100" height="520" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#173e4b">
+<text x="550" y="42" text-anchor="middle" font-size="26" font-weight="700">Two contacts, with a confirmed release between them</text>
+<g fill="#e6f1f3" stroke="#8eafb7"><rect x="35" y="90" width="315" height="180" rx="12"/><rect x="392" y="90" width="315" height="180" rx="12"/><rect x="749" y="90" width="315" height="180" rx="12"/></g>
+<text x="192" y="127" text-anchor="middle" font-size="22" font-weight="700">1 · First search ↓</text><text x="192" y="167" text-anchor="middle" font-size="19">SearchVelocity</text><text x="192" y="203" text-anchor="middle" font-size="18">Contact detected → stop Z</text><text x="192" y="239" text-anchor="middle" font-size="18">Not the final recorded contact</text>
+<text x="549" y="127" text-anchor="middle" font-size="22" font-weight="700">2 · Release ↑</text><text x="549" y="167" text-anchor="middle" font-size="19">SearchVelocity</text><text x="549" y="203" text-anchor="middle" font-size="18">Sensor clears → stop Z</text><text x="549" y="239" text-anchor="middle" font-size="18">No preset release distance</text>
+<text x="906" y="127" text-anchor="middle" font-size="22" font-weight="700">3 · Precision search ↓</text><text x="906" y="167" text-anchor="middle" font-size="19">FineSearchVelocity</text><text x="906" y="203" text-anchor="middle" font-size="18">Capture actual Z at contact</text><text x="906" y="239" text-anchor="middle" font-size="18">Stop Z, then continue the cycle</text>
+<path d="M352 180H382M709 180H739" stroke="#316f7c" stroke-width="3"/><path d="M374 173L385 180L374 187M731 173L742 180L731 187" fill="none" stroke="#316f7c" stroke-width="3"/>
+<text x="550" y="327" text-anchor="middle" font-size="21" font-weight="700">Before: spindle stopped qualification and positioning to the approach coordinate.</text>
+<text x="550" y="373" text-anchor="middle" font-size="21" font-weight="700">After: retract → return → accept the reference or positive tool length.</text>
+<text x="550" y="419" text-anchor="middle" font-size="19">A tool-length result is followed by machining-correction synchronization.</text>
+<text x="550" y="478" text-anchor="middle" font-size="17" fill="#576e77">Conceptual sequence, not a distance or speed plot. Stops between stages are not access permission.</text>
+</g></svg>

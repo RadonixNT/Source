@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <NTNativeRuntimeRoot>$(MSBuildThisFileDirectory)..\Runtime</NTNativeRuntimeRoot>
+  </PropertyGroup>
+  <Target Name="RequireDeliveryRuntime" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(NTNativeRuntimeRoot)\NT-Core.exe')" Text="The delivery Runtime folder is missing or incomplete." />
+  </Target>
+  <Target Name="CopyRouterXYZTCRuntime" AfterTargets="Build" Condition="'$(SkipNtRuntimeCopy)' != 'true' and '$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <RouterXYZTCRuntime Include="$(NTNativeRuntimeRoot)\*.dll;$(NTNativeRuntimeRoot)\*.exe;$(NTNativeRuntimeRoot)\*.json;$(NTNativeRuntimeRoot)\*.xml" />
+      <RouterXYZTCRuntime Remove="@(ReferenceCopyLocalPaths)" MatchOnMetadata="Filename;Extension" MatchOnMetadataOptions="CaseInsensitive" />
+      <RouterXYZTCReferenceDocumentation Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" />
+      <RouterXYZTCReferenceDocumentation Remove="@(RouterXYZTCReferenceDocumentation)" Condition="!Exists('%(RouterXYZTCReferenceDocumentation.FullPath)')" />
+      <RouterXYZTCRuntime Remove="@(RouterXYZTCReferenceDocumentation)" MatchOnMetadata="Filename;Extension" MatchOnMetadataOptions="CaseInsensitive" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RouterXYZTCReferenceDocumentation)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(RouterXYZTCRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="PublishDeliveryRuntime" AfterTargets="Publish">
+    <ItemGroup>
+      <DeliveryPublishRuntime Include="$(NTNativeRuntimeRoot)\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeliveryPublishRuntime)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

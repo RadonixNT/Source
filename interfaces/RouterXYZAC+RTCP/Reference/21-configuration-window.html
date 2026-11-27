@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 21 — Using the Configuration Window | RouterXYZAC+RTCP</title><meta name="description" content="Detailed operator guide to navigating Configuration, editing values, understanding immediate actions, accepting or cancelling changes and reviewing the result."><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+RTCP · CHAPTER 21</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>Using the Configuration Window</h1><p class="lead">Find the correct setting, understand what changing it will do, enter an approved value and verify the result before returning to machine operation.</p><p class="review-status"><strong>Expanded draft for review.</strong> This chapter teaches the window and its editing workflow. The approved machine setup determines the correct parameter values. It does not require an operator to design machine settings or write control programs.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-21">Manual contents</a> · <a href="20-simulation.html">Previous chapter: Simulation mode</a></nav></header><div class="body"><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Decide what you need to inspect or change before opening Configuration</a></li>
+<li><a href="#navigation">Find a group, select an item and read its description</a></li>
+<li><a href="#access">Understand read-only values, disabled controls and access prompts</a></li>
+<li><a href="#values">Edit one text or numeric value and verify what was accepted</a></li>
+<li><a href="#editors">Use choices, on/off values and specialized editors correctly</a></li>
+<li><a href="#toolbar">Recognize toolbar operations and their immediate effects</a></li>
+<li><a href="#context-menu">Treat right-click Save, Import and Reset as separate operations</a></li>
+<li><a href="#accept">Review validation and program-rebuild prompts before accepting</a></li>
+<li><a href="#cancel">Cancel ordinary edits without assuming a universal rollback</a></li>
+<li><a href="#practice">Practise an ordinary edit and complete a change record</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">21.1 Decide what you need to inspect or change before opening Configuration</h2>
+
+<p>The Configuration window brings together values that describe the machine, its operating preferences and parts of its control configuration. Some entries are everyday preferences. Others determine movement, tool handling, signal assignments or how a program is prepared. Their presence in the same window does not mean that they carry the same responsibility or take effect in the same way.</p>
+<p>Begin with a specific task: inspect a value, enter an approved replacement or perform an authorized configuration operation. If you are asked to change a setting, obtain its complete location, current expected value, replacement value and reason for the change. “Increase the speed” is not an adequate instruction when several different speed settings exist.</p>
+<h3>Inspection and editing are different tasks</h3>
+<div class="table-scroll"><table><caption>Table 21-1. Choose the intended task</caption><thead><tr><th scope="col">Task</th><th scope="col">What to do</th><th scope="col">What to establish first</th></tr></thead><tbody>
+<tr><td>Read a setting</td><td>Navigate to the correct group and inspect its value and description.</td><td>The full group and item identity.</td></tr>
+<tr><td>Change an ordinary value</td><td>Enter the approved replacement and review its accepted display.</td><td>Units, permitted use and whether acceptance affects a prepared job.</td></tr>
+<tr><td>Use a live value or command</td><td>Follow that operation's specific procedure.</td><td>When the effect occurs and what Cancel cannot reverse.</td></tr>
+<tr><td>Work with control-program source</td><td>Use the separate authorized source-editing workflow.</td><td>The purpose and approval of the change.</td></tr>
+<tr><td>Import, reset or directly save settings</td><td>Use a controlled setup procedure with a known scope.</td><td>Which values and stored records will be affected.</td></tr>
+</tbody></table></div>
+<p>For inspection alone, avoid typing in value cells or choosing commands from a context menu. Expanding a group and selecting an item are navigation actions. Editing its value, accepting a list choice or choosing Reset is a different action with a possible effect.</p>
+<h3>Prepare the machine and the information</h3>
+<p>Settle machine activity before a planned settings change. The application blocks Configuration entry in conditions such as a busy controller, program loading or a connection transition. Additional checks apply to particular fields and to final acceptance. A window opening successfully is not a general statement that every setting may now be changed.</p>
+<p>If a job is paused or partly complete, retain its status and planned recovery. Some accepted motion-setting changes require the prepared program to be rebuilt and its progress reconsidered. Do not enter Configuration with the assumption that the old continuation point will remain valid regardless of what you change.</p>
+<p>Record the approved starting value before editing. Include the whole path through the groups, not only a short label such as Speed, Enabled or Position. Similar labels can occur under different axes, tools or equipment. A correct number entered in the wrong group is still an incorrect setup.</p>
+<div class="learning-example"><h3>Example: an instruction refers to an axis speed</h3><p>The operator finds several speed-related values. Instead of choosing the first plausible one, the operator checks the specified axis, group and exact item. If those details were not supplied, the responsible person must identify the intended setting before the value is changed.</p></div>
+<p>This chapter explains how to operate the window. The following settings-reference chapter will describe the groups and their purposes in more detail. Passwords, dated locks, keyboard shortcuts and control-program editing also have dedicated chapters; access to their controls is not a request to explore them during an unrelated adjustment.</p>
+
+</section>
+<section id="navigation" aria-labelledby="navigation-title"><h2 id="navigation-title">21.2 Find a group, select an item and read its description</h2>
+
+<p>Open Configuration using the application's Configuration control. If an access prompt appears, use the account authorized for your task. Once the window opens, identify its main areas before editing: the toolbar at the top, the tree of groups on the left, the selected editor on the right and the OK and Cancel buttons at the bottom.</p>
+<p>The tree is a list arranged in levels. A group can contain smaller groups and individual entries. Expanding a group reveals its contents; collapsing it hides those contents from view without deleting them. Selecting a group changes what appears in the right-hand area.</p>
+<h3>Navigate from the general group to the exact item</h3>
+<ol class="steps">
+<li><strong>Identify the main branch.</strong> Use the complete location supplied for the task, such as Controller followed by the relevant machine component.</li>
+<li><strong>Expand only the needed levels.</strong> Follow the named branches rather than looking for a matching number somewhere in the window.</li>
+<li><strong>Select the group or entry.</strong> A group commonly shows a table of its member values. A selected individual entry can show a focused value editor or a specialized editor.</li>
+<li><strong>Read the selected row.</strong> Confirm its label, current value and description before placing the cursor in the editable area.</li>
+<li><strong>Check the surrounding context.</strong> Verify which axis, tool or equipment group owns the row. Keep that context visible while editing.</li>
+</ol>
+<div class="table-scroll"><table><caption>Table 21-2. Main areas of Configuration</caption><thead><tr><th scope="col">Area</th><th scope="col">Purpose</th><th scope="col">Operator habit</th></tr></thead><tbody>
+<tr><td>Left tree</td><td>Select the group or item to inspect.</td><td>Read the full branch, especially for repeated labels.</td></tr>
+<tr><td>Right property list</td><td>Display names and current values for the selection.</td><td>Select the intended row before editing its value.</td></tr>
+<tr><td>Description area</td><td>Explain the selected item and, where supplied, its current state message.</td><td>Read the explanation instead of guessing from the name alone.</td></tr>
+<tr><td>Specialized editor</td><td>Handle entries such as source text or shortcut assignments.</td><td>Recognize that the controls and commit behavior can differ.</td></tr>
+<tr><td>Toolbar</td><td>Open related operations and auxiliary dialogs.</td><td>Read the tooltip before using an icon.</td></tr>
+<tr><td>OK and Cancel</td><td>Finish the settings session through acceptance or cancellation.</td><td>Review which operations have already taken effect.</td></tr>
+</tbody></table></div>
+<p>The description may include a state message as well as the ordinary explanation. Where no custom description exists, the editor can show basic information such as a value range or available choices. A description is not guaranteed to list every condition needed for a correct machine setup.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 21-1</div><h3>The Configuration window and its main areas</h3><p>Capture the actual English Configuration window with an ordinary non-sensitive group selected. Label the toolbar, group tree, splitter, selected value row, description area, OK and Cancel. Choose a view that makes the owning group and selected field readable.</p><p>Suggested asset: <code>assets/images/21-settings-overview.png</code>.</p><figcaption>Reserved annotated overview of the delivered Configuration layout.</figcaption></figure>
+<p>Resize the window or adjust the divider between tree and editor when a name or value is difficult to read. These actions change the view, not the meaning of the setting. Scrolling to see hidden rows is preferable to guessing the rest of a truncated label.</p>
+<p>During the same application session, reopening Configuration can restore the expanded branches, selection and scroll position. Do not expect it always to open at the top. Window geometry can also be remembered where layout persistence is enabled. Always read the current selection rather than assuming it matches the previous training example.</p>
+
+</section>
+<section id="access" aria-labelledby="access-title"><h2 id="access-title">21.3 Understand read-only values, disabled controls and access prompts</h2>
+
+<p>A visible field is not necessarily editable. Some values are information supplied by the controller. Others are editable only with the appropriate access level or when the machine is in a suitable state. These conditions can also affect which groups are visible.</p>
+<p>If a row cannot be edited, first determine whether it is a reading, an access restriction or a temporary operating restriction. Do not assume the window is broken, and do not try another editor or shortcut to bypass the condition.</p>
+<h3>Access and machine readiness are separate checks</h3>
+<div class="table-scroll"><table><caption>Table 21-3. Why an item may not be editable</caption><thead><tr><th scope="col">Situation</th><th scope="col">Meaning</th><th scope="col">Appropriate response</th></tr></thead><tbody>
+<tr><td>Read-only information</td><td>The value is intended to be observed, not entered here.</td><td>Use it as information and identify the proper operation if a change is needed.</td></tr>
+<tr><td>Insufficient access</td><td>The current authenticated permission does not allow the edit.</td><td>Have the authorized person perform or authorize the task through the normal access procedure.</td></tr>
+<tr><td>Machine-state restriction</td><td>Connection, motion or another operation prevents the change.</td><td>Resolve that state before trying again.</td></tr>
+<tr><td>Unavailable toolbar action</td><td>The action may lack permission, required equipment or an application binding.</td><td>Read the action's purpose and prerequisites.</td></tr>
+<tr><td>Hidden entry</td><td>The present view does not expose that item.</td><td>Check the approved path and current access; do not invent a replacement field.</td></tr>
+</tbody></table></div>
+<p>The application may request Operator access at startup and Engineering access when entering Configuration, depending on the configured accounts. Successful local access checks remain valid for the application session, including later Configuration visits and reconnects. Closing Configuration does not by itself end the authenticated session.</p>
+<p>A cancelled or unsuccessful prompt does not grant the requested permission. The window may still allow inspection at the existing permission level. Do not interpret its appearance as confirmation that the higher-level access check succeeded.</p>
+<h3>Read a status before acting on it</h3>
+<p>Descriptions and state messages can explain a setting problem. Read the wording, including the affected group. If a field changes appearance after connection or another state change, recheck its availability before editing. The application refreshes editing access rather than assuming the conditions at window opening remain valid forever.</p>
+<p>The Configuration toolbar has its own access rules. Its Connect and Disconnect actions require Engineering access even though connection may be available through the main operating interface under different conditions. Time Lock additionally requires an available authenticated physical board. A disabled board-related action in Simulation is not proof that the Configuration window is malfunctioning.</p>
+<div class="learning-example"><h3>Example: the machine identifier cannot be typed over</h3><p>A controller information field shows a value but has no editable input. The operator should read and record it when needed. Changing a nearby text field does not change the physical identity represented by that reading.</p></div>
+<p>Keep access problems separate from value problems. An authorized user can still enter an unsuitable number, and an accepted numeric format does not establish permission to use it on the machine. Both the authority for the change and the correct replacement value must be known.</p>
+<p>When reporting an unavailable field, include its full group path, the current connection and activity state, and whether the required access prompt was completed. Do not include passwords in the report. These observations help distinguish a normal restriction from a configuration or application problem.</p>
+
+</section>
+<section id="values" aria-labelledby="values-title"><h2 id="values-title">21.4 Edit one text or numeric value and verify what was accepted</h2>
+
+<p>Select the exact property row, then activate its value cell. Before typing, read the existing value and the explanation for that item. Confirm whether the field expects plain text, a whole number or a decimal number. A time, distance, speed and percentage can all look like numbers while having very different meanings.</p>
+<p>Make one approved change at a time. Replace the intended text carefully and inspect the whole resulting value, including a minus sign and decimal separator where applicable. Do not append units, explanatory notes or a copied label unless the field specifically expects them.</p>
+<h3>Use a complete edit-and-check sequence</h3>
+<ol class="steps">
+<li><strong>Record the original.</strong> Note the full group path, value and unit before editing.</li>
+<li><strong>Enter the approved replacement.</strong> Ensure the selection covers the intended old value and does not leave an extra digit behind.</li>
+<li><strong>Finish the cell edit.</strong> Use the native editor's normal acceptance action, such as Enter while the value cell is being edited, or move to another row when the editor permits validation.</li>
+<li><strong>Read the resulting display.</strong> Confirm the value the application actually retained, rather than assuming your keystrokes were accepted unchanged.</li>
+<li><strong>Read any message or confirmation.</strong> Resolve it before making another change.</li>
+<li><strong>Keep the window decision separate.</strong> A completed cell edit is not the same as completing the entire Configuration session with OK.</li>
+</ol>
+<div class="table-scroll"><table><caption>Table 21-4. Common value-entry mistakes</caption><thead><tr><th scope="col">Mistake</th><th scope="col">What to inspect</th><th scope="col">Response</th></tr></thead><tbody>
+<tr><td>An extra digit remains</td><td>The complete value after replacement.</td><td>Correct the selection and re-enter the approved value.</td></tr>
+<tr><td>Decimal or sign is wrong</td><td>The exact sign and decimal position in the accepted display.</td><td>Restore the intended value before leaving the row.</td></tr>
+<tr><td>The unit was misunderstood</td><td>The field description and approved setup instruction.</td><td>Resolve the unit before converting or entering a number.</td></tr>
+<tr><td>The value does not remain as typed</td><td>Validation feedback, range and current retained value.</td><td>Investigate the rule; do not repeatedly enter nearby guesses.</td></tr>
+<tr><td>Text copied from a document includes extras</td><td>Spaces, quotation marks, line breaks or descriptive wording.</td><td>Use only the intended field content.</td></tr>
+</tbody></table></div>
+<p>The setting's own conversion and validation rules determine what can be retained. Numeric values can be limited to the configured minimum or maximum, and some entries have a defined list of values. The absence of a popup does not establish that the requested value was accepted exactly as entered. Reading the resulting display is part of the operation.</p>
+<p>Keyboard behavior depends on which control currently has focus. Enter in a value editor can complete that cell edit; the dialog also has OK as its default button. Likewise, Escape can belong to an active native editor or to dialog cancellation. Use the labelled OK and Cancel buttons when you intend to finish the whole window, and inspect the state after any keyboard action.</p>
+<div class="learning-example"><h3>Example: a number looks correct while it is still being typed</h3><p>The operator enters a replacement but has not left the value cell. At that point, the text visible inside the editor is not sufficient evidence of the final accepted value. Complete the edit, read the resulting row and handle any message before continuing.</p></div>
+<p>For a simple text field, preserve spelling and punctuation required by its purpose. Do not rename an identifier or rewrite a technical value merely to make it easier to read. If the approved task concerns only a display preference, avoid changing nearby machine parameters during the same visit.</p>
+<p>Before pressing OK, compare every intended change with the original instruction. Keep this list short enough to review accurately. The Configuration window is easier to use reliably when each visit has a defined purpose and a clear end condition.</p>
+
+</section>
+<section id="editors" aria-labelledby="editors-title"><h2 id="editors-title">21.5 Use choices, on/off values and specialized editors correctly</h2>
+
+<p>Some settings offer a list instead of unrestricted typing. Open the list, read the available choices and select the exact approved item. The list can represent a mode, named option, signal assignment or preset value. A choice being available does not mean it is appropriate for every machine or every operation.</p>
+<p>Some lists allow only their published choices; others can also accept a typed value. Follow the behavior and description of the particular field. Do not assume that every dropdown is a free-text box, or that every displayed label is the raw number used internally.</p>
+<h3>Read the meaning of an on/off choice</h3>
+<p>A two-state setting can appear as True/False or as descriptive choices. Read the field name together with its current value. Enabling a configured feature is not the same as observing that a physical output is energized. Likewise, an Enabled field can determine whether a configuration is used, rather than operating the equipment immediately.</p>
+<div class="table-scroll"><table><caption>Table 21-5. Editor types and what to check</caption><thead><tr><th scope="col">Editor</th><th scope="col">How to approach it</th><th scope="col">Do not assume</th></tr></thead><tbody>
+<tr><td>Choice list</td><td>Select the named approved option and verify the retained selection.</td><td>That a plausible neighboring option has the same meaning.</td></tr>
+<tr><td>On/off value</td><td>Read the full label and description before changing state.</td><td>That every such field directly starts or stops equipment.</td></tr>
+<tr><td>Related property rows</td><td>Review all values required by the approved change as a coherent set.</td><td>That one valid row makes the entire setup consistent.</td></tr>
+<tr><td>Shortcut editor</td><td>Use its assignment controls and resolve conflicts.</td><td>That typing a combination into an unrelated text field assigns it.</td></tr>
+<tr><td>Control-source editor</td><td>Follow the dedicated authorized source workflow.</td><td>That it behaves like a harmless descriptive note.</td></tr>
+</tbody></table></div>
+<h3>Grouped settings need a grouped review</h3>
+
+<p>Do not fill missing values by copying them from another component without an approved instruction. Similar equipment names do not guarantee identical mounting, travel or timing. Where an instruction changes more than one row, keep a written list and check each accepted result before OK.</p>
+<h3>Recognize when the right-hand panel changes function</h3>
+<p>Selecting certain tree entries opens a specialized editor rather than the ordinary property table. A keyboard shortcut has its own capture and commit controls. A control-program source entry opens a code editor and can display diagnostics as its text changes.</p>
+<p>For an operator, the important distinction is the purpose of that editor. Source text controls machine behavior; it is not a comment field to be rewritten for clarity. This chapter does not teach PLC programming. Use the later dedicated chapter for viewing or making an explicitly approved source correction.</p>
+<p>Changes in the code editor update the settings source while validation is scheduled. The Configuration OK action flushes pending source validation before its broader checks. Nevertheless, closing Configuration successfully must not be interpreted as proof that every control program has compiled, been loaded and performed a successful physical operation. Those are separate outcomes that need their own review.</p>
+<div class="learning-example"><h3>Example: selecting a program opens a large text area</h3><p>The operator intended to inspect a setting and unexpectedly sees control-language text. The correct response is to recognize the different editor and return to the intended group without typing. There is no need to understand or change that text to complete an unrelated ordinary value adjustment.</p></div>
+<p>For any unfamiliar editor, identify its own action buttons and the effect of committing before entering data. A consistent window appearance does not make every editing workflow identical.</p>
+
+</section>
+<section id="toolbar" aria-labelledby="toolbar-title"><h2 id="toolbar-title">21.6 Recognize toolbar operations and their immediate effects</h2>
+
+<p>The top toolbar uses icons with tooltips. Pause the pointer over an icon to read its action before clicking. These controls do not all edit the currently selected property. Some request a controller operation; others open a separate dialog with its own acceptance and persistence rules.</p>
+<p>In the reviewed Router application, Connect and Disconnect are bound to controller commands. The Configuration toolbar's Import Configuration and Export Configuration positions are present but no application commands are bound to them, so they remain disabled. Group-level import and export exist separately in the right-click menu, described in the next section.</p>
+<div class="table-scroll"><table><caption>Table 21-6. Configuration toolbar overview</caption><thead><tr><th scope="col">Action</th><th scope="col">Purpose and availability</th><th scope="col">Relationship to parent Cancel</th></tr></thead><tbody>
+<tr><td>Connect / Disconnect</td><td>Request the corresponding controller operation; Engineering access and command readiness are required.</td><td>Cancel does not reverse a completed connection operation.</td></tr>
+<tr><td>Import Configuration / Export Configuration</td><td>Toolbar slots remain disabled in the reviewed application composition.</td><td>Do not confuse them with the active group context-menu commands.</td></tr>
+<tr><td>Change Password</td><td>Open account management; its own credentials and rules apply.</td><td>An accepted password change has its own persistence.</td></tr>
+<tr><td>Time Lock</td><td>Open dated locks and board information with the required access and authenticated physical board.</td><td>Completed board actions are not undone by parent Cancel.</td></tr>
+<tr><td>Translations</td><td>Open the interface-text editor when configured and Operator access is available.</td><td>Applied translations remain accepted if Configuration is cancelled.</td></tr>
+</tbody></table></div>
+<h3>A command is not a pending property edit</h3>
+<p>Requesting Connect or Disconnect affects the controller session. Read the connection result and current machine state after the request. Do not click these icons as a way to save ordinary changes or close the window. Their names describe operations, not alternatives to OK.</p>
+<p>Controller Mode is another immediate operation even though it appears as a property. Changing it requests a reconnect into the selected mode. As explained in <a href="20-simulation.html">Chapter 20</a>, Configuration Cancel does not restore the previous mode or connection.</p>
+<h3>Auxiliary dialogs have their own completion actions</h3>
+<p>Use the password and time-lock chapters for their detailed procedures. Here, the important point is that closing the parent window is not a universal undo. Once an account or board operation succeeds, its result must be handled through that operation's own procedure.</p>
+<p>The Time Lock window also contains board date/time, runtime and identification information. Those readings do not appear as a separate board-information panel in the main Configuration window. A failed or unavailable board reading should not be interpreted as a zero value.</p>
+<p>The Translations editor changes interface wording. It shows original English text and a selected language's editable translation. Selecting a language there chooses which translations you are editing; it does not itself change the application's active language. Apply validates and accepts the translations, while cancelling the translation editor discards unapplied drafts. Applied translations survive cancellation of the parent Configuration window.</p>
+<div class="learning-example"><h3>Example: a wording change was applied in Translations</h3><p>The operator applies an approved translation and then cancels an unrelated machine-setting draft in the parent window. The wording change remains accepted. Parent cancellation should not be used as a test of whether the translation was saved.</p></div>
+<p>For an ordinary approved parameter adjustment, you usually do not need these auxiliary operations. Keep the scope of the visit clear. If you use an immediate action, add its result to your change record separately from the values you plan to accept with OK.</p>
+
+</section>
+<section id="context-menu" aria-labelledby="context-menu-title"><h2 id="context-menu-title">21.7 Treat right-click Save, Import and Reset as separate operations</h2>
+
+<p>Right-clicking a group in the tree can open commands for that group. Right-clicking a selected property can open a smaller menu for that value. Read the selected item before choosing a command: the difference between one property and a group containing many nested items is substantial.</p>
+<p>These commands are not simply another way to type a value. They can save data directly, import a settings file or restore defaults. Use them only as part of an approved setup procedure with a known scope. Do not use them experimentally to find out what a setting means.</p>
+<div class="table-scroll"><table><caption>Table 21-7. Right-click actions and their scope</caption><thead><tr><th scope="col">Selection and command</th><th scope="col">Effect</th><th scope="col">Check first</th></tr></thead><tbody>
+<tr><td>Group: Save to Registry</td><td>Saves the selected group's current values through its settings storage.</td><td>The selected branch and whether its current values have been reviewed.</td></tr>
+<tr><td>Group: Export...</td><td>First saves the group's current values, then exports its registry branch and nested keys.</td><td>The current values as well as the branch, destination and intended use of the file.</td></tr>
+<tr><td>Group: Import...</td><td>Imports the selected registry file and reloads group values.</td><td>The file's approved origin, destination keys and relevance to this installation.</td></tr>
+<tr><td>Group: Reset to Default...</td><td>Requests reset of the group and nested items, with a confirmation prompt.</td><td>Every affected item and the suitability of defaults for this machine.</td></tr>
+<tr><td>Property: Save to Registry</td><td>Directly saves that selected setting.</td><td>The actual retained value, not only what was intended.</td></tr>
+<tr><td>Property: Reset to Default</td><td>Resets the selected value; this path has no separate group-style confirmation.</td><td>The exact row and known default effect before clicking.</td></tr>
+</tbody></table></div>
+<h3>Understand the word Registry</h3>
+<p>Registry refers here to Windows settings storage used by the application. Save to Registry writes through that storage route immediately. It does not mean “keep this as an unsaved draft until I decide later.” It also does not perform the same whole-window validation and acceptance sequence as Configuration OK.</p>
+<p>Export first saves the group's current values and then creates a registry-format file. It is therefore not a read-only snapshot of the old stored setup. Do not export an unreviewed draft expecting to preserve the pre-edit version. The resulting file is a settings export, not a complete backup of the application, machining programs and physical machine setup. Keep its origin and intended destination clear.</p>
+<p>Import checks that the file targets the selected group's registry branch or its nested keys; unrelated branches and deletion entries are rejected. It then imports and reloads the group values. This scope check does not prove that the contained values suit this machine. Use only a file supplied and reviewed for the intended installation by the person responsible for configuration. An import failure is not a guarantee that every earlier change in the operation has been rolled back.</p>
+<h3>Default does not mean commissioned</h3>
+<p>A default is a supplied starting value. It is not necessarily the value established when this particular machine was aligned, measured or commissioned. Resetting a group can affect many descendants. Read the confirmation and decline if the complete scope is not intended.</p>
+<p>Direct menu imports and resets do not follow the same ordinary property-edit tracking as typed changes. Do not rely on parent Cancel to undo them. Likewise, a direct save or import may already have altered stored settings. Establish the resulting values and the approved recovery procedure rather than closing the window and assuming the previous configuration has returned.</p>
+<div class="learning-example"><h3>Example: only one field needed correction</h3><p>An operator is asked to enter one approved replacement. Resetting its entire parent group changes the scope from one known edit to many defaults. The correct approach is to edit the specified field and review it through the ordinary workflow.</p></div>
+<p>If an import, direct save or reset was performed unintentionally, record the selected branch, action and any file used. Keep the machine out of the next operation until the configuration has been checked. This is a configuration-recovery task, not a reason to guess replacement values.</p>
+
+</section>
+<section id="accept" aria-labelledby="accept-title"><h2 id="accept-title">21.8 Review validation and program-rebuild prompts before accepting</h2>
+
+<p>Before OK, review the complete list of intended changes and finish the active field edit. Confirm that the accepted values match the approved instruction. Also identify any immediate actions already performed, because those are not merely waiting for final acceptance.</p>
+<p>OK starts the Configuration acceptance process. Pending source validation is completed, the application's settings checks run and any required acceptance confirmation is evaluated. Only after these steps permit acceptance does the dialog save the settings. A validation message or declined confirmation can leave the window open for correction or Cancel.</p>
+<h3>Handle an error at its actual location</h3>
+<p>If the whole-settings checks fail, the dialog attempts to select the first tree item carrying an error and displays a message. Read the selected group and explanation. The cause may be a relationship between values, a shortcut conflict or another configuration condition, rather than the field most recently touched.</p>
+<p>Do not change unrelated values until the warning disappears. Compare the reported condition with the approved setup, then correct or cancel the relevant edits. If the meaning is unfamiliar, keep the message and the field path for the responsible person.</p>
+<div class="table-scroll"><table><caption>Table 21-8. Outcomes during acceptance</caption><thead><tr><th scope="col">Outcome</th><th scope="col">Meaning</th><th scope="col">Next step</th></tr></thead><tbody>
+<tr><td>Field value is adjusted or rejected</td><td>The field's own rules did not retain the requested input unchanged.</td><td>Read the accepted value and resolve the discrepancy.</td></tr>
+<tr><td>Whole-settings validation fails</td><td>The candidate configuration did not pass the application's checks.</td><td>Inspect the indicated problem before retrying OK.</td></tr>
+<tr><td>Program-progress reset confirmation</td><td>An affected setting can require rebuilding the prepared path.</td><td>Decide whether losing the previous continuation state is intended.</td></tr>
+<tr><td>Machine is not ready to apply</td><td>The required idle and operation conditions are not satisfied.</td><td>Resolve the current activity through its normal controls.</td></tr>
+<tr><td>Save fails</td><td>Persistence did not complete successfully.</td><td>Keep the message and establish the actual stored and current values.</td></tr>
+<tr><td>OK succeeds</td><td>Configuration were accepted and saved; the application applies relevant changed settings.</td><td>Review any resulting program rebuild and machine readiness.</td></tr>
+</tbody></table></div>
+<h3>Understand why a parameter change can affect the prepared job</h3>
+<p>The reviewed application treats axis settings, coordinated-motion settings and the general traverse velocity as changes that can require a path rebuild. If the prepared program has progress, a warning can ask whether that progress may be reset. This is a decision about the job's continuation, not merely a request to acknowledge that a number changed.</p>
+<p>The confirmation can appear after a field edit and can be checked again at final acceptance when required. Declining the field-level confirmation restores that edit's preceding value. Declining final acceptance keeps the dialog open. Read the actual result instead of assuming both decisions close the window.</p>
+<p>If a rebuild is accepted, inspect the resulting prepared program and establish the intended next start again. Do not treat the old paused position or selected entry as an automatic recovery plan. Use the program review and selected-start procedures in <a href="15-program-preview.html">Chapter 15</a> and <a href="18-selected-start-line.html">Chapter 18</a>.</p>
+<figure class="figure-placeholder"><div class="placeholder-label">SCREENSHOT TO INSERT · FIGURE 21-2</div><h3>A prepared-program progress warning</h3><p>Capture the delivered confirmation for an approved deferred motion-setting change in a controlled Simulation exercise. Show the affected field and readable warning. Label the consequences of accepting or declining. Do not create an interrupted physical machining job solely to obtain the image.</p><p>Suggested asset: <code>assets/images/21-progress-reset-warning.png</code>.</p><figcaption>Reserved example of a settings change that needs a deliberate decision about program progress.</figcaption></figure>
+<h3>Saved does not mean physically verified</h3>
+<p>Successful OK does not qualify the physical machine or prove that all control programs are compiled and running correctly. Some controller settings have their own application or reconnection requirements. Read the setting's specific procedure and the resulting status before using the machine.</p>
+<p>If persistence fails, the dialog reports the error and remains open. Do not assume that all storage writes were undone. Record the message, retain the intended change list and resolve the storage problem before treating the setup as reliably saved.</p>
+<div class="learning-example"><h3>Example: a paused job and a motion-setting correction</h3><p>The operator is asked to change an approved motion value but intends to continue the old cut immediately afterwards. A progress-reset warning means that intention needs review. Accepting the warning without considering the partly machined workpiece is not a routine part of entering the number.</p></div>
+<p>After acceptance, inspect the relevant values and status in the main application. A visit that changed only a display preference should not be treated as a reason to redo unrelated machine settings. Review the consequences of the changes actually made.</p>
+
+</section>
+<section id="cancel" aria-labelledby="cancel-title"><h2 id="cancel-title">21.9 Cancel ordinary edits without assuming a universal rollback</h2>
+
+<p>Cancel is useful when you decide not to accept the ordinary edits made during the current Configuration visit. The dialog keeps track of changes committed through its property, source and shortcut editors. For tracked values, it restores the recorded value from before the first edit of that item during the visit.</p>
+<p>If you change the same ordinary field several times, cancellation is not just one Undo step to the immediately preceding number. It uses the value recorded before those edits. Closing the window without a successful OK also follows its cancellation-restoration path.</p>
+<h3>Know the limits before relying on Cancel</h3>
+<div class="table-scroll"><table><caption>Table 21-9. What parent Configuration cancellation means</caption><thead><tr><th scope="col">Kind of change</th><th scope="col">Expected cancellation behavior</th></tr></thead><tbody>
+<tr><td>Ordinary tracked field edits</td><td>Restore the value recorded before the first tracked edit of that item in this visit.</td></tr>
+<tr><td>Controller Mode</td><td>Excluded from restoration; the live mode operation is not reversed.</td></tr>
+<tr><td>Live machine-control values</td><td>Excluded live values are left at their current state.</td></tr>
+<tr><td>Updates originating outside the editor</td><td>Cancel does not restore a complete snapshot of every value that existed at window opening.</td></tr>
+<tr><td>Accepted auxiliary operations</td><td>Password, board and applied translation actions retain their own results.</td></tr>
+<tr><td>Direct context-menu storage or reset operations</td><td>Do not rely on the ordinary edit journal to reverse these operations or their stored effects.</td></tr>
+<tr><td>Window layout and tree position</td><td>Presentation state can be retained even when setting edits are cancelled.</td></tr>
+</tbody></table></div>
+<figure class="concept-figure"><img src="assets/images/21-settings-decisions.svg" alt="Ordinary tracked edits use OK validation and saving or Cancel restoration; live and direct operations require their own result review and are not universally undone by Cancel."><figcaption>Figure 21-3. Identify the action type before deciding what OK or Cancel will mean.</figcaption></figure>
+<p>This distinction matters because Configuration is connected to the current application, not a detached photograph of all machine values. Live readings and outside updates can occur while the window is open. Cancellation deliberately does not rewind the whole controller to its opening state.</p>
+<h3>Inspect the result after cancelling</h3>
+<p>For an ordinary approved practice edit, reopen the same group and verify the restored value. If any immediate operation was performed, check its actual current result separately. For example, after a Mode change, inspect the active connection rather than assuming that Cancel returned the former session.</p>
+<p>If you directly saved or exported a group after editing, storage may already contain the edited values. Cancel may restore a tracked current value without proving that every stored record now matches it. Resolve this through an intentional reviewed save or the approved recovery process, rather than relying on a later application exit to make the situation clear.</p>
+<div class="learning-example"><h3>Example: a display preference and a connection command</h3><p>During one visit, an operator changes an ordinary preference and requests a controller disconnect. Cancelling the settings draft can restore the tracked preference. It does not reconnect the controller. Each result must be understood according to the action that produced it.</p></div>
+<p>Window layout can also be saved during closing. If a window-state persistence error appears, the form can remain open even after a cancellation request. Read that message separately from a machine-settings validation error. Do not conclude that the old edited values are still active solely because the window did not disappear.</p>
+<p>Cancel cannot undo physical movement, remove material already cut or restore a file edited through another workflow. If an unintended action has affected the machine or stored configuration, follow the relevant recovery procedure and record the outcome. Use Cancel for its defined editing role, not as an emergency or recovery command.</p>
+
+</section>
+<section id="current-mapping-layout"><h3>Changing I/O mappings</h3><p>Mapping edits require Offline or Failed, no PLC Apply in progress, and every ToolPath empty. Merely stopping or disconnecting does not clear prepared programs. Use Clear Tool Path for TP0; retained auxiliary paths must also be cleared. These restrictions apply to the target, Enabled and input Filter Mode. Review validation before connecting again.</p><h3>I/O monitor layout and names</h3><p>The monitor uses the same readable signal captions as Configuration. Internal PLC identifiers and physical addresses remain unchanged. Hover over a shortened label to see the full name and address. In PLC Memory, numeric indices are raw memory addresses, not signal names.</p><p>Place the pointer in the narrow invisible gap immediately to the right of the first module panel. The horizontal resize cursor identifies the grip. Drag to resize all panels together from 75% to 200% of their default width. It works with any first module and with a single panel. Heights stay fixed; wider content uses horizontal scrolling.</p><p>With Save Window Layout enabled (default), closing the monitor saves its placement and shared panel-width percentage for the next opening or session. With the option disabled, saved layout is neither restored nor overwritten. The percentage is independent of display DPI. Diagnostic windows do not offer a minimize button.</p></section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">21.10 Practise an ordinary edit and complete a change record</h2>
+
+<p>For a first exercise, ask the trainer to choose a reversible display preference that uses the ordinary Configuration editing workflow. The trainer should identify its exact path, original value, replacement and expected visible result. Do not use an axis limit, tool position, signal mapping, live value or control-program source as a first editing exercise.</p>
+<p>The purpose is to practise navigation, value entry, cancellation and acceptance. You do not need to connect the physical machine or issue movement commands to demonstrate those skills. Use the shop's approved training arrangement and keep machine activity settled.</p>
+<h3>Practise cancellation first</h3>
+<ol class="steps">
+<li><strong>Locate the field.</strong> Open Configuration and navigate from the main group to the specified item. Read its description aloud in ordinary language.</li>
+<li><strong>Record the original.</strong> Note the full path and accepted starting value.</li>
+<li><strong>Make the approved edit.</strong> Change only this field, finish its cell edit and inspect the resulting value.</li>
+<li><strong>Cancel the visit.</strong> Use the labelled Cancel button. Do not use direct Save, Export, Import, Reset or an auxiliary action during this exercise.</li>
+<li><strong>Reopen and compare.</strong> Return to the same field and verify that the original tracked value was restored.</li>
+</ol>
+<h3>Then practise acceptance and verification</h3>
+<p>Repeat the same approved edit, this time finishing with OK. Read any message rather than dismissing it automatically. After successful acceptance, reopen the field and verify the retained value, then check the expected display effect. Return the preference to its approved final value if the training plan requires that.</p>
+<p>This exercise should not produce a program-progress reset warning when it is limited to a suitable display preference. If a warning appears that you did not expect, stop and review the selected path and field with the trainer. Do not accept it merely to finish the exercise.</p>
+<div class="table-scroll"><table><caption>Table 21-10. Suggested settings change record</caption><thead><tr><th scope="col">Record item</th><th scope="col">What to retain</th></tr></thead><tbody>
+<tr><td>Purpose and approval</td><td>The reason for the adjustment and who supplied the approved change.</td></tr>
+<tr><td>Exact setting</td><td>The full group path, item name and units where applicable.</td></tr>
+<tr><td>Before and after</td><td>The original value, requested replacement and actual retained value.</td></tr>
+<tr><td>Other operations</td><td>Any live action, auxiliary Apply, direct save, export, import or reset performed.</td></tr>
+<tr><td>Messages</td><td>Validation, progress-reset, application or persistence messages and the response chosen.</td></tr>
+<tr><td>Window result</td><td>Accepted with OK, cancelled, or left unresolved after an error.</td></tr>
+<tr><td>Verification</td><td>The reopened value, expected effect and any required program or physical setup review.</td></tr>
+</tbody></table></div>
+<p>This record is a suggested shop procedure, not a claim that Configuration automatically generates a complete change-history document. For multiple approved changes, identify each field separately. A general note saying “settings updated” does not tell another operator which machine behavior may have changed.</p>
+<h3>Check your understanding before independent use</h3>
+<p>You should be able to explain why selecting a group is different from resetting it, why a number must be read after acceptance, and why a read-only field does not imply a broken editor. You should also be able to describe the difference between completing a value-cell edit and saving the complete Configuration session.</p>
+<p>Finally, explain three cancellation limits: changing Mode is a live operation, accepted auxiliary-dialog actions have their own results, and direct storage commands are not ordinary unsaved drafts. Remember that Export itself saves current group values before producing its file.</p>
+<p>When you can perform the exercise and explain those distinctions, continue to the next chapter's settings reference. Use it to understand the purpose of each group while continuing to obtain machine-specific values from the approved setup information.</p>
+
+</section>
+<section><h2>I/O mapping admission and clearing loaded programs</h2><p>Target, Enabled and Filter Mode can change only while the controller is Offline or Failed, no PLC Apply is active, and all four ToolPaths are empty. A retained program in any of TP0–TP3 locks these editors; the description explains that loaded programs must be cleared first. The Controller API enforces the same rule before changing mapping values or invalidating PLC compilation.</p><p>Use the explicit Configuration toolbar clear command to empty all ToolPaths. It requires Engineering access and idle motion/preparation. Clearing is immediate and cannot be undone by Cancel. Editing mappings never clears or rebuilds a program automatically. After clearing, mappings can be edited and PLC validated without restarting the application.</p></section><details class="source-note"><summary>Documentation basis</summary><p>Reviewed against source available on 9 October 2026. This review did not operate a live controller or test every native keyboard interaction. Screenshot placeholders require capture from the delivered application.</p><ul><li><code>NT-ConfigurationManager/ConfigurationForm.cs</code></li><li><code>NT-ConfigurationManager/ConfigurationForm.Designer.cs</code></li><li><code>NT-ConfigurationManager/ConfigurationForm.Toolbar.cs</code></li><li><code>NT-ConfigurationManager/ConfigurationForm.Translations.cs</code></li><li><code>NT-ConfigurationManager/ConfigurationAccessSession.cs</code></li><li><code>NT-ToolsWF/GroupEditor/GroupEditorBinder.cs</code></li><li><code>NT-ToolsWF/GroupEditor/GroupPropertyBag.cs</code></li><li><code>NT-LinkManager/LinkGroup.cs</code></li><li><code>NT-LinkManager/RealLink.cs</code></li><li><code>NT-LinkManager/IntegerLink.cs</code></li><li><code>NT-ToolsWF/Tools/SEditors/sLinkEditor.cs</code></li><li><code>RouterXYZAC+RTCP/Configuration/GeneralLinks.cs</code></li><li><code>RouterXYZAC+RTCP/Configuration/Controller/ControllerLinks.cs</code></li><li><code>RouterXYZAC+RTCP/MainForm.Runtime.cs</code></li></ul></details></div><footer class="page-footer"><a href="20-simulation.html">Previous chapter</a><a href="index.html">Manual contents</a><span>RouterXYZAC+RTCP · 21</span></footer></main></body></html>

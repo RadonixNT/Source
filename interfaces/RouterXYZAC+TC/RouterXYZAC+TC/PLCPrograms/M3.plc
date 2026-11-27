@@ -1,0 +1,17 @@
+// Start only when Background qualifies the configured spindle interlocks.
+// Optional unmapped feedback is omitted; assigned feedback must be confirmed.
+// SpindleReady is qualified by Background. This activation preserves the selected
+// speed and waits the configured minimum acceleration delay. A successful
+// result confirms this command contract, not a measured RPM value.
+// Result 0: delay completed while ready; 2: interlock unavailable (TP0 is stopped).
+TIMER StartTime;
+IF NOT SpindleReady THEN
+    SpindleCW := FALSE;
+    SpindleCCW := FALSE;
+    TOOLPATH_STOP(TOOLPATH := 0);
+    END_FUNCTION(Result := 2);
+END_IF;
+SpindleCW := TRUE;
+SpindleCCW := FALSE;
+StartTime(TYPE := TON, IN := TRUE, PT := SpindleOnTime);
+IF StartTime.Q THEN END_FUNCTION(Result := 0); END_IF;

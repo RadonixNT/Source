@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 32 — Messages, Reports and Troubleshooting | RouterXYZAC+RTCP</title><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head><body class="chapter-intro"><a class="skip-link" href="#messages">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+RTCP · CHAPTER 32</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>Messages, Reports and Troubleshooting</h1><p class="lead">Understand a message, preserve its details, find the related session events and choose the appropriate next step.</p><p class="review-status"><strong>Expanded draft for review.</strong> Troubleshooting starts with the observed machine condition. Acknowledging a message does not repair its cause or confirm that motion has stopped.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-32">Manual contents</a> · <a href="31-diagnostic-graphs.html">Previous chapter: Graphs, Scope and Communication Diagnostics</a></nav></header><div class="body"><nav aria-label="In this chapter"><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#messages">Understand the message before choosing a response</a></li>
+<li><a href="#details">Expand and preserve message details</a></li>
+<li><a href="#report">Open the current session report and find the relevant event</a></li>
+<li><a href="#sequence">Read the operation sequence without assuming success</a></li>
+<li><a href="#troubleshoot">Use a symptom guide without bypassing the cause</a></li>
+<li><a href="#support">Prepare a service handover and verify an authorized recovery</a></li>
+</ol></nav>
+<section id="messages" aria-labelledby="messages-title"><h2 id="messages-title">32.1 Understand the message before choosing a response</h2>
+
+<p>A message is the application's way of telling you about a condition or asking for a decision. Some messages simply provide information. Others explain why an operation cannot proceed, identify a fault, or ask you to confirm an action. Read the complete sentence before choosing a button. The same button label can have different consequences in different questions.</p>
+<p>First attend to the machine. If there is unexpected movement, a loose workpiece, a tool problem or another unsafe condition, use the machine's prescribed stop procedure. Do not delay that response while trying to photograph a message. Conversely, do not assume that a message appearing on the screen has automatically stopped all motion. A dialog is an interface notification, not a physical-state confirmation.</p>
+<h3>Recognize the purpose of the message</h3>
+<div class="table-scroll"><table><caption>Table 32-1. Message categories and an operator's first response</caption><thead><tr><th scope="col">Category</th><th scope="col">Meaning</th><th scope="col">First response</th></tr></thead><tbody>
+<tr><td>Information</td><td>Explains a condition or operation.</td><td>Read it and relate it to the action you were performing.</td></tr>
+<tr><td>Success</td><td>Reports successful completion of the stated operation.</td><td>Check exactly which operation succeeded; it may be a settings action rather than machining.</td></tr>
+<tr><td>Warning</td><td>A condition needs attention.</td><td>Read the consequence and required response. A warning is not permission to ignore the condition.</td></tr>
+<tr><td>Error</td><td>An operation failed or could not proceed.</td><td>Record the message and resolve the stated condition before another authorized attempt.</td></tr>
+<tr><td>Critical error</td><td>A major subsystem cannot continue safely as expected.</td><td>Follow the site's stop and service procedure and preserve the details when safe.</td></tr>
+<tr><td>Question</td><td>The application needs an explicit choice.</td><td>Identify what accepting or declining will do before answering.</td></tr>
+</tbody></table></div>
+<p>The dialog can use a specific title such as Controller or Configuration instead of the category name. Symbols and color help draw attention, but the wording and context determine the meaning. The interface language can also change the button captions. This manual uses the English captions.</p>
+<h3>Acknowledge, cancel and retry are different actions</h3>
+<p>In a notice, <strong>OK</strong> normally acknowledges the message. In a confirmation, it may accept the action described in the question. <strong>Yes</strong> and <strong>No</strong> answer that particular question; they are not general machine start and stop controls. <strong>Cancel</strong> declines or leaves the current request as defined by that operation. It does not undo physical movement that has already occurred.</p>
+<p>If <strong>Retry</strong> is offered, it requests another attempt. Read the recommended action and establish whether the relevant condition has changed before using it. Repeatedly pressing Retry without understanding the failure can obscure the original event and does not repair a sensor, configuration or mechanical problem. Only the buttons provided for that message are available; not every dialog has all these choices.</p>
+<p>After dismissing an error, check the main screen and the affected operation again. The message disappearing does not mean the fault is cleared, the tool is clamped, the spindle has stopped or the program can resume. Use the appropriate operation chapter to determine what must be confirmed. When the next action is unclear, preserve the exact wording and seek assistance rather than guessing.</p>
+
+</section>
+<section id="details" aria-labelledby="details-title"><h2 id="details-title">32.2 Expand and preserve message details</h2>
+
+<p>The first line of a message is intended to be understandable without technical training. When more information is available, <strong>Show details</strong> opens a read-only area beneath it. This may explain the condition, suggest a response, show an error code or include technical evidence. You do not need to understand every technical line to preserve it accurately for support.</p>
+<h3>Use the detail controls</h3>
+<ol>
+<li>Read the short message and note what you were doing when it appeared.</li>
+<li>If <strong>Show details</strong> is available, select it. Scroll within the details area to read content that does not fit.</li>
+<li>Read the recommended action, when supplied. Distinguish an operator check from work that requires service or engineering access.</li>
+<li>Select <strong>Copy details</strong> to place the available detail text on the Windows clipboard.</li>
+<li>Paste it into the support note or another approved document and confirm that the intended text was copied. Add the short message and title separately.</li>
+</ol>
+<p><strong>Hide details</strong> collapses the area again; it does not remove information from the report. The details area cannot be used to edit settings or repair a fault. When a message has no additional details, the extra controls are not displayed. Their absence is not evidence that the message is unimportant.</p>
+<div class="table-scroll"><table><caption>Table 32-2. Information that may appear in message details</caption><thead><tr><th scope="col">Item</th><th scope="col">Purpose</th><th scope="col">What to preserve</th></tr></thead><tbody>
+<tr><td>Error code</td><td>A stable identifier used to classify the condition.</td><td>Both the number and the accompanying name, exactly as shown.</td></tr>
+<tr><td>Report description</td><td>A longer explanation than the short message.</td><td>The full wording rather than a shortened interpretation.</td></tr>
+<tr><td>Recommended action</td><td>A suggested response to the classified condition.</td><td>The instruction and whether the authorized check was performed.</td></tr>
+<tr><td>Technical details</td><td>Operation-specific evidence, such as a file, device, failed step or internal exception.</td><td>The complete copied text, even if some terms are unfamiliar.</td></tr>
+</tbody></table></div>
+<h3>The copied details are not the whole incident</h3>
+<p>Copy details copies the assembled details area. It does not automatically add the short message, dialog title, machine activity or an image of the main screen. A support note containing only a technical identifier may therefore be incomplete. Add the exact short message, approximate time, Normal or Simulation mode and the action immediately preceding it.</p>
+<p>If copying fails or the pasted text is missing, use a readable screenshot and note the problem. Check the paste rather than assuming the clipboard contains the latest message. For long details, the copied text is usually more useful than several cropped images. Include a screenshot as well when the arrangement of controls or the main-screen condition matters.</p>
+<h3>Do not confuse a diagnostic identifier with an instruction</h3>
+<p>An unfamiliar name in the details is normally a label for support, not something you are expected to type into the machine. Do not change a parameter simply because it appears in an error description. When an action requires modifying a mapping, control program, password or drive configuration, use the relevant authorized procedure and access level.</p>
+<p>The application normally records diagnostic content when showing a message. Some controller and program notifications have already been recorded, so the dialog avoids writing the same event again. Do not expect a second identical report entry merely because you expanded or acknowledged the dialog. Equally, a missing report line does not invalidate a message you saw; file-writing limitations are explained below.</p>
+<figure class="figure-placeholder"><p class="eyebrow">SCREENSHOT TO INSERT · FIGURE 32-1</p><h3>A message with expanded details</h3><p>Capture a genuine message with its title, short text, expanded details, Copy details and available response buttons visible. Annotate the error code and recommended action where present. Use an existing authorized example; do not deliberately cause a machine fault. Remove sensitive content only from a separate illustration copy.</p><p>Suggested asset: <code>assets/images/32-message-details.png</code></p><figcaption>The short message explains the immediate issue; the expanded details preserve evidence for diagnosis.</figcaption></figure>
+
+</section>
+<section id="report" aria-labelledby="report-title"><h2 id="report-title">32.3 Open the current session report and find the relevant event</h2>
+
+<p>The session report is a text file containing messages and selected application events. A session normally means one run of the application, from opening it to closing it. Reconnecting the controller during that run does not, by itself, create a new report file. This makes the report useful for following a problem across a disconnect and another connection attempt.</p>
+<h3>Open it from the application</h3>
+<p>The command is <strong>OpenReportFile</strong>. Its supplied shortcut is <code>Ctrl+Shift+Alt+PrintScreen</code>; use the current configured assignment if it has been changed. You can also double-click the main screen's program-progress display. The command asks Windows Notepad to open the current session report. It does not open a built-in searchable alarm-history window.</p>
+<ol>
+<li>When machine supervision allows, open the report using the command or the program-progress display.</li>
+<li>Note the file name in the editor. Confirm that it belongs to the session in which the event occurred.</li>
+<li>Use the editor's Find function to search for a distinctive phrase, error code, operation name or program file name.</li>
+<li>Read several entries before and after the match. The first visible error may be a consequence of an earlier rejected request or lost connection.</li>
+<li>Preserve the original file. Put your explanation in a separate note or an explicitly separate copy.</li>
+</ol>
+<div class="table-scroll"><table><caption>Table 32-3. Recognizing the report file</caption><thead><tr><th scope="col">Item</th><th scope="col">What to expect</th></tr></thead><tbody>
+<tr><td>Usual folder for this product</td><td><code>%ProgramData%\Radonix\RouterXYZAC+RTCP\Report</code>, based on the application's configured product identity. Use the application command to select the current file.</td></tr>
+<tr><td>File name</td><td>A timestamp followed by <code>.log</code>, for example <code>2026-10-09 08-30-00.log</code>. This example is illustrative.</td></tr>
+<tr><td>Beginning of file</td><td>A date/time header. Individual entries normally begin with local time in hours, minutes and seconds.</td></tr>
+<tr><td>Restart versus reconnect</td><td>A new application run uses its own timestamped report name. A controller reconnect within the same run continues the session report.</td></tr>
+<tr><td>File contents</td><td>Text messages, optional level and classified error information, and additional exception details where provided.</td></tr>
+</tbody></table></div>
+<h3>The editor is not a guaranteed live report viewer</h3>
+<p>The application writes reports in the background. Opening the report does not force every queued entry to disk, and the command does not refresh an editor that is already showing older contents. If a just-observed event is missing, allow writing to catch up and reopen or reload the file using the editor's available controls. Do not assume that the file visible in an old editor tab is automatically current.</p>
+<p>Normal application shutdown attempts to finish writing accepted report entries. An abrupt termination, unavailable storage or logging overload can leave an incomplete report. A diagnostics-queue overflow entry, if present, explicitly indicates that some entries were not accepted. The absence of a line is therefore not proof that an action never occurred.</p>
+<h3>If no report opens</h3>
+<p>The command opens the current report only when the file exists. Very early in startup it may not yet have been created; storage or editor-launch problems can also prevent access. Record the exact behavior rather than creating an empty replacement file or deleting old reports. If the problem persists, ask support to check the report location and access to it. Do not restart the machine solely to force a report window to appear.</p>
+<p>Notepad is an editor, so avoid typing into and saving over the original report. To share evidence, copy the file to the approved support location and state when the copy was made. A copy taken while the application remains active is a snapshot; later events will not appear in that already-copied file.</p>
+<figure class="figure-placeholder"><p class="eyebrow">SCREENSHOT TO INSERT · FIGURE 32-2</p><h3>Finding an operation in the session report</h3><p>Capture a genuine report opened from the application. Keep the timestamped file name, the relevant entry and surrounding entries readable. Annotate the entry time, operation wording and any file/line context. Use an illustration copy if customer file paths need redaction.</p><p>Suggested asset: <code>assets/images/32-session-report.png</code></p><figcaption>Read an event in context; the session file name and neighboring entries help establish which operation was observed.</figcaption></figure>
+
+</section>
+<section id="sequence" aria-labelledby="sequence-title"><h2 id="sequence-title">32.4 Read the operation sequence without assuming success</h2>
+
+<p>A report often records several stages of one operation. A request is the operator's or program's intention. Acceptance means that the software admitted the request. Running, stopping and completion entries describe later observations. Reading only the first positive-looking line can lead to the wrong conclusion about what the machine actually did.</p>
+<h3>Follow the operation from request to outcome</h3>
+
+<div class="table-scroll"><table><caption>Table 32-4. Important report wording</caption><thead><tr><th scope="col">Wording</th><th scope="col">What it establishes</th><th scope="col">What it does not establish</th></tr></thead><tbody>
+<tr><td><code>Run requested</code></td><td>A start request was recorded, with its available context.</td><td>That it passed every condition or produced motion.</td></tr>
+<tr><td><code>Run accepted</code></td><td>The start was admitted; positioning or execution can still be pending.</td><td>That the tool has already reached the entry point or cutting has begun.</td></tr>
+<tr><td><code>Program execution running</code></td><td>The application observed the main program running.</td><td>Continuous cutting, or the eventual result of the program.</td></tr>
+<tr><td><code>Reset accepted; waiting for motion to stop</code></td><td>A stop was accepted and stopping is still being awaited.</td><td>Immediate physical standstill.</td></tr>
+<tr><td><code>Program execution no longer running</code></td><td>A change out of the running state was observed.</td><td>Natural completion rather than interruption.</td></tr>
+<tr><td><code>Program completed naturally</code></td><td>The current execution was reported as naturally completed.</td><td>Finished-part quality, spindle standstill or completion of a subsequent park operation.</td></tr>
+<tr><td><code>Program execution ended with unknown stop origin</code></td><td>The end was observed but its cause was not established.</td><td>A normal finish or a specific fault cause.</td></tr>
+</tbody></table></div>
+<p>Other outcomes explicitly report a requested stop or an observed axis/coupling fault. Preserve that distinction. If you see only a “no longer running” entry, do not replace it in your report with “completed.” State exactly what was recorded and what you observed at the machine.</p>
+<h3>Use file and line information as context</h3>
+<p>Many operation entries include <code>File=</code> and <code>SourceLine=</code>. The file identifies the current program context, and the source line reflects the main path's reported block at the time of the entry. This helps locate the region of an operation. It is not necessarily the exact instruction that caused a later error, nor a guarantee that every preceding line cut material.</p>
+
+<h3>Read homing and spindle entries carefully</h3>
+<p>Homing reports can identify an activated routine and its eventual exit reason, result and success indication. An axis home-state change is a separate observation. If homing was interrupted, use <a href="06-homing.html">Chapter 6</a> and the actual axis state rather than treating an activation entry as successful homing.</p>
+<p>Spindle entries describe output changes and speed setpoints. A recorded RPM setpoint is a command value, not a measurement of shaft rotation. Likewise, an output going off does not prove that the shaft has stopped. Use the machine's required spindle confirmation before tool access; see <a href="10-spindle.html">Chapter 10</a>.</p>
+<h3>Understand the report's timing limits</h3>
+<p>The report records selected transitions rather than every control cycle, axis position or program line. Entry times are displayed to the second, so several events can share one time label. Do not use their visible timestamps to calculate millisecond response times. Some notifications are observed after the underlying event, and a loss of connection can interrupt observation.</p>
+<p>For timing evidence use <a href="31-diagnostic-graphs.html">Chapter 31</a>; for physical-channel indications use <a href="30-io-monitor.html">Chapter 30</a>. Combine these sources with the report, but state which evidence came from which view. None is a complete recording of every physical event.</p>
+
+</section>
+<section id="troubleshoot" aria-labelledby="troubleshoot-title"><h2 id="troubleshoot-title">32.5 Use a symptom guide without bypassing the cause</h2>
+
+<p>Begin with what you can actually observe: a command is unavailable, a file was rejected, an operation stopped, or a sensor indication did not change. A symptom can have several causes. The table below gives a starting point for operator checks; it is not a diagnosis and does not authorize changing protected settings or bypassing an interlock.</p>
+<h3>Use the same short sequence each time</h3>
+<p>First establish the machine's condition and stop the affected operation when required by its procedure. Next preserve the message and approximate time. Then check the relevant main-screen state and read the report around the event. Perform only the normal checks within your authorization. If the cause remains unclear, leave the operation stopped and pass the evidence to the responsible person.</p>
+<div class="table-scroll"><table><caption>Table 32-5. Symptom, possible explanation and appropriate next step</caption><thead><tr><th scope="col">Symptom</th><th scope="col">Possible explanation to check</th><th scope="col">Operator response</th></tr></thead><tbody>
+<tr><td>The controller does not connect.</td><td>A connection transition is still active, access is missing, settings were rejected, or startup failed.</td><td>Read the final connection result and details. Confirm the intended mode. Follow <a href="03-startup.html">Chapter 3</a>; do not repeatedly issue connect requests.</td></tr>
+<tr><td>The screen indicates Simulation when real machining is expected.</td><td>The active connection is simulated.</td><td>Do not treat simulated motion as hardware verification. Follow the authorized mode-change procedure in <a href="20-simulation.html">Chapter 20</a>.</td></tr>
+
+<tr><td>A program is rejected or no cutting entry can be found.</td><td>The file has a blocking diagnostic, the requested line is unsuitable, or no valid cutting entry is available.</td><td>Preserve file and line details. Review <a href="14-opening-programs.html">Chapter 14</a> and <a href="18-selected-start-line.html">Chapter 18</a> before making an approved correction.</td></tr>
+<tr><td>The program is no longer running.</td><td>Natural completion, a requested stop, a fault, an intermediate wait or an uncertain termination must be distinguished.</td><td>Read the operation state and outcome entries. Use <a href="17-stopping-and-recovery.html">Chapter 17</a>; do not resume solely because an error dialog closed.</td></tr>
+
+<tr><td>An output is on but the expected mechanism response is absent.</td><td>The command and physical confirmation do not agree; wiring, mapping, supply, sensor or mechanical conditions require investigation.</td><td>Record both output and feedback input using <a href="30-io-monitor.html">Chapter 30</a>. Do not force outputs to make the picture match.</td></tr>
+<tr><td>Configuration cannot be opened or changed.</td><td>Access requirements, a connection transition, machine activity, a read-only item or validation rules may apply.</td><td>Use <a href="21-configuration-window.html">Chapter 21</a> and <a href="25-passwords.html">Chapter 25</a>. Ask an authorized person rather than seeking a password or interlock bypass.</td></tr>
+<tr><td>A time-lock condition blocks operation.</td><td>The board's lock condition requires the authorized licensing or service procedure.</td><td>Preserve the message and available board information. Follow <a href="26-time-locks.html">Chapter 26</a>; do not change clocks to conceal the condition.</td></tr>
+<tr><td>Timing or communication warnings appear.</td><td>There may be stale data, a non-operational network, a reached deadline or recorded communication faults.</td><td>Use <a href="31-diagnostic-graphs.html">Chapter 31</a> to record mode, state and counters. A past nonzero total differs from a growing total.</td></tr>
+<tr><td>Configuration cannot be saved when closing the application.</td><td>The settings save failed, for example because storage or access was unavailable; normal closing can be cancelled.</td><td>Copy the details and report that the application remained open. Do not force termination and assume settings were saved.</td></tr>
+</tbody></table></div>
+<h3>One approved correction, then a controlled check</h3>
+<p>If the cause is a normal operator condition with a documented remedy, follow that remedy and verify the result through the relevant operating procedure. Record what changed and whether the same symptom returned. If it returns, stop repeating the action and escalate. A different error after a change should also be recorded, not treated as proof that the original cause was fixed.</p>
+<p>Do not use a restart as the default cure. It can create a new session report, change the available observation context and require renewed readiness checks. If a restart is part of an authorized recovery, preserve evidence first when practical and follow the normal shutdown and startup procedures. After any interruption, confirm the tool, workpiece, references and restart plan before continuing the job.</p>
+
+</section>
+<section id="support" aria-labelledby="support-title"><h2 id="support-title">32.6 Prepare a service handover and verify an authorized recovery</h2>
+
+<p>Ask for assistance when the next action is unclear, the same fault returns, the physical state cannot be confirmed, or the required correction exceeds your access or training. A useful handover lets the next person understand the event without asking you to reproduce it immediately. It should separate what you saw, what the software reported and what you suspect.</p>
+<h3>Build a small, complete evidence package</h3>
+<p>Start with a plain-language description: what you tried to do, what you expected, and what happened instead. Add the exact message and copied details. Include the session report from the affected application run, with the approximate event time identified. If several application runs were involved, identify which file belongs to each attempt rather than sending an unexplained collection of reports.</p>
+<div class="table-scroll"><table><caption>Table 32-6. Service handover template</caption><thead><tr><th scope="col">Field</th><th scope="col">Information to provide</th></tr></thead><tbody>
+<tr><td>Machine and software</td><td>Machine identifier and the installed application version if known; state explicitly if the version is unknown.</td></tr>
+<tr><td>Time and session</td><td>Date, approximate local event time, report file name and whether the controller or application had been restarted.</td></tr>
+<tr><td>Operating context</td><td>Normal or Simulation mode, connection state, loaded program, visible line, selected tool and relevant operation stage.</td></tr>
+<tr><td>Expected versus observed</td><td>The intended result and the actual screen or physical behavior, described separately.</td></tr>
+<tr><td>Exact diagnostic evidence</td><td>Short message, code, copied details, relevant surrounding report entries and readable screenshots.</td></tr>
+<tr><td>Checks already performed</td><td>The approved checks, changes and retries in order, including whether each changed the symptom.</td></tr>
+<tr><td>Present machine condition</td><td>Whether the job is interrupted, what remains uncertain, and what the next operator must not assume.</td></tr>
+</tbody></table></div>
+<h3>Choose supporting views according to the question</h3>
+<p>For a sensor or output issue, include the full channel address and separate request/feedback indications from <a href="30-io-monitor.html">Chapter 30</a>. For timing or communication, include the graph settings, assessment and counters from <a href="31-diagnostic-graphs.html">Chapter 31</a>. If support requests control-program activity or memory values, follow <a href="28-plc-program-monitor.html">Chapter 28</a> or <a href="29-plc-memory.html">Chapter 29</a>; do not edit the program to obtain evidence.</p>
+<p>Use the site's approved method for sharing the report and relevant program files. Keep an unchanged original and make any explanation or redaction in a separate copy. Never include passwords in the support note. If a file cannot be shared, identify it and describe the limitation so support knows what evidence is missing.</p>
+<h3>Make uncertainty visible</h3>
+<p>Write “the release output was on, but I did not confirm tool release” when that is what you know. Do not turn it into “the tool was released.” Similarly, distinguish “the report says Run accepted” from “the machine started cutting.” An honest missing observation is useful information; a guessed result can send the investigation in the wrong direction.</p>
+
+<h3>Recovery requires verification, not just a quiet screen</h3>
+<p>After an authorized correction, follow the relevant startup or recovery chapter to confirm readiness. Depending on the interrupted operation, that includes the tool state, homing, work reference, workpiece condition and intended restart point. Do not use an arbitrary source line as a shortcut around an unresolved interruption.</p>
+<p>Perform only the approved verification operation and observe its outcome. Check both the physical result and the application's state. Preserve any new message or report entry. If the symptom returns, stop further repetition and give support the new evidence alongside the earlier package.</p>
+<p>Finish the handover by stating whether the machine has been released for the next operation under the site's procedure or remains awaiting service. Closing a message, reopening the application or obtaining a successful connection is not, by itself, that release decision.</p>
+
+</section>
+<aside class="source-note"><p><strong>Verification basis:</strong> Checked against the message-dialog implementation, report opening and file-writing behavior, application event reporting, and the operation admission and recovery paths described in the preceding chapters. This is a source-verified operator draft, not a live fault test or certification of the installed machine. Screenshot placeholders identify the remaining genuine illustrations.</p></aside></div><footer class="book-footer"><a href="31-diagnostic-graphs.html">Previous chapter</a><a href="index.html#chapter-32">Contents</a><span>RouterXYZAC+RTCP · 32</span></footer></main></body></html>

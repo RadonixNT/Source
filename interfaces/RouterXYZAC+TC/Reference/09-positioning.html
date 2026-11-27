@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 9 — Positioning, Return to Work and Parking | RouterXYZAC+TC</title>
+<meta name="description" content="Operator procedures for Go Home, Go Ref, Return to Work and parking, including route checks, automatic continuation, completion parking and interrupted positioning.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#destinations">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+TC · CHAPTER 9</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Positioning, Return to Work and Parking</h1>
+<p class="lead">Choose the destination, understand the complete route, and know whether arrival ends the operation or hands control back to the machining program.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> This chapter describes the application's managed positioning commands. Illustrations are conceptual; the actual tool, fixtures, travel settings and approved machine procedure determine whether a route is suitable.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-09">Manual contents</a> · <a href="08-work-origins.html">Previous chapter: Work origins</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZAC update — 10 November 2026.</strong> Return, park and reference targets retain all five coordinates. The host lifts Z before lateral/angular movement and descends afterward. See the <a href="XYZAC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#destinations">Choose the destination and what should happen afterward</a></li>
+<li><a href="#preparation">Prepare the whole route and the operation that may follow</a></li>
+<li><a href="#route">Understand the Z-first route and its limits</a></li>
+<li><a href="#speed">Check the positioning speed and issue one request</a></li>
+<li><a href="#go-home">Use Go Home to request machine zero</a></li>
+<li><a href="#go-reference">Use Go Ref with the applied work reference and tool correction</a></li>
+<li><a href="#return-to-work">Treat ReturnToWork as a program start or continuation</a></li>
+<li><a href="#manual-parking">Set up and request manual parking</a></li>
+<li><a href="#automatic-parking">Understand parking after normal program completion</a></li>
+<li><a href="#interruption">Stop positioning and reassess before another request</a></li>
+<li><a href="#problems">Read positioning messages and resolve a refused or incomplete move</a></li>
+<li><a href="#practice">Work through a positioning example and check your understanding</a></li>
+</ol></nav>
+<section id="destinations" aria-labelledby="destinations-title"><h2 id="destinations-title">9.1 Choose the destination and what should happen afterward</h2>
+
+<p>A positioning command requests an automatic route to a defined destination. Unlike a held jog, it is not controlled by how long you keep a button pressed. Once accepted, it can carry out several movements in sequence after a single request.</p>
+<p>The application provides four related commands: <strong>Go Home</strong>, <strong>Go Ref</strong>, <strong>ReturnToWork</strong> and <strong>GoToPark</strong>. They share route-building behaviour but choose their destinations differently. ReturnToWork has a further consequence: a successful return can start or resume the retained machining program without another Run request.</p>
+<table><caption>Table 9-1. Select the operation by its purpose</caption><thead><tr><th scope="col">Operator command</th><th scope="col">Destination</th><th scope="col">What follows successful positioning</th></tr></thead><tbody>
+<tr><td>Go Home</td><td>Machine X/Y/Z zero.</td><td>The positioning operation ends; it does not itself start the main program.</td></tr>
+<tr><td>Go Ref</td><td>The applied work-path reference plus current tool and live corrections.</td><td>The positioning operation ends; it does not itself start the main program.</td></tr>
+<tr><td>ReturnToWork</td><td>The machine position currently required by the retained machining path.</td><td>The return mechanism can hand execution back to the main program automatically.</td></tr>
+<tr><td>GoToPark</td><td>The configured X/Y/Z machine-coordinate parking values.</td><td>The positioning operation ends without starting the main program.</td></tr>
+</tbody></table>
+<p><strong>Home</strong> is a different command: it performs sensor-based homing to establish the machine reference. Go Home uses an already established reference to travel to machine zero. See <a href="06-homing.html">Chapter 6</a> if the distinction is unfamiliar.</p>
+<p>These commands also differ from <strong>Goto X</strong>, <strong>Goto Y</strong> and <strong>Goto Z</strong>. The latter are single-axis manual destination commands, described in <a href="07-manual-motion.html#destination">Chapter 7</a>. Do not assume they use the multistage route described here.</p>
+<h3>Know the actual access point</h3>
+<p>The main window has Go Home and Go Ref controls. ReturnToWork and GoToPark are available in the configurable command/shortcut catalog; the reviewed layout does not require a dedicated visible button for each. Use only the approved access or assigned shortcut for your installation. This chapter does not invent a universal key combination.</p>
+<p>In command lists and reports, the reference command may appear as <strong>GoToReference</strong>, and the home-positioning command as <strong>GoHome</strong>. Those identify the operations associated with the main-window captions.</p>
+<aside class="learning-example"><h3>“Move away from the job” needs a destination</h3><p>Go Home, Go Ref and GoToPark might all move away from the present position, but they do not mean the same thing. Go Ref can finish at a low job reference; Go Home uses machine zero; parking uses its saved coordinates. Choose the defined destination that the approved task actually requires.</p></aside>
+<p>Before issuing any of them, answer two questions: where will the tool/head go, and can the machining program start after arrival? The second question is essential for ReturnToWork.</p>
+
+</section>
+<section id="preparation" aria-labelledby="preparation-title"><h2 id="preparation-title">9.2 Prepare the whole route and the operation that may follow</h2>
+
+<p>Prepare for the entire operation before issuing a positioning command. The application does not ask for another click between a Z movement, horizontal travel and the final Z approach. ReturnToWork can also proceed into the machining program when its handoff succeeds.</p>
+<p>Confirm operator access, the intended Simulation or Normal connection and complete-machine homing. All configured motors must be homed, including the second gantry motor. Required axes must be ready, stopped and available, with the expected gantry pairing. Other movement paths must be idle.</p>
+<p>These conditions are checked again when the command is requested. A control that appeared available can still reject a request if the state changed. Read the actual response rather than assuming that a click guarantees movement.</p>
+<table><caption>Table 9-2. Pre-positioning checks</caption><thead><tr><th scope="col">Check</th><th scope="col">What to establish</th></tr></thead><tbody>
+<tr><td>Command and purpose</td><td>You have selected the intended destination, and know whether machining may follow.</td></tr>
+<tr><td>Reference state</td><td>Complete homing is valid. The relevant work reference and tool corrections are correct where the destination uses them.</td></tr>
+<tr><td>Current physical position</td><td>The tool can leave its present location through the commanded first movement.</td></tr>
+<tr><td>Horizontal route</td><td>The whole traverse is clear for the actual tool, holder, head, bridge and fixtures.</td></tr>
+<tr><td>Final height</td><td>The final Z position and approach are appropriate, including any surface or material near the destination.</td></tr>
+<tr><td>Speed</td><td>The configured traverse speed is approved for the operation; jog settings are not assumed to control it.</td></tr>
+<tr><td>Next action</td><td>For ReturnToWork, the retained program and starting state are ready for execution.</td></tr>
+<tr><td>People and stopping</td><td>The area is prepared and you know the required stopping response from the operating position.</td></tr>
+</tbody></table>
+<h3>A valid coordinate is not a clear route</h3>
+<p>The software validates the current point, destination and route waypoints against the configured travel and drive-position range, including the coupled gantry motor. It does not inspect the physical shape of clamps, material, hoses or accessories.</p>
+<p>A route may fit inside machine travel while crossing an obstruction. A final coordinate may be numerically valid while the cutter would enter the workpiece at that point. Check the physical setup independently of the command's availability.</p>
+<aside class="learning-example"><h3>A tool below a fixture lip</h3><p>The final parking position is clear, but the tool is currently beneath an overhanging feature. A direct Z move toward the configured traverse height may not be a suitable escape. Do not use parking as an improvised recovery move; establish the approved way to leave the current position first.</p></aside>
+<h3>Understand why an available-looking destination command may be disabled</h3>
+<p>Go Home, Go Ref and GoToPark can be unavailable when the current commanded position is already within the configured axis tolerances of their destinations. That does not necessarily indicate a fault. ReturnToWork is different because it may still need to hand execution to the program even when little or no visible repositioning is required.</p>
+<p>Other causes include incomplete homing, an active or stopping operation, an axis or gantry fault, unavailable path resources or invalid motion configuration. Investigate the current state instead of switching to a different command as a workaround.</p>
+<p>Remain at the operating position after starting. A short stop between route stages is not the end of the operation and does not authorize entering the movement area.</p>
+
+</section>
+<section id="route" aria-labelledby="route-title"><h2 id="route-title">9.3 Understand the Z-first route and its limits</h2>
+
+<p>When X, Y or a rotary axis must move, the positioning route raises Z if necessary, traverses at that height, then moves Z to the destination. Each stage stops before the next.</p>
+<p><strong>General → Safe Z</strong> sets the minimum traverse height in machine coordinates. The initial value of zero and values outside Z travel select Z MaxCourse. A head already higher than the selected height traverses at its present Z. Set the height for the actual tool, workpiece and clamps.</p>
+<p><strong>Approach Distance</strong> and <strong>Approach Velocity</strong> in General control the slow final move to the programmed start or resume point. The defaults are 10 millimeters and 5 millimeters per second. A shorter available final leg uses approach speed from its start.</p>
+<figure class="concept-figure"><img src="assets/images/09-positioning-route.svg" alt="Schematic three-stage route: raise Z to the traverse height if needed, traverse X/Y, then move Z to the destination height."><figcaption>Figure 9-1. The route used when horizontal positioning is required. The drawing explains stage order, not actual travel distances or verified clearance.</figcaption></figure>
+<table><caption>Table 9-3. Check each part of the route</caption><thead><tr><th scope="col">Stage</th><th scope="col">Commanded behaviour</th><th scope="col">Physical check</th></tr></thead><tbody>
+<tr><td>Initial Z movement</td><td>Keep the starting X/Y and raise Z to Safe Z if needed.</td><td>The tool and head can leave the current location along that Z route.</td></tr>
+<tr><td>Horizontal traverse</td><td>Move to destination X/Y at the configured traverse height.</td><td>The full horizontal route is clear for the actual assembly and surrounding equipment.</td></tr>
+<tr><td>Final Z movement</td><td>Keep destination X/Y and move to destination Z.</td><td>The final approach and endpoint are suitable; do not assume it stops above the material.</td></tr>
+</tbody></table>
+<h3>When no horizontal movement is needed</h3>
+<p>If the X/Y differences are below the configured axis tolerances, the application treats the move as not requiring horizontal travel. It keeps the current X/Y and moves Z directly to the destination height. It does not first go to MaxCourse and then return merely because you used a positioning command.</p>
+<p>This explains why two requests for the same type of destination can look different from different starting positions. The route depends on the current position as well as the destination. A change too small to be treated as a horizontal move is not a reason to alter the machine tolerances during ordinary operation.</p>
+<aside class="learning-example"><h3>Already above the destination</h3><p>The current X/Y is already at the destination within the configured tolerances, but Z is at another height. The request can produce only a direct Z movement. Do not expect a preliminary lift to provide an extra opportunity to inspect the final approach.</p></aside>
+<h3>A planned route is not collision detection</h3>
+<p>The application checks route points against configured travel and representable drive positions. It does not build a three-dimensional model of every physical obstruction, and it does not detect whether a tool is trapped beneath an overhang. Calling a coordinate a traverse height does not establish clearance for every job.</p>
+<p>Likewise, a stop between stages is part of normal sequencing. It is not permission to reach into the machine, move a clamp or make an adjustment before the next stage. The operation continues automatically.</p>
+<p>Do not change MaxCourse simply to make a particular positioning attempt appear convenient. It is part of machine configuration and affects more than this one route. Have an unsuitable route or machine setting assessed through the authorized procedure.</p>
+
+</section>
+<section id="speed" aria-labelledby="speed-title"><h2 id="speed-title">9.4 Check the positioning speed and issue one request</h2>
+
+<p>These positioning routes use the configured <strong>TraverseVelocity</strong>, expressed in millimetres per second. They do not take their speed from the individual X/Y/Z jog V fields or the jog percentage. A low manual-jog setting therefore does not establish that Go Home, Go Ref or parking will use that same speed.</p>
+<p>TraverseVelocity is found under <strong>General</strong> in Configuration. It is also used for program traverse preparation, so changing it is not merely a private adjustment for one positioning button. Use the approved value and follow any Configuration message about the prepared program when a change is authorized.</p>
+<table><caption>Table 9-4. Keep the speed controls separate</caption><thead><tr><th scope="col">Value or control</th><th scope="col">Relevant use</th></tr></thead><tbody>
+<tr><td>TraverseVelocity</td><td>Supplies the speed captured for the managed positioning route described here.</td></tr>
+<tr><td>Axis jog V and jog percentage</td><td>Prepare manual jog and single-axis Goto movement, as described in Chapter 7.</td></tr>
+<tr><td>Main machining-feed percentage</td><td>Controls the main machining path; it is not an all-motion stop for the separate positioning route.</td></tr>
+<tr><td>Displayed movement speed</td><td>Presents an estimate of combined commanded movement; it may differ during acceleration or stage transitions.</td></tr>
+</tbody></table>
+<h3>Values are captured for the request</h3>
+<p>The route is built from the current commanded position, resolved destination and selected traverse speed when the request is accepted. For parking, all three saved parking coordinates are captured for that route. Editing a setting afterward is not a method for redirecting an already queued movement.</p>
+<p>The requested speed must be finite and positive, and machine motion limits still apply. Short legs, acceleration and stopping between stages can make the observed speed lower than the requested value. Do not increase a setting simply because one short move did not appear to reach it.</p>
+<ol class="journey">
+<li><strong>Identify the command and destination.</strong><p>Check the whole setup and whether a machining continuation can follow.</p></li>
+<li><strong>Confirm the approved traverse configuration before motion.</strong><p>If an authorized change is needed, make and accept it through Configuration while the machine is appropriately settled.</p></li>
+<li><strong>Issue the intended command once.</strong><p>Use the main-window control or the documented configured access. These are finite operations; releasing the button or shortcut does not cancel the accepted route.</p></li>
+<li><strong>Observe all stages and the reported result.</strong><p>An accepted request is not arrival. Stay attentive through the final Z movement and, for ReturnToWork, the possible program start.</p></li>
+</ol>
+<aside class="learning-example"><h3>The jog slider was low</h3><p>An operator prepares a careful manual adjustment with a reduced jog percentage, then requests Go Ref. The separate positioning route uses TraverseVelocity, not that jog percentage. Check the positioning configuration and route before the request instead of assuming the previous manual settings carry over.</p></aside>
+<p>Use the stopping controls described later in this chapter if interruption is necessary. Do not try to stop positioning by changing the jog percentage or lowering the main-program feed percentage.</p>
+<p>If the request is rejected, read the cause before trying again. Repeated clicks do not repair invalid travel, incomplete homing or unavailable axes, and can make it harder to identify which request actually started.</p>
+
+</section>
+<section id="go-home" aria-labelledby="go-home-title"><h2 id="go-home-title">9.5 Use Go Home to request machine zero</h2>
+
+<p><strong>Go Home</strong> resolves its destination to machine X zero, Y zero and Z zero. It does not search for sensors or establish a new machine reference. Complete the required homing and setup checks before using it.</p>
+<p>The position at which sensor homing finishes is determined by the configured homing coordinates and displacements. That final position need not be machine zero. Consequently, Home and Go Home can finish at different physical locations even on a correctly configured machine.</p>
+<table><caption>Table 9-5. Home and Go Home answer different needs</caption><thead><tr><th scope="col">Question</th><th scope="col">Relevant operation</th></tr></thead><tbody>
+<tr><td>Establish the machine reference from its sensors</td><td>Home.</td></tr>
+<tr><td>Move to machine coordinate zero using the established reference</td><td>Go Home.</td></tr>
+<tr><td>Move to the job's work-reference location</td><td>Go Ref, after verifying its applied reference and corrections.</td></tr>
+<tr><td>Move to a defined parking location</td><td>GoToPark, after verifying its stored machine coordinates.</td></tr>
+</tbody></table>
+<ol class="journey">
+<li><strong>Confirm that machine zero is the intended destination.</strong><p>Use the installed machine documentation to understand that location, especially its Z height. Do not infer it from the word home.</p></li>
+<li><strong>Verify homing, readiness and the complete route.</strong><p>Check the initial Z movement, horizontal traverse and final approach where applicable.</p></li>
+<li><strong>Check the positioning speed configuration.</strong><p>The route uses TraverseVelocity, not the manual-jog V fields.</p></li>
+<li><strong>Press Go Home once.</strong><p>Observe the route without treating a pause between stages as completion.</p></li>
+<li><strong>Verify the result.</strong><p>Check the positioning completion report and settled Machine position. The command does not itself start the main machining program.</p></li>
+</ol>
+<h3>Do not infer clearance from the numeral zero</h3>
+<p>Machine Z zero may be low in the machine's working range. When horizontal travel is required, the route can first visit the configured traverse height and then move down to machine Z zero. That final movement is part of the requested operation, not an optional extra step.</p>
+<aside class="learning-example"><h3>High at the middle, low at the end</h3><p>The head travels horizontally at the raised traverse coordinate and appears clear of the workpiece. Go Home can still have a final Z movement remaining. Keep observing until the operation ends; a clear traverse does not prove a clear endpoint.</p></aside>
+<p>If machine zero lies outside valid configured travel or the route fails another validation, the request is rejected rather than making zero valid by changing the machine settings. Do not alter limits simply to enable this command.</p>
+<p>If all relevant commanded coordinates are already within the configured tolerances of zero, the control can be unavailable because no positioning is required. Read the Machine position and current state before concluding that the button has failed.</p>
+<p>Reaching machine zero does not establish that the spindle is stopped or that access to the table is permitted. Use the installed stopping and access procedure for unloading, inspection or maintenance.</p>
+
+</section>
+<section id="go-reference" aria-labelledby="go-reference-title"><h2 id="go-reference-title">9.6 Use Go Ref with the applied work reference and tool correction</h2>
+
+<p><strong>Go Ref</strong>, also identified as <strong>Go Reference</strong> or <strong>GoToReference</strong>, requests the location of the applied work-path reference with its current tool and live corrections. It does not set a new work origin, measure the material or perform homing.</p>
+<p>For each axis, the machine destination is the applied reference coordinate plus the applicable tool offset and live correction. This is the inverse relationship of the work-position display. Where this reference is the frame used by that display, arrival corresponds to work zero within the configured positioning tolerances.</p>
+<table><caption>Table 9-6. Illustrative Go Ref destination</caption><thead><tr><th scope="col">Axis</th><th scope="col">Applied reference</th><th scope="col">Tool/live correction total</th><th scope="col">Machine destination</th></tr></thead><tbody>
+<tr><td>X</td><td>400 mm</td><td>0 mm</td><td>400 mm.</td></tr>
+<tr><td>Y</td><td>200 mm</td><td>0 mm</td><td>200 mm.</td></tr>
+<tr><td>Z</td><td>100 mm</td><td>50 mm</td><td>150 mm.</td></tr>
+</tbody></table>
+<p>The example explains the arithmetic only. It does not establish a suitable destination for your actual tool. A change of applied tool correction can change the machine-coordinate destination even when the stored job origin is unchanged.</p>
+<h3>The applied reference may differ from the initial selector</h3>
+<p>A loaded machining file can explicitly use another work reference or several reference systems. The positioning command reads the reference currently applied to the prepared work path. Do not assume that its destination always comes directly from whichever G54–G59 row you most recently selected or inspected in Configuration.</p>
+<p>For a simple file explicitly using G55, for example, the prepared path can use G55 independently of an initial G54 selection. For more complex files, the prepared path's reference representation needs to be understood through the job's setup and preview. Review <a href="08-work-origins.html#program-origins">Chapter 8</a> before using Go Ref with an unfamiliar multi-origin job.</p>
+<ol class="journey">
+<li><strong>Identify the applied job reference.</strong><p>Confirm the file's requirements and accepted origin values. Finish any preparation or reference update first.</p></li>
+<li><strong>Confirm the actual tool and correction.</strong><p>Do not use an unverified tool length or a stale correction to position the tool tip at a job datum.</p></li>
+<li><strong>Check the complete route and final point.</strong><p>Include the last Z movement. Work zero may be on a material surface or another low datum, not a clearance point.</p></li>
+<li><strong>Issue Go Ref once.</strong><p>Observe the route and use the appropriate stop if anything differs from the approved expectation.</p></li>
+<li><strong>Verify completion.</strong><p>Read the settled coordinates and result. The managed Go Ref route does not itself start the main machining program.</p></li>
+</ol>
+<aside class="learning-example"><h3>Work zero is on the material top</h3><p>If the job defines work Z zero at the material surface, Go Ref can finish at that datum rather than a convenient distance above it. Do not use the command as a casual way to hover over the job. Establish that its exact endpoint and approach are appropriate before starting.</p></aside>
+<p>If the result is unexpected, stop further movement and check the applied reference, tool correction and job preparation. Do not change an origin merely to make Go Ref arrive at a more convenient point; use the correct positioning task and approved destination.</p>
+
+</section>
+<section id="return-to-work" aria-labelledby="return-to-work-title"><h2 id="return-to-work-title">9.7 Treat ReturnToWork as a program start or continuation</h2>
+
+<p><strong>ReturnToWork</strong> is not a harmless inspection move. It returns toward the position currently required by the retained machining path and, after successful alignment and handoff, can start or resume that path automatically. Prepare for machining before requesting it, not after the return movement finishes.</p>
+<p>The retained position is the machine-coordinate position associated with the current prepared program state. It is not simply the last location you remember cutting, the work origin or the point where the head happens to be parked. Loading, resetting, changing the prepared start or changing relevant coordinate information can affect what position is required.</p>
+<h3>How a return can begin</h3>
+<p>A normal Run request can discover that the head is not at the required program position. The application can then use the return-positioning mechanism as part of starting the job. The operator should therefore expect a Run request to initiate preparation or positioning before ordinary cutting movement.</p>
+<p>The separate ReturnToWork command also exists in the command catalog. Do not use it as a shortcut around the normal job-start procedure or to apply an unprepared line selection. A newly highlighted line does not by itself prove that the retained return destination and tool state have been prepared for that line.</p>
+<table><caption>Table 9-7. What a return operation can involve</caption><thead><tr><th scope="col">Stage</th><th scope="col">Meaning for the operator</th></tr></thead><tbody>
+<tr><td>Start preparation through the normal Run workflow</td><td>The application may prepare a required entry tool before entry positioning. Observe any tool operation as part of the start sequence.</td></tr>
+<tr><td>Return positioning</td><td>The head follows the managed route to the retained work-path destination.</td></tr>
+<tr><td>Stopped/alignment checks</td><td>The return mechanism checks readiness and position before handing execution back.</td></tr>
+<tr><td>Successful handoff</td><td>The main machining path can start without another Run click.</td></tr>
+<tr><td>Rejected or interrupted handoff</td><td>Read the result and reassess the state. Arrival near the expected point is not proof that machining has resumed.</td></tr>
+</tbody></table>
+<ol class="journey">
+<li><strong>Confirm the correct job and intended starting state.</strong><p>Resolve the file, selected start, prior Pause/Reset/Reset and any preparation changes through the approved execution procedure.</p></li>
+<li><strong>Prepare for the machining that may follow.</strong><p>Verify material, fixtures, references, required tools, spindle-related job setup and the whole return route.</p></li>
+<li><strong>Use the approved start or continuation control once.</strong><p>Know whether you are requesting normal Run preparation or an explicitly authorized direct ReturnToWork operation.</p></li>
+<li><strong>Observe the entire sequence.</strong><p>Do not enter the area when return positioning stops; that stopped interval can precede the program handoff.</p></li>
+<li><strong>Check whether execution actually started.</strong><p>Read current program state and the operation report. A return-completed handoff entry means execution was handed to the main program, not that the machining job has finished.</p></li>
+</ol>
+<p>The internal handoff routine is named <strong>M100</strong> in reports. An operator may need to quote that name when reporting a rejection, but does not need to edit or run the routine independently. Its readiness and alignment checks are part of the return mechanism.</p>
+<aside class="learning-example"><h3>No obvious travel, but execution can still start</h3><p>The head is already close to the retained destination. ReturnToWork may require little visible repositioning, yet its handoff can still start the machining path. Do not judge the command's consequence by the distance you expect the head to move.</p></aside>
+<p>If the tool, workpiece or reference changed during an interruption, retaining the program's place does not establish a valid continuation. Complete the required recovery and setup checks first. Use <a href="index.html#chapter-17">the stopping and recovery chapter</a> and <a href="index.html#chapter-18">the selected-start chapter</a> for those execution decisions.</p>
+
+</section>
+<section id="manual-parking" aria-labelledby="manual-parking-title"><h2 id="manual-parking-title">9.8 Set up and request manual parking</h2>
+
+<p><strong>GoToPark</strong> moves to the stored parking coordinates for X, Y and Z. These are absolute machine coordinates, independent of the work reference and tool offsets. Parking does not mean finding an empty space automatically or moving to the last position used for unloading.</p>
+<p>The settings are under <strong>General → X → Park Position</strong>, <strong>General → Y → Park Position</strong> and <strong>General → Z → Park Position</strong>. The underlying setting name may appear as <strong>ParkPosition</strong>. The operator groups contain X, Y and Z; there is no separate ordinary YG parking coordinate to adjust.</p>
+<table><caption>Table 9-8. Parking values and their meaning</caption><thead><tr><th scope="col">Setting</th><th scope="col">Meaning</th><th scope="col">Do not confuse it with</th></tr></thead><tbody>
+<tr><td>X Park Position</td><td>Final machine X coordinate.</td><td>A distance to move from current X.</td></tr>
+<tr><td>Y Park Position</td><td>Final machine Y coordinate.</td><td>A workpiece-origin coordinate.</td></tr>
+<tr><td>Z Park Position</td><td>Final machine Z coordinate after any horizontal traverse.</td><td>The intermediate Safe Z traverse height.</td></tr>
+<tr><td>Park Enabled</td><td>Controls the automatic completion-parking feature.</td><td>A requirement to permit an otherwise valid manual GoToPark request.</td></tr>
+</tbody></table>
+<p>The supplied parking values initially default to zero. That is a configuration starting value, not an approved parking location for every installation. Verify all three coordinates against the intended machine arrangement before using manual or automatic parking.</p>
+<ol class="journey">
+<li><strong>Obtain the approved parking coordinates.</strong><p>Confirm that the location suits the machine, current tool and expected fixtures. A park location suitable for one tool projection may not suit another.</p></li>
+<li><strong>Inspect or edit the three values while appropriately stopped.</strong><p>Use authorized Configuration access, confirm each complete machine coordinate and finish the Configuration transaction deliberately.</p></li>
+<li><strong>Check the current-to-park route.</strong><p>Include the first Z move, horizontal traverse when needed and final Z parking height. Parking does not inspect spindle rotation.</p></li>
+<li><strong>Issue GoToPark through its approved configured access.</strong><p>The command is available in the shortcut catalog without a supplied default key assignment. Do not guess a shortcut.</p></li>
+<li><strong>Observe completion and verify the final state.</strong><p>Read the report and settled Machine position. Complete the required spindle and access checks before approaching the machine.</p></li>
+</ol>
+<h3>Machine coordinates do not include the tool's projection</h3>
+<p>Changing work zero does not move the stored parking destination. Changing the active tool correction does not add that correction to Park Position either. The head's commanded machine destination is the stored value, but the physical tool attached to that head can differ in length and shape. Check actual tool clearance.</p>
+<aside class="learning-example"><h3>Same park coordinates, longer tool</h3><p>A longer tool is fitted while the three parking values remain unchanged. The head can finish at the same machine coordinates while the tool tip occupies a different physical height. Do not treat familiar stored parking numbers as proof that the new assembly clears the table.</p></aside>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 9-2 · SETTINGS SCREENSHOT REQUIRED</p><h3>Parking configuration and automatic-parking selection</h3><p>Supply an English Configuration view showing General, Park Enabled, TraverseVelocity and the X/Y/Z Park Position values. Label the final Z parking coordinate separately from the Safe Z traverse coordinate.</p><p>Suggested image: <code>assets/images/09-parking-settings.png</code>. Identify illustrated values as installation-specific examples, not recommended defaults.</p><figcaption>Manual parking and automatic completion parking use the same stored destination but have different triggers.</figcaption></figure>
+<p>GoToPark does not append the return-to-work handoff or start the main program. It also does not stop the spindle as part of this route. Establish the required spindle state through the approved operating procedure.</p>
+
+</section>
+<section id="automatic-parking" aria-labelledby="automatic-parking-title"><h2 id="automatic-parking-title">9.9 Understand parking after normal program completion</h2>
+
+<p><strong>Park Enabled</strong> under General controls automatic parking after the application accepts a normal completion of the main machining program. The supplied default is off. When enabled, a qualifying completion requests GoToPark once using the ordinary parking destination, readiness checks and route validation.</p>
+<p>This means the last cutting movement is not necessarily the last machine movement. If automatic parking is enabled, remain attentive after the program finishes and expect the parking route if its request is accepted.</p>
+<table><caption>Table 9-9. What triggers automatic parking</caption><thead><tr><th scope="col">Observed situation</th><th scope="col">Parking behaviour</th></tr></thead><tbody>
+<tr><td>Current program is reported completed normally and Park Enabled is on</td><td>The application requests parking once, subject to readiness and route validation.</td></tr>
+<tr><td>Park Enabled is off</td><td>No completion-triggered parking request is made.</td></tr>
+<tr><td>Program stopped after a requested stop</td><td>This does not trigger automatic parking.</td></tr>
+<tr><td>Observed fault or unknown termination</td><td>This does not trigger automatic parking.</td></tr>
+<tr><td>An obsolete completion belongs to an earlier program/start state</td><td>It is not treated as a current completion-parking trigger.</td></tr>
+<tr><td>The one parking request is rejected</td><td>The rejection is reported; it is not silently retried later.</td></tr>
+</tbody></table>
+<h3>Prepare the final move before starting the job</h3>
+<p>Before a job that will park automatically, verify Park Enabled, all three parking coordinates, the expected final tool and the complete route from the job's finishing region. Do not wait until the last cutting line to decide whether the saved parking setup is suitable.</p>
+<p>Include the final parking Z height in the check. The intermediate raised traverse does not remove the need to verify the final approach. If a different tool remains fitted at the end of this job, reassess its physical clearance rather than reusing yesterday's assumption.</p>
+<h3>Parking does not manage spindle shutdown</h3>
+<p>The automatic-parking trigger does not inspect spindle rotation and does not issue a spindle-stop command. Spindle sequencing belongs to the machining program and installed operating procedure. A completed program indication or a moving park sequence must not be treated as proof that the cutter has stopped rotating.</p>
+<aside class="learning-example"><h3>The cutting operation ended, then the head moved again</h3><p>With Park Enabled on, the application accepts the program's normal completion and requests the stored parking route. That movement is expected behaviour, not necessarily an unintended restart of cutting. Keep the area prepared until parking has ended and the required access conditions have been established.</p></aside>
+<h3>If automatic parking does not occur</h3>
+<p>Read the program termination report and any positioning message. A requested stop or uncertain result does not qualify as normal completion. Even after a qualifying completion, parking can be rejected because the axes are not available, a destination is invalid or the head is already at the parking destination within tolerance.</p>
+<p>Do not assume the application is waiting to retry automatically. The completion is consumed before the parking attempt. If a new manual park is required, resolve the cause and issue it deliberately under the manual-parking procedure.</p>
+<p>Turning Park Enabled on after a completed event has already been handled is not a command to move immediately. Similarly, turning it off is not the stop control for a parking route already in progress. Use the proper stop if interruption is necessary.</p>
+<p>The reported completion is a software observation, not a separate inspection of the workpiece or a certificate of physical machine condition. After parking, still verify the result and follow the machine's spindle, unloading and access procedures.</p>
+
+</section>
+<section id="interruption" aria-labelledby="interruption-title"><h2 id="interruption-title">9.10 Stop positioning and reassess before another request</h2>
+
+<p>Positioning is a finite automatic operation. Releasing the button or shortcut does not cancel the route already accepted. If an ordinary interruption is required, use the application's appropriate all-motion stopping control. For immediate danger, use the installed emergency response.</p>
+<p>Both Pause and Reset request stopping of all motion. They also cancel pending positioning continuation. Their distinction concerns the main machining program: Pause retains its cursor, while Reset requests its reset after stopping. Neither action is a promise that an interrupted positioning route can later continue from the same stage.</p>
+<table><caption>Table 9-10. Interruption and its consequence</caption><thead><tr><th scope="col">Action or event</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>Release a positioning button</td><td>The finite accepted route is not cancelled by release.</td></tr>
+<tr><td>Pause</td><td>Requests all-motion stopping and cancels pending positioning continuation while retaining the main program cursor.</td></tr>
+<tr><td>Reset</td><td>Requests all-motion stopping, cancels continuation and schedules main-program reset.</td></tr>
+<tr><td>Connection or relevant path state changes</td><td>The pending return continuation can be invalidated. Establish the current machine and program state before further action.</td></tr>
+<tr><td>Positioning stops before its end</td><td>Do not assume arrival or successful return handoff.</td></tr>
+</tbody></table>
+<ol class="journey">
+<li><strong>Issue the required stopping response.</strong><p>Do not rely on a feed slider, changing Park Enabled or closing a window as the stop procedure.</p></li>
+<li><strong>Observe until the movement and stopping response settle.</strong><p>An accepted stop request is not instantaneous standstill. Follow the emergency procedure if the expected response is absent or danger develops.</p></li>
+<li><strong>Identify where the operation stopped.</strong><p>Record whether it was on the initial Z leg, horizontal traverse, final Z leg or return handoff.</p></li>
+<li><strong>Check both positioning and machining state.</strong><p>For ReturnToWork, establish whether the main program had already started. Use current indications and messages rather than the stage you last remembered.</p></li>
+<li><strong>Resolve the reason for interruption.</strong><p>Recheck the actual position, tool, references, destination and route before preparing a new request.</p></li>
+</ol>
+<h3>A new request builds from a new starting point</h3>
+<p>After an interrupted Go Home, Go Ref or parking move, a new accepted request resolves its route again from the current commanded position. It is not a “continue leg two” instruction. Depending on the new X/Y relationship, the route may differ from the first attempt.</p>
+<p>After an interrupted return, use the approved program recovery procedure. Reset may have rewound the main program's place; Pause may have retained it, but the physical setup still needs verification. Do not press ReturnToWork repeatedly to discover which program state remains.</p>
+<aside class="learning-example"><h3>Stopped during the traverse</h3><p>You stop parking halfway across the table because a route concern is noticed. The next parking request, if later authorized and accepted, is prepared from that new position. First resolve the obstruction and check the new route; do not assume the rest of the original path is automatically safe.</p></aside>
+<p>The return mechanism checks for changes in the prepared path and coordinate state so that an obsolete continuation is not treated as current. This does not replace the operator's responsibility to verify the job after a reset, reload, tool change or physical disturbance.</p>
+<p>Travel stopping does not itself stop all auxiliary equipment or establish that the spindle is stationary. Follow <a href="02-safe-operation.html#access">the access procedure</a> before approaching the machine. If machine reference or mechanical condition is uncertain, obtain the required inspection and homing recovery before another automatic movement.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">9.11 Read positioning messages and resolve a refused or incomplete move</h2>
+
+<p>When a positioning operation does not behave as expected, first establish whether it was refused before movement, interrupted during movement, or completed but unable to start the machining program. These situations require different responses. Repeating the same command without understanding the message can cause a new movement as soon as the blocking condition disappears.</p>
+<h3>Read the current attempt as a sequence</h3>
+<p>The report can contain several positioning attempts. Identify the most recent one by its time and command name, then read the following messages in order. An earlier completion does not describe a later request. Keep enough surrounding messages to show a stop, connection change or program operation that happened between them.</p>
+<p><strong>Positioning requested</strong> records a request. <strong>Positioning accepted</strong> records the accepted start and destination coordinates and speed; it does not mean the head has arrived. <strong>Positioning completed</strong> indicates the positioning operation reached its completion condition. <strong>Positioning cancelled</strong> indicates that the pending operation was cancelled; use its accompanying explanation to understand why.</p>
+<p>The report uses command identifiers such as <code>GoToReference</code> for the action labelled Go Ref on the main window. Recognizing that name is sufficient; the operator does not need to know how commands are implemented.</p>
+<table><caption>Table 9-11. Common positioning problems and the next check</caption><thead><tr><th scope="col">What you observe</th><th scope="col">What to check</th><th scope="col">Appropriate response</th></tr></thead><tbody>
+<tr><td>The positioning control is unavailable</td><td>Connection, completed homing, stopped axes, axis faults, other active operations and current destination.</td><td>Identify the unavailable prerequisite. Being already at a non-return destination within tolerance can also make the command unavailable.</td></tr>
+<tr><td>The request is rejected with a travel or coordinate explanation</td><td>The intended destination and intermediate traverse height, using machine coordinates.</td><td>Have the setup corrected through the authorized procedure. Do not enlarge travel limits merely to admit the move.</td></tr>
+<tr><td>Go Ref does not match the work-origin row you expected</td><td>The reference actually applied to the prepared program and the active tool corrections.</td><td>Reconcile the prepared job with the intended work origin before requesting movement.</td></tr>
+<tr><td>The head moves only vertically</td><td>Whether X and Y are already within destination tolerance.</td><td>A direct Z move can be the intended route. Check its entire vertical path and final height.</td></tr>
+<tr><td>Automatic parking did not happen</td><td>Park Enabled, the program termination reason and any rejected parking request.</td><td>Resolve the cause. There is no automatic retry waiting for a later opportunity.</td></tr>
+<tr><td>The head returns near the work position but cutting does not begin</td><td>The return handoff message, main-program readiness and any intervening stop.</td><td>Keep the machine stopped while the cause is established. Near the destination is not proof that the handoff checks passed.</td></tr>
+<tr><td>A cancellation follows movement</td><td>The current position, stopping state, program state and accompanying reason.</td><td>Treat arrival and continuation as unconfirmed. Reassess before a new command.</td></tr>
+</tbody></table>
+<h3>Understand a return handoff result</h3>
+<p>ReturnToWork uses a machine-control routine named <strong>M100</strong> to transfer execution to the main machining program. If that name appears in a message, it refers to the final start check after returning. It is not an instruction to open an editor or change the routine.</p>
+<table><caption>Table 9-12. Meaning of the supplied M100 result numbers</caption><thead><tr><th scope="col">Result</th><th scope="col">Meaning for the operator</th><th scope="col">What follows</th></tr></thead><tbody>
+<tr><td>0</td><td>The routine successfully issued the main-program start.</td><td>Expect machining execution. This is not a message that the machining job has finished.</td></tr>
+<tr><td>1</td><td>A busy, stopped or unsuitable program/path condition prevented the handoff.</td><td>Review current job readiness and preceding stop messages.</td></tr>
+<tr><td>2</td><td>The axes were unavailable or an axis/coupling fault prevented the handoff.</td><td>Follow the fault and recovery procedure; do not bypass the check.</td></tr>
+<tr><td>3</td><td>The current commanded position did not pass the alignment check against the program's required return position.</td><td>Have position, references and tool correction checked before another attempt.</td></tr>
+</tbody></table>
+<p>These meanings apply to the supplied routine. An installation with an authorized customized routine needs corresponding machine documentation. A stopped or failed routine must also be read with its exit reason; a number alone does not describe every failure.</p>
+<p>A result-3 message may include observed alignment information gathered after the routine ended. Preserve that information for support, but do not treat it as an exact measurement of the earlier instant when the routine rejected the handoff. Do not alter axis step, tolerance, coupling or work zero simply to make a check pass.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 9-3 · REPORT SCREENSHOT REQUIRED</p><h3>One positioning attempt in the report</h3><p>Supply an English report view showing a genuine positioning request, its accepted coordinates and speed, and the resulting completion or cancellation. Include timestamps and enough surrounding context to associate the messages with one attempt.</p><p>Suggested image: <code>assets/images/09-positioning-report.png</code>. If illustrating ReturnToWork, label a successful handoff as the start of main-program execution, not job completion. Use a recorded or approved demonstration; do not create a machine fault to obtain this image.</p><figcaption>Read the complete sequence rather than judging an operation from one isolated message.</figcaption></figure>
+<h3>Give support a usable description</h3>
+<p>Record the requested action, whether movement started, the stage reached, the current Machine coordinates, the fitted tool and the relevant work-origin or parking values. Include the exact report text and say whether Pause, Reset, a connection change or a program reload occurred. Describe the physical observation separately from what the screen reported.</p>
+<p>If the coordinate readings, physical position or stopping behaviour cannot be reconciled, leave the operation stopped and obtain assistance. A clearer report is more useful than repeated attempts that change the evidence.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">9.12 Work through a positioning example and check your understanding</h2>
+
+<p>Use this example to practise predicting the complete movement before pressing a control. The numbers describe an imaginary installation. They are not parking recommendations and must not be entered into a real machine merely to reproduce this exercise.</p>
+<h3>Example: moving from the work area to a parking point</h3>
+<p>Assume the head is stopped at Machine X = 100 mm, Y = 200 mm and Z = 50 mm. The authorized parking destination is X = 500 mm, Y = 300 mm and Z = 80 mm. On this imaginary machine, the configured Z MaxCourse is 200 mm. All points are within the approved travel ranges and the actual tool assembly has been checked against the entire route.</p>
+<p>X and Y must change, so parking is not one diagonal movement directly to the final point. The application first requests the Z traverse coordinate, then moves across, then requests the final parking Z. The route is prepared before motion begins.</p>
+<table><caption>Table 9-13. Predicted machine coordinates in the example</caption><thead><tr><th scope="col">Stage</th><th scope="col">X (mm)</th><th scope="col">Y (mm)</th><th scope="col">Z (mm)</th><th scope="col">What the operator checks</th></tr></thead><tbody>
+<tr><td>Starting position</td><td>100</td><td>200</td><td>50</td><td>The current position is understood and the first vertical route is clear.</td></tr>
+<tr><td>End of initial Z movement</td><td>100</td><td>200</td><td>200</td><td>The head has reached the configured traverse coordinate.</td></tr>
+<tr><td>End of horizontal traverse</td><td>500</td><td>300</td><td>200</td><td>The tool assembly clears everything along the horizontal route.</td></tr>
+<tr><td>Final parking position</td><td>500</td><td>300</td><td>80</td><td>The final approach and the tool's physical height are suitable.</td></tr>
+</tbody></table>
+<p>The three movements change Z by +150 mm, move X by +400 mm and Y by +100 mm together, then change Z by −120 mm. The intermediate value of 200 mm is not the parking height. Stopping there would leave the operation unfinished.</p>
+<p>Before requesting this move, the operator checks the configured positioning speed, the spindle condition required by the machine procedure and whether any person or object is in the route. After requesting it, the operator observes the complete sequence and checks the settled result. Parking completion alone does not authorize reaching into the work area.</p>
+<h3>Change only the starting position</h3>
+<p>Now suppose the starting coordinates are X = 500 mm, Y = 300 mm and Z = 50 mm, with the same parking destination. X and Y already match, so the operation requests a direct vertical move to Z = 80 mm. It does not first travel to Z = 200 mm. The operator must check that direct vertical route rather than expect an automatic preliminary lift.</p>
+<p>If X and Y differ from the destination by amounts smaller than their configured positioning tolerances, the same vertical-only choice can apply: the current X/Y coordinates are retained. The purpose of this detail is to explain a small displayed difference, not to invite the operator to adjust tolerances.</p>
+<h3>Change the purpose of the request</h3>
+<p>If the intended action were Go Home, the destination would instead be machine zero on all three axes. If it were Go Ref, the destination would come from the work reference applied to the prepared path plus its active corrections. If it were ReturnToWork, the destination would be the prepared program's required return position and a successful handoff could start the program immediately.</p>
+<p>These commands can share a route pattern without sharing a destination or an outcome. First identify the purpose, then establish the destination, then check the route and the activity that may follow.</p>
+<h3>Review questions</h3>
+<dl>
+<dt>Does Go Home perform homing?</dt><dd><p>No. It requests machine-zero coordinates after the required readiness and homing conditions have already been established. Use the homing procedure to establish machine reference.</p></dd>
+<dt>Does a raised intermediate traverse guarantee obstacle clearance?</dt><dd><p>No. It uses a configured coordinate. The operator must check the tool assembly, fixtures and complete physical route.</p></dd>
+<dt>Can ReturnToWork start cutting without another press of Run?</dt><dd><p>Yes. Treat the return request as permission for the prepared program to start or continue after the handoff succeeds.</p></dd>
+<dt>Does disabling Park Enabled prevent a manually requested park?</dt><dd><p>No. That setting controls completion-triggered automatic parking. It is not a general lock on GoToPark and is not a stop control.</p></dd>
+<dt>Will a rejected automatic park retry when the cause disappears?</dt><dd><p>No. Resolve the cause and deliberately prepare a new request if parking is still required.</p></dd>
+<dt>Is a stopped head or a completed parking message proof that the spindle has stopped?</dt><dd><p>No. Check the spindle and the required machine access conditions separately.</p></dd>
+<dt>What must be checked after an interrupted return?</dt><dd><p>The physical position, tool and coordinate setup, the retained or reset program state, and whether the main program had already started. Do not infer all of these from one positioning message.</p></dd>
+</dl>
+<p>You are ready to apply this chapter when you can explain where the chosen command will go, how it will get there, what can happen afterward and how you will verify the result. Practise that explanation with the machine's approved setup information before operating independently.</p>
+<aside class="note"><strong>About the illustrations and behaviour described here.</strong> The route diagram is a conceptual illustration, not a scale drawing or collision simulation. Two marked spaces identify the installation screenshots still required. The chapter describes the application's positioning commands and supplied return handoff reviewed on 8 October 2026; approved installation-specific controls or customized routines need their own matching instructions.</aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZAC+TC · Operator Manual · Chapter 9</span><a href="index.html#chapter-09">Return to the contents</a></footer></main></body></html>

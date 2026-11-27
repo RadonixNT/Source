@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 10 — Spindle Operation | RouterXYZBC+TC</title>
+<meta name="description" content="An operator's guide to spindle controls, requested RPM, manual and program operation, readiness, start and stop waits, and fault reporting.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#basics">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZBC+TC · CHAPTER 10</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Spindle Operation</h1><p class="lead">Understand what the spindle controls request, prepare the tool and machine, and distinguish an accepted command from actual rotation or standstill.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> Procedures describe the supplied application and machine-control routines. Use the approved tooling data and operating procedure for the installed machine.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-10">Manual contents</a> · <a href="09-positioning.html">Previous chapter: Positioning and parking</a></nav></header>
+<div class="body"><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#basics">Understand the spindle, its speed request and its actual movement</a></li>
+<li><a href="#controls">Locate the controls and understand when they are available</a></li>
+<li><a href="#preparation">Prepare the tool, machine and intended operation before starting</a></li>
+<li><a href="#speed">Set the requested RPM deliberately</a></li>
+<li><a href="#manual-start">Start the spindle manually and verify its response</a></li>
+<li><a href="#manual-stop">Stop manual running and distinguish it from a motion stop</a></li>
+<li><a href="#program-commands">Recognize spindle instructions in a machining program</a></li>
+<li><a href="#start-wait">Understand the start delay and the limits of reverse operation</a></li>
+<li><a href="#stop-wait">Understand rundown, stopped qualification and timeout</a></li>
+<li><a href="#problems">Respond to a refused start, lost readiness or an incomplete stop</a></li>
+<li><a href="#examples">Work through common operating situations</a></li>
+<li><a href="#review">Review the operating decisions before working independently</a></li>
+</ol></nav>
+<section id="basics" aria-labelledby="basics-title"><h2 id="basics-title">10.1 Understand the spindle, its speed request and its actual movement</h2>
+
+<p>The spindle is the rotating assembly that holds and drives the cutting tool. The machine axes move that assembly around the workpiece; spindle rotation turns the cutter. These are related parts of machining, but they are controlled separately. A head that has stopped travelling can still contain a rotating cutter.</p>
+<p>Spindle speed is expressed in <strong>RPM</strong>, meaning revolutions per minute. A request of 12,000 RPM asks for twelve thousand revolutions in one minute. It does not mean a feed distance, an axis speed or a percentage of the machining program. The appropriate speed depends on the approved tool, material and cutting process.</p>
+<h3>Three different things can be called “speed”</h3>
+<p>First there is the speed the job requires. Second there is the speed command sent by the application to the spindle equipment. Third there is the physical speed that the shaft has actually reached. During acceleration or deceleration, and during a fault, these can differ.</p>
+<p>The main-window spindle RPM control represents the speed <strong>command</strong>. It reads the configured speed output and displays that value in RPM. It is not a separate shaft-speed measuring instrument. Seeing the requested number on the screen therefore confirms neither that the spindle has reached that speed nor that the cutting tool is rotating correctly.</p>
+<table><caption>Table 10-1. Distinguish the spindle indications</caption><thead><tr><th scope="col">Item</th><th scope="col">What it means</th><th scope="col">What it does not establish</th></tr></thead><tbody>
+<tr><td>Spindle run control</td><td>The application's forward-run output request.</td><td>Measured shaft rotation, correct tool installation or attained RPM.</td></tr>
+<tr><td>Spindle RPM control</td><td>The speed-output command displayed in revolutions per minute.</td><td>An independent measurement of the cutting tool's speed.</td></tr>
+<tr><td>Axis or machining feed</td><td>How the machine moves along a travel or cutting path.</td><td>How fast the spindle rotates.</td></tr>
+<tr><td>Spindle readiness</td><td>The applicable configured starting conditions are satisfied.</td><td>A measurement that the spindle has accelerated to cutting speed.</td></tr>
+<tr><td>Qualified stopped status</td><td>The supplied control logic's stop conditions have been satisfied.</td><td>Permission by itself to touch the tool or enter the machine.</td></tr>
+</tbody></table>
+<h3>Starting and setting speed are separate actions</h3>
+<p>A nonzero speed request does not by itself switch on the forward-run output. Conversely, a run request with a zero speed command is not a useful substitute for an approved cutting-speed setting. Before starting manually, check both the requested RPM and the intended run state.</p>
+<aside class="learning-example"><h3>The screen shows 12,000, but the cutter is stationary</h3><p>The speed command may have been prepared while the run output is off. The number alone does not prove a fault. Check the run state and the actual response through the approved observation method. Do not issue repeated start requests before understanding the state.</p></aside>
+<p>Throughout this chapter, <em>request</em> describes what the controls ask the machine to do. <em>Observe</em> and <em>verify</em> describe the operator's checks of the result. Keep that distinction when reporting a problem: “the RPM control showed 12,000” is different from “an approved speed measurement confirmed 12,000 RPM.”</p>
+<p>Review <a href="02-safe-operation.html#access">the machine access procedure</a> before spindle work. Ordinary operation, a software stop and maintenance isolation are different activities. This chapter explains the controls; it does not replace the installed machine's procedure for securing the tool and isolating hazardous energy.</p>
+
+</section>
+<section id="controls" aria-labelledby="controls-title"><h2 id="controls-title">10.2 Locate the controls and understand when they are available</h2>
+
+<p>Find the <strong>Spindle</strong> toggle in the main-window spindle area. Beside it is the vertical spindle-speed slider. The same area also contains the tool selector and Measure Tool control. Those nearby controls perform different operations; selecting a tool or measuring its length is not a spindle start command.</p>
+<p>The Spindle toggle turns green when either mapped run output is active, including during program-controlled reverse rotation. The green face shows a run request. Actual rotation and standstill are checked separately.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 10-1 · MAIN-WINDOW SCREENSHOT REQUIRED</p><h3>Spindle toggle and RPM slider</h3><p>Insert an English main-window crop showing Spindle, the complete vertical speed slider with its displayed value, the tool selector and Measure Tool. Annotate the toggle as “Spindle run request” and the speed value as “Commanded RPM — not measured shaft speed.” Identify the tool controls separately.</p><p>Suggested image: <code>assets/images/10-spindle-controls.png</code>. Capture an approved stationary setup and state whether it is Simulation or Normal operation. Do not stage a live spindle start merely to obtain the image.</p><figcaption>The neighbouring controls belong to the same machine area but do not perform the same task.</figcaption></figure>
+<h3>Availability follows the operation currently in progress</h3>
+<p>Manual on/off control and speed adjustment have different availability rules. While a machining program is active, the application prevents manual use of the Spindle toggle, but ordinarily permits adjustment of the RPM command. This avoids treating manual start/stop and speed adjustment as interchangeable actions.</p>
+<table><caption>Table 10-2. Main-window spindle-control availability</caption><thead><tr><th scope="col">Machine/application state</th><th scope="col">Manual forward on/off</th><th scope="col">RPM adjustment</th></tr></thead><tbody>
+<tr><td>Connected and idle, with the required mapped outputs and access</td><td>Available, subject to the machine's interlocks.</td><td>Available.</td></tr>
+<tr><td>Ordinary manual jog in progress</td><td>Jog alone does not disable it.</td><td>Jog alone does not disable it.</td></tr>
+<tr><td>Main machining program active</td><td>Blocked.</td><td>Normally available unless another blocking operation is active.</td></tr>
+<tr><td>Program loading or a connection transition</td><td>Blocked.</td><td>Blocked.</td></tr>
+<tr><td>Homing, managed positioning or a tool operation</td><td>Blocked.</td><td>Blocked.</td></tr>
+<tr><td>Disconnected or the relevant physical output is unavailable</td><td>Unavailable.</td><td>Unavailable.</td></tr>
+</tbody></table>
+<p>Operator access is also required. Applying machine-control program changes can introduce additional restrictions, including blocking RPM adjustment. A control becoming available again does not automatically mean that the physical setup is ready for a start.</p>
+<h3>Do not use availability as an instruction</h3>
+<p>The ability to operate a control during ordinary jog means only that jog does not impose that particular software restriction. It does not advise starting a tool while moving close to material. Plan spindle operation and axis movement as separate, deliberate steps under the approved procedure.</p>
+<p>If the toggle is disabled during a machining operation, do not look for a live output editor to bypass it. Follow the prescribed program interruption and spindle-stop procedure. If there is immediate danger, use the machine's emergency response rather than trying to regain access to a greyed-out control.</p>
+<aside class="learning-example"><h3>The slider works but the toggle does not</h3><p>A machining program is active. Its spindle speed can be adjusted through the permitted RPM control while manual on/off remains blocked. This is an intentional difference in control availability, not evidence that the toggle is broken.</p></aside>
+<p>After any rejected or suppressed start, read the available report and examine the actual run and speed indications. The machine interlocks may clear an unsuitable run request after it is issued. A brief change on the screen is not a successful start.</p>
+
+</section>
+<section id="preparation" aria-labelledby="preparation-title"><h2 id="preparation-title">10.3 Prepare the tool, machine and intended operation before starting</h2>
+
+<p>Before starting the spindle, establish why it is being started and what operation will follow. A manual check, a prepared cutting job and a tool exchange are different activities. The application cannot decide that a physically fitted cutter, holder or fixture is suitable just because the requested RPM is within its numerical range.</p>
+<p>Use the approved setup sheet and tool information for the job. Identify the actual fitted tool and its holder, and complete the machine's clamping and inspection procedure. If the tool identity shown on the screen disagrees with the fitted tool, resolve that disagreement before rotation. Do not try a brief start to find out whether the tool is secure.</p>
+<table><caption>Table 10-3. Checks before a spindle start</caption><thead><tr><th scope="col">Check</th><th scope="col">Operator action</th></tr></thead><tbody>
+<tr><td>Tool and holder</td><td>Confirm the approved assembly, its condition, correct installation and retention through the installed procedure.</td></tr>
+<tr><td>Requested speed</td><td>Use the approved RPM for this tool and operation, within the permitted limits of the complete assembly.</td></tr>
+<tr><td>Direction</td><td>Confirm the required rotation direction and that the machine supports it.</td></tr>
+<tr><td>Work area</td><td>Complete the prescribed guarding, clearance and access checks. Remove setup equipment through the approved procedure before starting.</td></tr>
+<tr><td>Machine supplies and indications</td><td>Resolve relevant pressure, thermal, drive-ready and tool-grip conditions. Do not dismiss an unexpected indication.</td></tr>
+<tr><td>Current activity</td><td>Know whether you are starting manually or starting a program that controls the spindle itself.</td></tr>
+<tr><td>Stopping response</td><td>Know the ordinary interruption procedure and the emergency response from the operating position.</td></tr>
+</tbody></table>
+<h3>What the supplied readiness checks cover</h3>
+<p>The supplied machine-control logic checks the emergency circuit state and the configured forward run output. It also checks pressure, spindle thermal condition, drive readiness, tool-clamped, tool-released and piston-retracted signals where those inputs are assigned to enabled physical sensors. The tool-release output must not be active, and a tool operation must not be underway.</p>
+<p>These checks describe the configured signals, not a complete inspection of the machine. A “tool clamped” signal cannot identify the cutting tool or certify that its cutting edges are undamaged. A “drive ready” signal is not a measurement of attained spindle speed. Continue to perform the physical and job checks required by the machine documentation.</p>
+<h3>Optional sensors need a careful interpretation</h3>
+<p>Some installations do not include every optional sensor. In the supplied logic, an absent optional physical input is treated differently from an assigned sensor reporting the wrong state. For example, an assigned pressure signal that does not indicate the required condition prevents the applicable operation; it is not silently treated as a machine without that sensor.</p>
+<p>Do not disable a sensor mapping, substitute a fixed value or alter an interlock to obtain a start. Configuration describes the installed equipment and belongs to authorized setup work. An unexpected sensor state during ordinary operation needs investigation.</p>
+<aside class="learning-example"><h3>A ready control with the wrong tool</h3><p>The outputs and configured sensors satisfy the software's start conditions, but the operator notices that the fitted cutter does not match the setup sheet. The start must still wait. Software readiness cannot resolve tool identity or choose suitable cutting conditions.</p></aside>
+<p>Once the checks are complete, remain at the operating position. Do not leave the controls after issuing a start request on the assumption that the machine will either start correctly or refuse all unsuitable conditions. Observe the result and follow the established response if it differs from the expected behaviour.</p>
+
+</section>
+<section id="speed" aria-labelledby="speed-title"><h2 id="speed-title">10.4 Set the requested RPM deliberately</h2>
+
+<p>Choose the requested RPM from the approved job information. Do not select a speed by copying another machine, using the slider's midpoint or assuming that the largest permitted number is the best cutting speed. The spindle, holder, cutter and cutting process each impose requirements.</p>
+<p>The setting <strong>MaximumSpindleSpeed</strong> defines the full-scale RPM used by the control system. It also sets the upper end of the main-window speed control. This is a machine configuration value, not an operator recommendation. Changing it changes the relationship between displayed RPM and the command sent to the equipment; it is not a way to obtain a little more speed for one job.</p>
+<h3>Use the slider as a live command</h3>
+<p>The vertical slider changes its value as it is operated. It is not a draft entry awaiting an OK button. Dragging the handle can publish successive speed changes while the pointer moves. Clicking elsewhere on the track can select that position directly.</p>
+<ol class="journey">
+<li><strong>Read the required RPM and the current displayed value.</strong><p>Confirm that you are using the spindle-speed control, not the machining-feed or jog control.</p></li>
+<li><strong>Confirm that adjustment is appropriate now.</strong><p>Before a manual start, prepare the value with the run request off. During machining, make only the adjustment authorized by the operating procedure.</p></li>
+<li><strong>Move the slider deliberately.</strong><p>Use a controlled adjustment and watch the number. Avoid clicking an arbitrary place on the track merely to give it focus.</p></li>
+<li><strong>Release the control and verify the settled indication.</strong><p>Check that the displayed command is the intended value. The machine-control program can also write this output.</p></li>
+<li><strong>Observe the process through the approved method.</strong><p>The new command does not establish that the spindle has already reached the new speed.</p></li>
+</ol>
+<table><caption>Table 10-4. Slider interactions to recognize</caption><thead><tr><th scope="col">Interaction</th><th scope="col">Effect in the supplied control</th></tr></thead><tbody>
+<tr><td>Drag the handle</td><td>Changes the value during the drag.</td></tr>
+<tr><td>Click the track away from the handle</td><td>Can directly select a different value at that location.</td></tr>
+<tr><td>Arrow keys while the slider has focus</td><td>Adjust by the configured small increment.</td></tr>
+<tr><td>Page Up / Page Down</td><td>Adjust by the configured larger increment.</td></tr>
+<tr><td>Home / End while the slider has focus</td><td>Select the minimum or maximum. These keys do not home the machine in this context.</td></tr>
+<tr><td>Mouse wheel while focused and editable</td><td>Changes the value in small increments.</td></tr>
+<tr><td>Escape or loss of focus during a gesture</td><td>Ends the interaction; it does not undo a speed value already published.</td></tr>
+</tbody></table>
+<p>The manual increment comes from <strong>Router → Spindle → Spindle Speed Step</strong> (100 RPM by default). Page Up and Page Down use ten increments. The slider displays the executed S setpoint within the configured range without rounding it to a manual increment.</p>
+<h3>A manual change does not rewrite the machining file</h3>
+<p>The slider and S commands share the speed setpoint. When an executed S command changes the setpoint, the slider follows it within the configured limits, including after a manual adjustment. The last setpoint remains in effect through M3, M4 and M5 and is saved as <strong>Router → Spindle → Current Spindle Speed</strong>. Restoring the value on connection does not issue a run command.</p>
+<aside class="learning-example"><h3>A manual adjustment survives a stop</h3><p>After S12000, an authorized slider change to 10,000 RPM remains at 10,000 through M5 and the next M3. A subsequent S command can select a new speed.</p></aside>
+<p>Do not use a zero RPM command as a substitute for a spindle-stop request. The run output and the qualified stopped condition are separate. Equally, lowering the spindle RPM does not stop the machine axes or reduce the programmed feed automatically.</p>
+
+</section>
+<section id="manual-start" aria-labelledby="manual-start-title"><h2 id="manual-start-title">10.5 Start the spindle manually and verify its response</h2>
+
+<p>Manual starting is appropriate only when the machine's approved procedure calls for it and the manual control is available. It is not a replacement for the spindle commands in a prepared machining program. For ordinary program execution, use the job-start procedure and let the verified program sequence control the required spindle actions.</p>
+<p>The main Spindle toggle directly changes the forward-run output request. It does not execute the supplied M3 routine and therefore does not perform M3's programmed minimum start wait. Do not interpret the toggle changing state as a message that an acceleration period has completed.</p>
+<ol class="journey">
+<li><strong>Complete the pre-start checks.</strong><p>Confirm the actual tool, retention, intended direction, approved speed, clear work area and required machine conditions.</p></li>
+<li><strong>Confirm that the intended operation is manual forward running.</strong><p>If a program, tool operation or positioning sequence is active, follow that operation's procedure rather than trying to force the manual control.</p></li>
+<li><strong>Check the current RPM request with the run request off.</strong><p>Set and read back the approved value. Do not assume the last job left a suitable speed.</p></li>
+<li><strong>Operate Spindle once to request forward running.</strong><p>Keep clear and stay at the operating position. The accepted request may be suppressed by a machine interlock if conditions are unsuitable.</p></li>
+<li><strong>Observe the response through the approved method.</strong><p>Check the run indication, any report and the actual machine response. Follow the installation's method for allowing acceleration and confirming readiness for the intended operation.</p></li>
+<li><strong>Proceed only when the result is consistent with the approved task.</strong><p>Do not start cutting solely because the RPM command is already displayed.</p></li>
+</ol>
+<table><caption>Table 10-5. What to expect from a manual forward start</caption><thead><tr><th scope="col">Observation</th><th scope="col">Interpretation</th><th scope="col">Operator response</th></tr></thead><tbody>
+<tr><td>The run indication turns on and the expected response begins</td><td>The forward request is active; actual acceleration still takes time.</td><td>Observe and complete the prescribed start verification.</td></tr>
+<tr><td>The indication turns off again or the spindle does not begin the expected response</td><td>The request may have been suppressed, unavailable or unable to produce the expected physical result.</td><td>Read the state and report; investigate before another request.</td></tr>
+<tr><td>The displayed RPM differs from the intended setting</td><td>The current speed command is not what you expected.</td><td>Resolve the command value before proceeding.</td></tr>
+<tr><td>Unexpected noise, vibration, direction or tool behaviour</td><td>The physical response is unsuitable even if no software warning appears.</td><td>Use the prescribed stopping or emergency response and obtain assistance.</td></tr>
+</tbody></table>
+<h3>The toggle is not a held-to-run control</h3>
+<p>After a manual run request is accepted, releasing the mouse button does not request spindle stop. The toggle represents an on/off command state. Keep this separate from a held jog button, where release normally ends the manual movement request.</p>
+<p>Similarly, changing focus, opening a different view or looking at the report is not a spindle-stop action. Establish the intended run state explicitly and verify its result. Do not leave a running spindle unattended because the control interaction has ended.</p>
+<aside class="learning-example"><h3>A short click can request sustained running</h3><p>An operator clicks Spindle and releases the mouse immediately. That is still an on request. It is not a short-duration test pulse. Before clicking, the operator must be prepared for the spindle to keep running until a proper stop request or an interlock removes the command.</p></aside>
+<p>If the machine refuses a start, do not repeatedly click until the indication stays on. A condition such as pressure or grip feedback can change between attempts, allowing an unexpected later start. Leave the request in a known state, identify the cause and deliberately repeat the complete preparation only when it has been resolved.</p>
+
+</section>
+<section id="manual-stop" aria-labelledby="manual-stop-title"><h2 id="manual-stop-title">10.6 Stop manual running and distinguish it from a motion stop</h2>
+
+<p>For an ordinary manual forward-running operation, use the available Spindle toggle to remove the forward-run request. Continue observing until the spindle has stopped according to the approved machine procedure. A command changing to off does not make the rotating assembly stop instantaneously.</p>
+<p>The toggle writes the forward output only. It does not run the M5 sequence, does not necessarily clear the speed-output value and does not serve as a general reverse-stop control. This distinction is especially important if an installation supports reverse running through a program.</p>
+<ol class="journey">
+<li><strong>Identify what is currently controlling the spindle.</strong><p>For manual forward running with the toggle available, use that control. For program-controlled running, follow the job interruption procedure.</p></li>
+<li><strong>Request the prescribed ordinary stop.</strong><p>For the manual forward case, switch Spindle off once. For immediate danger, use the installed emergency response.</p></li>
+<li><strong>Observe deceleration from the operating position.</strong><p>Keep clear during rundown. An off indication or a zero command does not prove that the shaft is stationary.</p></li>
+<li><strong>Confirm the final state through the approved method.</strong><p>Account for the tool, spindle and any other equipment relevant to access.</p></li>
+<li><strong>Apply the access or isolation procedure for the next task.</strong><p>Inspection from outside, unloading and hands-on tool work can require different precautions.</p></li>
+</ol>
+<table><caption>Table 10-6. Actions that must not be treated as equivalent</caption><thead><tr><th scope="col">Action</th><th scope="col">What it requests</th><th scope="col">Limit of that action</th></tr></thead><tbody>
+<tr><td>Manual Spindle toggle off</td><td>Removes the forward-run output request.</td><td>Does not itself execute the program's timed stop routine or certify standstill.</td></tr>
+<tr><td>Set RPM to zero</td><td>Changes the speed-output command.</td><td>Does not remove the run output or satisfy the supplied stopped qualification by itself.</td></tr>
+<tr><td>Pause or Reset motion</td><td>Stops axes and motion paths through the application's motion-stop route.</td><td>Is not, by itself, an M5 spindle-stop request.</td></tr>
+<tr><td>M5 in a program</td><td>Clears the forward and reverse commands, then waits for the supplied stop conditions.</td><td>Still requires the machine's physical-access procedure afterward.</td></tr>
+<tr><td>Parking completion</td><td>Indicates the positioning route has completed.</td><td>Does not establish spindle shutdown.</td></tr>
+</tbody></table>
+<h3>A motion stop can leave the spindle running</h3>
+<p>Pause and Reset request all-motion stop and then queue their editable PLC extensions. Factory extensions clear spindle run/direction without timers and preserve the analog speed setpoint. They do not execute M5's timed stop-qualification sequence. Pause preserves the TP0 cursor; Reset rewinds it after stopping. Saved engineer PLC extensions can differ from factory defaults. Factory Run does not restart the spindle automatically; verify equipment state before resuming.</p>
+<p>For example, pausing during a cut can stop travel while the tool continues to rotate. Remain clear and follow the approved procedure for the interrupted job. Do not reach toward the tool because the position readings have stopped changing.</p>
+<h3>The speed value may remain after manual switch-off</h3>
+<p>Because the manual toggle changes the forward request separately, the RPM command may still show the previously selected value after switching off. That is not proof of continued physical rotation. It also means a later manual on request may use an existing speed value. Read and confirm the value before every new start.</p>
+<aside class="learning-example"><h3>Off does not mean reset</h3><p>You stop a manual forward run and later prepare a different tool. The old RPM command can still be present. Recheck the approved speed for the new assembly rather than assuming switch-off erased the previous selection.</p></aside>
+<p>If the expected stop response does not occur, use the machine's prescribed escalation or emergency procedure. Do not attempt to stop the shaft by contact, tool release or improvised changes to outputs. Record the discrepancy only after the machine has been brought into the required safe condition.</p>
+
+</section>
+<section id="program-commands" aria-labelledby="program-commands-title"><h2 id="program-commands-title">10.7 Recognize spindle instructions in a machining program</h2>
+
+<p>A machining file can contain spindle instructions among its movement instructions. An operator should recognize their purpose when checking the file and interpreting a pause in execution. This does not require writing a program or editing the machine-control routines.</p>
+<p>The letter <strong>S</strong> introduces a spindle-speed request in RPM. <strong>M3</strong> requests forward running, <strong>M4</strong> requests reverse running where supported, and <strong>M5</strong> requests spindle stop. Their supplied behaviour is described below; an approved customized installation must document any differences.</p>
+<table><caption>Table 10-7. Spindle-related instructions to recognize</caption><thead><tr><th scope="col">Instruction</th><th scope="col">Supplied behaviour</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>S followed by a number</td><td>Stores the requested speed and writes the speed output, limited to the configured range.</td><td>Sets speed; does not by itself issue a direction/run request.</td></tr>
+<tr><td>M3</td><td>Requests forward, clears reverse and waits the configured minimum start delay while ready.</td><td>Expect forward starting and a deliberate wait before command completion.</td></tr>
+<tr><td>M4</td><td>Requests reverse, clears forward, only when reverse is configured and readiness is satisfied.</td><td>Do not assume this machine supports reverse because a file contains M4.</td></tr>
+<tr><td>M5</td><td>Clears both run directions, then waits for the supplied stop qualification.</td><td>Expect rundown and a stop wait; the retained S request is not erased.</td></tr>
+<tr><td>M2</td><td>Uses the supplied spindle-stop and wait sequence associated with program termination.</td><td>Program ending includes the spindle-stop contract.</td></tr>
+<tr><td>M30</td><td>Uses M2, waits for successful completion and completion of its source path, then resets that path.</td><td>Do not treat it as an immediate reset that skips the spindle-stop wait.</td></tr>
+</tbody></table>
+<h3>Speed output during a stop</h3>
+<p>S writes the normalized speed setpoint to the assigned AM or inverter speed output. M3 and M4 select the run direction. M5 clears both run requests and leaves the speed setpoint at its current value.</p>
+<aside class="learning-example"><h3>Reading a sequence</h3><p>After S12000, the speed request stays at 12,000 RPM through M3, M5 and a later M3 unless another S command or manual adjustment changes it.</p></aside>
+<p>A manual RPM adjustment changes the same output as S. Check its current value before restarting.</p>
+<h3>Read program progress together with the machine state</h3>
+<p>A spindle instruction can intentionally hold program progression while its start or stop conditions are being processed. A moment without axis movement is not necessarily a frozen application. Check the active operation and messages before pressing Run again or issuing unrelated commands.</p>
+<p>If a spindle instruction reports failure, treat that result as an interrupted job requiring assessment. Do not skip the instruction to reach the next cutting movement. A start failure can mean the tool is not permitted to rotate; a stop failure can mean the required stopped qualification has not been obtained.</p>
+<p>Before starting from a selected line or recovering after an interruption, use the approved program-start procedure. Do not assume that manually choosing a visible line recreates the correct retained speed, tool and run state. Later chapters cover those recovery decisions; this chapter explains the spindle consequences you need to recognize.</p>
+
+</section>
+<section id="start-wait" aria-labelledby="start-wait-title"><h2 id="start-wait-title">10.8 Understand the start delay and the limits of reverse operation</h2>
+
+<p>The supplied M3 and M4 routines include a minimum starting delay. This gives the spindle a configured interval after the run request before the instruction completes. The setting is <strong>Router → Spindle → Spindle On Time</strong> and its unit is milliseconds: 1,000 milliseconds equals one second.</p>
+<p>The supplied initial value is 3,000 milliseconds, or three seconds. This describes the default setting in the reviewed source, not a guaranteed acceleration time or a recommended value for every spindle. The commissioned machine must have an approved setting suitable for its equipment and process.</p>
+<h3>The delay does not measure RPM</h3>
+<p>While the start routine is active, it requires the spindle readiness conditions to remain satisfied and runs the configured start timer. If readiness fails, it clears the run requests, requests stopping of the main machining path and reports an unsuccessful result.</p>
+<p>Successful completion means that the command's required delay elapsed while its readiness condition remained satisfied. The routine does not compare a measured shaft RPM against the requested RPM. It therefore cannot, by itself, prove that a particular cutter reached cutting speed in the available time.</p>
+<table><caption>Table 10-8. Interpreting a spindle start wait</caption><thead><tr><th scope="col">Observation or setting</th><th scope="col">Meaning</th><th scope="col">Do not conclude</th></tr></thead><tbody>
+<tr><td>Spindle On Time</td><td>The minimum delay used by the supplied program start routines.</td><td>That the same delay runs when the manual toggle is used.</td></tr>
+<tr><td>A successful M3/M4 result</td><td>The configured delay completed while the required start conditions were satisfied.</td><td>That an independent speed measurement confirmed the requested RPM.</td></tr>
+<tr><td>Drive ready indication</td><td>The applicable drive-readiness condition is satisfied.</td><td>That the physical shaft is already at speed.</td></tr>
+<tr><td>A configured rotation sensor</td><td>Provides state changes used in stopped qualification.</td><td>That this chapter's RPM readout is a tachometer.</td></tr>
+<tr><td>A readiness failure during starting</td><td>The supplied routine removes spindle requests and stops the main path.</td><td>That skipping the wait is an acceptable recovery.</td></tr>
+</tbody></table>
+<aside class="learning-example"><h3>The timer finished before the expected physical response</h3><p>The start instruction completes, but the machine's approved observation method indicates that acceleration was unsuitable. Stop according to the installed procedure and have the setup assessed. Do not simply extend the timer repeatedly while continuing production; the cause may involve the requested speed, drive, tool assembly or readiness information.</p></aside>
+<h3>Reverse is an installation capability</h3>
+<p>M4 is recognized as a reverse-start request, but recognition does not mean the installed spindle can perform it. Reverse must be configured and supported by the complete spindle/drive arrangement. Tooling and the intended process must also permit that direction.</p>
+<p>The reviewed EtherCAT inverter-speed route does not provide a reverse command capability. Assigning an additional reverse digital output does not add reverse support to that route. On an installation using it, an M4 request fails the supplied reverse-capability check.</p>
+<p>The main Spindle toggle controls forward running. It is not a direction selector. Do not attempt to obtain reverse by using a negative RPM, repeatedly toggling forward or changing output mappings. Have a job that requires unsupported reverse operation reviewed before machining.</p>
+<p>On an installation legitimately configured for reverse, follow its documented direction-change sequence. This chapter does not authorize reversing a rotating spindle directly. Confirm the approved stop and restart conditions, and remember that a forward toggle in the off state is not proof that reverse operation has stopped.</p>
+<p>Changes to start timing or direction capability belong to authorized machine setup. Record the observed problem and current settings so that the responsible person can assess them; the operator's task is to recognize the meaning of the wait and its limits.</p>
+
+</section>
+<section id="stop-wait" aria-labelledby="stop-wait-title"><h2 id="stop-wait-title">10.9 Understand rundown, stopped qualification and timeout</h2>
+
+<p>Removing a run command starts a stopping process; it does not establish instant standstill. The supplied control logic allows a configured deceleration interval, then requires an additional quiet interval before it sets its stopped status. This distinction explains why a program can wait after the visible run requests have gone off.</p>
+<p>The deceleration setting is <strong>Router → Spindle → Spindle Off Time</strong>, expressed in milliseconds. After that interval, the supplied logic requires a complete additional <strong>1,000 milliseconds</strong> without an edge from the assigned rotation sensor. An edge is a change from low to high or from high to low.</p>
+<figure class="concept-figure"><img src="assets/images/10-spindle-stop-sequence.svg" alt="Three-stage spindle stop qualification: both run requests off, configured deceleration delay, then a complete one-second quiet interval. Rotation sensor edges restart the quiet interval."><figcaption>Figure 10-2. The supplied stop qualification. This is a control sequence, not a measurement of shaft speed or a permission to approach the tool.</figcaption></figure>
+<h3>How the rotation sensor is used</h3>
+<p>If a physical rotation sensor is assigned, each detected change restarts the quiet interval. Both a continuously high signal and a continuously low signal count as having no edge. The logic therefore watches changes; it does not interpret one static level as a universal “stopped” signal.</p>
+<p>If no physical rotation sensor is assigned, the stopped qualification uses the deceleration and quiet delays alone. Do not describe that arrangement as sensor-confirmed standstill. Even where a sensor is fitted, the status depends on the configured signal behaving correctly and must be used within the approved machine procedure.</p>
+<table><caption>Table 10-9. Stop timing and what can extend the wait</caption><thead><tr><th scope="col">Condition</th><th scope="col">Effect</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>Both run requests removed, required outputs configured</td><td>The stopped qualification can progress through its timing conditions.</td><td>Rundown can still be in progress.</td></tr>
+<tr><td>Spindle Off Time has not elapsed</td><td>The initial deceleration interval is not complete.</td><td>A continuing wait can be normal.</td></tr>
+<tr><td>A rotation-sensor edge occurs during the quiet check</td><td>The complete quiet interval must be established again.</td><td>The stop wait may take longer.</td></tr>
+<tr><td>No physical rotation sensor assigned</td><td>Qualification relies on timing alone.</td><td>Do not infer an independent physical measurement.</td></tr>
+<tr><td>Either run request becomes active</td><td>The no-run condition for stopped qualification is lost.</td><td>Investigate the operation and current commands.</td></tr>
+<tr><td>The program's stop timeout is reached</td><td>The stop routine reports failure and requests main-path stop.</td><td>The required qualification was not obtained; do not continue as though it succeeded.</td></tr>
+</tbody></table>
+<h3>Minimum delay and maximum wait are different</h3>
+<p>For M5 and M2, the supplied timeout threshold is the configured Spindle Off Time plus the one-second quiet interval plus <strong>SpindleFeedbackTimeout</strong>. The latter is an additional allowance for obtaining the required stop result, not a second normal acceleration setting.</p>
+<aside class="learning-example"><h3>Reading an illustrative stop wait</h3><p>Suppose the approved settings are 3,000 ms for Spindle Off Time and 5,000 ms for the additional timeout allowance. With no later sensor edges, qualification requires roughly the initial three seconds followed by a full quiet second. The routine's failure threshold is nine seconds from its activation. Software sampling and prior state affect the observed timing; these numbers are not a stopwatch-based access permission.</p></aside>
+<p>The timing is state-dependent. If the spindle was already off and its stopped condition already qualified before M5 began, the background quiet check need not start from scratch at that instruction. M5 still applies its own minimum stop delay. Do not assume every stop instruction must last exactly the same duration.</p>
+<h3>Tool exchange uses this information too</h3>
+<p>The supplied tool-exchange sequence requests spindle shutdown and waits for its own stop confirmation together with the stopped status. A tool operation waiting for this condition is not an invitation to release the tool manually. Let the approved sequence complete or follow its fault recovery procedure.</p>
+<p>If a stop times out, preserve the message and determine whether the problem involves continued rotation, sensor behaviour, output configuration or another machine condition. Changing the delay or disabling the sensor simply to remove the timeout can hide the cause. Access to the tool must still follow the installed procedure.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">10.10 Respond to a refused start, lost readiness or an incomplete stop</h2>
+
+<p>When a spindle operation fails, first identify the stage: the manual control was unavailable, a start request was removed, a program start failed, running was interrupted, or a stop did not qualify. “The spindle does not work” is too broad to choose a reliable recovery action.</p>
+<p>Establish the required stopped condition before investigating from close to the machine. If the actual response is dangerous or inconsistent with the stop request, use the installed emergency procedure. Screen inspection comes after the immediate machine condition is addressed.</p>
+<table><caption>Table 10-10. Common symptoms and the appropriate next check</caption><thead><tr><th scope="col">Symptom</th><th scope="col">Possible explanation to check</th><th scope="col">Operator response</th></tr></thead><tbody>
+<tr><td>Spindle toggle is disabled</td><td>Program activity, loading, homing, positioning, tool operation, connection or access restrictions.</td><td>Identify the active operation. Do not bypass the control through an output editor.</td></tr>
+<tr><td>A manual on request disappears</td><td>The configured readiness conditions do not permit running.</td><td>Read available messages and check the relevant approved indications before retrying.</td></tr>
+<tr><td>RPM is displayed but rotation is absent</td><td>Speed command exists without a run request, a suppressed request or a drive/machine problem.</td><td>Distinguish the command from physical response; do not assume the RPM number is measured.</td></tr>
+<tr><td>RPM changes back after a manual adjustment</td><td>A later program instruction changed the speed command.</td><td>Check the job sequence and retained program request.</td></tr>
+<tr><td>M4 is unsuccessful</td><td>Reverse capability is unavailable or another readiness condition failed.</td><td>Confirm that the job is compatible with the installed spindle arrangement.</td></tr>
+<tr><td>M5 or M2 does not finish successfully</td><td>The required stop qualification was not obtained within the permitted time.</td><td>Preserve the report and have rundown, sensor state and configuration assessed.</td></tr>
+<tr><td>Running stops after a pressure, thermal or grip-related change</td><td>A configured interlock may have removed the run request.</td><td>Resolve the underlying machine condition and assess the interrupted job.</td></tr>
+<tr><td>The head has stopped but the cutter continues rotating</td><td>A motion stop is not necessarily a spindle-stop request.</td><td>Keep clear and follow the spindle interruption procedure.</td></tr>
+</tbody></table>
+<h3>Read a result number with its operation name</h3>
+<p>For the supplied M3 and M4 routines, result <strong>0</strong> means the minimum start delay completed while the required conditions were satisfied; result <strong>2</strong> means readiness, or reverse capability for M4, was unavailable. For supplied M5 and M2, result <strong>0</strong> means the stop qualification succeeded and result <strong>3</strong> means the stop wait timed out.</p>
+<p>Those meanings belong to those routines. A number from a tool-exchange routine or another operation can have a different context. Record the operation name, result and accompanying exit reason together. An aborted routine is not a successful operation merely because a previous successful result remains visible elsewhere.</p>
+<h3>Readiness is monitored beyond the first click</h3>
+<p>The supplied background logic continues to monitor spindle conditions. An unsuitable running request, conflicting direction requests or unsupported reverse can cause it to clear the run outputs and request stopping of the main machining path. During a tool exchange, that operation has its own fault and stopping sequence.</p>
+<p>This explains why a spindle that initially started can later stop following a change in a configured condition. Restoring a pressure signal or clearing a warning does not by itself revalidate the interrupted workpiece, tool and program state. Use the recovery procedure before restarting.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 10-3 · DIAGNOSTIC SCREENSHOT REQUIRED</p><h3>Spindle request and relevant feedback</h3><p>Insert an approved English diagnostic view or a labelled pair of views showing the current spindle run/speed requests, relevant configured input states, and a genuine report message where available. Label command outputs separately from sensor feedback. Explain which shown inputs are actually fitted on this machine.</p><p>Suggested image: <code>assets/images/10-spindle-diagnostics.png</code>. Use recorded evidence or a stationary approved demonstration. Do not force a sensor or create a spindle fault to obtain the illustration.</p><figcaption>Useful diagnosis keeps the command, configured feedback and observed physical response separate.</figcaption></figure>
+<h3>Information to record for assistance</h3>
+<p>Record whether the operation was manual or program-controlled, the requested RPM, the tool fitted, the instruction or stage in progress, and what the spindle physically did. Include the report with its time and any relevant pressure, thermal, drive-ready or grip indication. State whether Pause, Reset, emergency action or reconnection occurred.</p>
+<p>Do not change maximum RPM, timing, sensor assignments or machine-control programs merely to remove a symptom. If the cause cannot be established using the approved operator checks, leave the operation stopped and refer it to the responsible person.</p>
+
+</section>
+<section id="examples" aria-labelledby="examples-title"><h2 id="examples-title">10.11 Work through common operating situations</h2>
+
+<p>The following examples connect the controls to situations an operator may encounter. They are reading exercises using imaginary approved setups. Their RPM values are not recommendations for any actual cutter, and the command sequences are explanations rather than complete machining files.</p>
+<h3>Example one: prepare a manual forward run</h3>
+<p>The setup sheet calls for a manual spindle check at an approved 12,000 RPM. The operator has completed the physical setup and the machine is connected, idle and ready. The speed control presently shows a value left from an earlier operation.</p>
+<p>The operator first confirms the forward request is off, sets the approved RPM and reads the displayed command. The operator then uses Spindle once and observes the actual response from the operating position. There is no automatic M3 start-delay completion attached to that manual click, so the installation's manual verification procedure determines when the check is complete.</p>
+<p>At the end, the operator requests forward off and observes rundown before applying the required access procedure. A retained 12,000 RPM command afterward is not proof that the shaft is still rotating, and it must be checked again before the next start.</p>
+<h3>Example two: adjust a running job</h3>
+<p>A prepared job has requested 12,000 RPM through S and started forward through M3. The operator is authorized by the job procedure to change the current output to 10,000 RPM. The speed slider is available while the program is active, although the manual on/off toggle is blocked.</p>
+<p>After the adjustment to 10,000 RPM, M5 stops the spindle and M3 requests forward running again. The speed output remains at 10,000 RPM through both commands.</p>
+<table><caption>Table 10-11. Follow the speed request through the illustrative program</caption><thead><tr><th scope="col">Event</th><th scope="col">Current speed-output command</th><th scope="col">Last S instruction</th><th scope="col">Run consequence</th></tr></thead><tbody>
+<tr><td>S requests 12,000 RPM</td><td>12,000 RPM.</td><td>12,000 RPM.</td><td>Does not alone switch on a run direction.</td></tr>
+<tr><td>M3 executes successfully</td><td>12,000 RPM.</td><td>12,000 RPM.</td><td>Forward requested; start delay applies.</td></tr>
+<tr><td>Authorized slider adjustment</td><td>10,000 RPM.</td><td>12,000 RPM.</td><td>Existing run request is separate.</td></tr>
+<tr><td>M5 executes</td><td>10,000 RPM.</td><td>12,000 RPM.</td><td>Both directions cleared; stop qualification awaited.</td></tr>
+<tr><td>A later M3 executes successfully</td><td>10,000 RPM.</td><td>12,000 RPM.</td><td>Forward requested again; start delay applies.</td></tr>
+</tbody></table>
+<h3>Example three: the program waits at its spindle stop</h3>
+<p>The run outputs have been cleared, but the program has not yet advanced beyond its stop instruction. If the deceleration and quiet intervals are still being satisfied, this can be expected. A configured rotation-sensor edge during the quiet interval restarts that interval.</p>
+<p>The operator remains clear and checks the current operation and messages. If the stop routine reports a timeout, the operator does not treat the wait as completed or advance past it. The machine's stopped condition and the cause of the failed qualification need assessment.</p>
+<h3>Example four: cutting finishes and parking begins</h3>
+<p>Automatic parking is enabled for an approved job. The operator expects the head to move again after the application accepts normal program completion. As explained in <a href="09-positioning.html#automatic-parking">Chapter 9</a>, that parking request does not itself stop the spindle or check its rotation.</p>
+<p>Spindle shutdown must therefore be provided by the verified job sequence and the installed operating procedure. If the job contains the supplied stop/end sequence, interpret its result together with the parking result. A head at the parking point, by itself, does not establish that the cutter is stationary or that unloading is permitted.</p>
+<p>In each example, the operator follows the same reasoning: identify the current command, understand what it can change, observe the result, and check the conditions for the next activity. This is more reliable than memorizing a button sequence without knowing what the program can do afterward.</p>
+
+</section>
+<section id="review" aria-labelledby="review-title"><h2 id="review-title">10.12 Review the operating decisions before working independently</h2>
+
+<p>Before using the spindle independently, practise explaining the controls and the expected machine response to the person responsible for your training. Knowing where a button is located is only the first step. You should also be able to explain what the button changes, what it does not confirm and how the next program instruction can change the state again.</p>
+<table><caption>Table 10-12. Operator review before spindle work</caption><thead><tr><th scope="col">Before this activity</th><th scope="col">Be able to explain</th></tr></thead><tbody>
+<tr><td>Manual start</td><td>The actual tool, approved RPM, forward direction, pre-start checks and method of verifying the response.</td></tr>
+<tr><td>Manual stop</td><td>Which run request the toggle removes, the expected rundown and the access checks that follow.</td></tr>
+<tr><td>Speed adjustment</td><td>That the slider is live, which value you intend to set, and whether later program instructions can replace it.</td></tr>
+<tr><td>Program start or continuation</td><td>The required spindle state, the meaning of the start wait and the job's approved recovery procedure.</td></tr>
+<tr><td>End of a job</td><td>The spindle-stop sequence, possible parking movement and final conditions required for unloading.</td></tr>
+<tr><td>A refused or incomplete operation</td><td>The stage that failed, the exact report and which approved checks can be made without changing configuration.</td></tr>
+</tbody></table>
+<h3>Questions to check your understanding</h3>
+<dl>
+<dt>The RPM slider shows 18,000. Does that prove the spindle is rotating at 18,000 RPM?</dt>
+<dd><p>No. It shows the current speed command in RPM. Actual rotation and attained speed require the machine's approved verification method.</p></dd>
+<dt>Is the upper end of the RPM slider a recommendation for the fitted cutter?</dt>
+<dd><p>No. It comes from machine full-scale configuration. The permitted speed for the tool assembly and job must be obtained from approved setup information.</p></dd>
+<dt>Can you prepare a nonzero speed while the forward request is off?</dt>
+<dd><p>Yes, when adjustment is available. The speed command and run request are separate. Recheck both before starting.</p></dd>
+<dt>Does releasing the mouse after clicking Spindle stop the spindle?</dt>
+<dd><p>No. The toggle is an on/off request, not a held-to-run control.</p></dd>
+<dt>Does pressing Escape during a slider adjustment restore the original speed?</dt>
+<dd><p>No. It ends the interaction without undoing values already published. Read the resulting command and follow the appropriate operating procedure.</p></dd>
+<dt>Why can the slider remain available while the manual toggle is disabled?</dt>
+<dd><p>During an active machining program, the application ordinarily allows speed adjustment but blocks manual spindle on/off.</p></dd>
+<dt>What does successful completion of M3 confirm?</dt>
+<dd><p>That its configured minimum start delay completed while the required readiness conditions remained satisfied. It does not independently measure shaft RPM.</p></dd>
+<dt>Does M5 forget the program's selected speed?</dt>
+<dd><p>No. It clears the run outputs and leaves the current speed setpoint in effect.</p></dd>
+<dt>What does a rotation-sensor edge do during the quiet interval?</dt>
+<dd><p>It restarts that interval. Where no physical rotation sensor is assigned, the stopped qualification relies on timing alone.</p></dd>
+<dt>Can a motion stop or completed parking move establish spindle standstill?</dt>
+<dd><p>No. Treat axis movement, spindle shutdown and permission to access the machine as separate checks.</p></dd>
+</dl>
+<h3>What belongs in the installation's own instructions</h3>
+<p>The machine's instructions must supply the approved tool/holder limits, normal operating speeds, direction capability, commissioning values and method of confirming rotation and standstill. They must also describe the actual guards, stop devices, energy-isolation procedure and fitted sensors. Those physical details cannot be determined from the application controls alone.</p>
+<p>If authorized personnel have customized the saved machine-control routines, use instructions that match those installed routines. The supplied defaults are not silently substituted for saved custom behaviour. Report a difference between this chapter and the installed machine so the documentation can be reconciled before relying on the affected procedure.</p>
+<aside class="note"><strong>Chapter scope and illustrations.</strong> This chapter was checked against the application bindings, control availability, spindle configuration and supplied start/stop routines available on 8 October 2026. Its diagram explains the stop sequence; it is not a speed measurement or machine screenshot. Two marked spaces specify the actual installation screenshots still required. Tool exchange and tool-length measurement are covered separately in the following chapters.</aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZBC+TC · Operator Manual · Chapter 10</span><a href="index.html#chapter-10">Return to the contents</a></footer></main></body></html>

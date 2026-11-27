@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="400" viewBox="0 0 900 400" role="img" aria-labelledby="title desc">
+<title id="title">Machine and work coordinates describe the same point</title><desc id="desc">In this simplified one-dimensional X example, work zero is at machine X 200 millimetres. Point P is at machine X 250 millimetres and therefore work X 50 millimetres. Corrections are omitted.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#155765"/></marker></defs>
+<rect width="900" height="400" fill="#f7fafb"/><g font-family="Segoe UI,Arial,sans-serif" fill="#22313a">
+<text x="34" y="40" font-size="22" font-weight="600">One point, two reference origins</text><text x="34" y="70" font-size="15" fill="#596871">Simplified X-axis example · distances in millimetres · corrections omitted</text>
+<rect x="590" y="125" width="225" height="90" fill="#e2eff0" stroke="#b8cbd0"/>
+<text x="702" y="153" text-anchor="middle" font-size="14">Illustrative workpiece</text>
+<path d="M80 225H835" stroke="#155765" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="849" y="230" font-size="17">+X</text>
+<g stroke="#637f8a" stroke-dasharray="5 4"><path d="M90 185V342"/><path d="M610 171V342"/><path d="M740 171V290"/></g>
+<circle cx="90" cy="225" r="5" fill="#155765"/><circle cx="610" cy="225" r="5" fill="#155765"/><circle cx="740" cy="225" r="7" fill="#ae7c2b"/>
+<text x="90" y="180" text-anchor="middle" font-size="16" font-weight="600">Machine zero</text>
+<text x="575" y="112" font-size="16" font-weight="600">Work zero</text><path d="M618 118L612 164" stroke="#637f8a"/>
+<text x="741" y="112" text-anchor="middle" font-size="16" font-weight="600">Point P</text><path d="M741 118V164" stroke="#637f8a"/>
+<g stroke="#155765" stroke-width="1.7" fill="none" marker-start="url(#arrow)" marker-end="url(#arrow)"><path d="M615 268H735"/><path d="M95 330H605"/></g>
+<text x="675" y="292" text-anchor="middle" font-size="15">Work X = 50</text>
+<text x="350" y="355" text-anchor="middle" font-size="15">Work origin at machine X = 200</text>
+<text x="90" y="249" text-anchor="middle" font-size="14">0</text><text x="610" y="249" text-anchor="middle" font-size="14">200</text><text x="740" y="249" text-anchor="middle" font-size="14">250</text>
+<text x="34" y="386" font-size="15" font-weight="600">At point P: machine X = 250 mm; work X = 250 − 200 = 50 mm.</text>
+</g></svg>

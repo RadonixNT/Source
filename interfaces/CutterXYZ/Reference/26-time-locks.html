@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 26 — Time Locks and Board Information | RouterXYZ+TC</title><link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head><body class="chapter-intro"><a class="skip-link" href="#meaning">Skip to chapter text</a><main class="book"><header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZ+TC · CHAPTER 26</p><p class="edition">Operator Manual · English · 9 October 2026</p><h1>Time Locks and Board Information</h1><p class="lead">Read the controller's dated locks and board information, understand their effect on operation, and follow the authorized management procedure.</p><p class="review-status"><strong>Expanded draft for review.</strong> This chapter describes the reviewed implementation. Lock and clock changes are persistent board operations.</p><nav aria-label="Manual navigation"><a href="index.html#chapter-26">Manual contents</a> · <a href="25-passwords.html">Previous chapter: Passwords and Access Levels</a></nav></header><div class="body"><nav aria-label="In this chapter"><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#meaning">Understand what a dated lock restricts</a></li>
+<li><a href="#window">Open Time locks and read the list and board information</a></li>
+<li><a href="#clock">Review the board clock and synchronize it only when authorized</a></li>
+<li><a href="#add">Enter a valid date and add an authorized lock</a></li>
+<li><a href="#delete">Remove the intended lock and verify the remaining restrictions</a></li>
+<li><a href="#refresh">Interpret refreshes, unavailable data and operation failures</a></li>
+</ol></nav>
+<section id="meaning" aria-labelledby="meaning-title"><h2 id="meaning-title">26.1 Understand what a dated lock restricts</h2>
+
+<p>A time lock is a dated record held by the controller board. When its due date is reached according to the board clock, the controller restricts new ToolPath runs. A ToolPath run is the controller's execution of a prepared movement path, such as a machining program. The lock is separate from the Operator and Engineering passwords used to enter application access levels.</p>
+<p>The form states <strong>Due dates block new runs. Running work continues.</strong> A path already running is not stopped merely because a lock becomes due. Other movements remain available under their normal operating conditions. This means that a time lock is not an emergency-stop function, a guard interlock or proof that the machine cannot move.</p>
+<h3>A due date is a calendar boundary</h3>
+<p>The application compares the registered date with the controller board's calendar date. A lock dated today is already due; it is not a promise that use continues until the end of that day. If more than one lock exists, any due entry can keep new runs restricted. Removing one entry therefore does not establish that every restriction has been cleared.</p>
+<div class="table-scroll"><table><caption>Table 26-1. Distinguish the reason for a restriction</caption><thead><tr><th scope="col">Condition</th><th scope="col">Meaning</th><th scope="col">Appropriate response</th></tr></thead><tbody>
+<tr><td>Local access prompt</td><td>Operator or Engineering admission is requested.</td><td>Follow Chapter 25 using the correct local account.</td></tr>
+<tr><td>Dated lock is due</td><td>New path runs are restricted by the board's dated record.</td><td>Have an authorized person review the lock date and its specific password.</td></tr>
+<tr><td>Invalid clock with registered locks</td><td>The controller cannot rely on the clock to admit new runs.</td><td>Report the clock and lock state; follow the approved service procedure.</td></tr>
+<tr><td>Invalid clock with no registered locks</td><td>The controller reports a clock warning.</td><td>Investigate the clock; this condition alone is not a dated-lock run block.</td></tr>
+<tr><td>Invalid lock storage</td><td>The controller reports a storage fault and blocks admission.</td><td>Arrange service; do not treat it as an ordinary missing password.</td></tr>
+</tbody></table></div>
+<p>A warning that a lock is due tomorrow provides time to contact the responsible person. It does not remove the date or change the password. Report it before the next planned production period rather than discovering the restriction when a new job is ready to start.</p>
+<p>Do not use available manual movement as an improvised replacement for a blocked production run. The lock defines an administrative restriction, while ordinary operating procedures still define how the machine may be used. Likewise, do not change the computer date as a trial repair: the lock is evaluated using board state and clock management has its own controlled process.</p>
+<p>The operator's first task is to identify and report the condition accurately. Record whether the message concerns a due lock, an invalid clock, unavailable information or storage corruption. Management actions in this chapter are for a person with the required access and authorization; reading about them does not make a persistent board change part of ordinary job setup.</p>
+
+</section>
+<section id="window" aria-labelledby="window-title"><h2 id="window-title">26.2 Open Time locks and read the list and board information</h2>
+
+<p>Open Configuration with accepted Engineering access, then use the time-lock toolbar action. The window is titled <strong>Time locks</strong>. The application requires both Engineering access and an available authenticated physical controller board for this action. Operator access alone is insufficient. Simulation does not satisfy the physical-board requirement.</p>
+<p>If the action is unavailable, check those requirements before assuming the board has no locks. An unavailable button says nothing about how many lock records exist. Use <a href="25-passwords.html">Chapter 25</a> for the access process and the normal connection procedure for the controller. Do not connect or change operating mode solely to explore a form during production.</p>
+<h3>Read the three areas in order</h3>
+<p>The left area lists <strong>Registered locks</strong>, with a count out of 24. Entries are sorted by due date. The upper-right <strong>MM information</strong> area shows board date, time, runtime, manufacturing date and firmware. The lower-right <strong>Manage locks</strong> area contains the date and password fields with Add and Delete. Sync clock belongs to the information area; Close is in the footer.</p>
+<div class="table-scroll"><table><caption>Table 26-2. Lock-list status text</caption><thead><tr><th scope="col">Display</th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td>Scheduled</td><td>The due date is later than tomorrow according to the valid board date.</td></tr>
+<tr><td>Due tomorrow</td><td>The due date is the next calendar day according to the board.</td></tr>
+<tr><td>Due</td><td>The due date is today or earlier.</td></tr>
+<tr><td>Clock invalid</td><td>The list cannot classify the date using a valid board clock.</td></tr>
+<tr><td>No locks registered</td><td>A successful available snapshot contains no lock entries.</td></tr>
+<tr><td>Lock information unavailable</td><td>The list was not successfully established; this is not an empty-list confirmation.</td></tr>
+</tbody></table></div>
+<p>Selecting an existing entry copies its date into the date field and clears both lock-password fields. Selection does not remove or modify the entry. The passwords are not displayed in the list. If you need to remove that entry, obtain its specific lock password through the authorized process.</p>
+<h3>Interpret board information without inventing missing values</h3>
+<p>Board date and Board time are the controller clock reading, displayed as a full year-month-day and hours:minutes:seconds. Board runtime is shown in hours, minutes and seconds. It is a board runtime record, not the current program's elapsed time, an estimate of remaining cutting time or the age of the computer session. Manufacturing date is a separate recorded date. Firmware identifies the software running on the board.</p>
+<p><strong>Not recorded</strong> for manufacturing date means that a successful read found no recorded date. <strong>Unavailable</strong> means that the value could not be established. An unavailable runtime must not be reported as zero hours, and unavailable firmware must not be treated as an empty version that can be ignored.</p>
+<p>These fields are informational in this form. There is no manufacturing-date editor or firmware-update control here. For service identification, also record the machine identity and, where required, the controller's MM UID from the Configuration reference; the lock form's information panel does not itself show that identifier.</p>
+<figure class="figure-placeholder"><p class="eyebrow">SCREENSHOT TO INSERT · FIGURE 26-1</p><h3>Time locks window overview</h3><p>Capture the complete form in an authorized training installation. Label Registered locks, MM information, Manage locks, Sync clock and the footer status. Leave password fields empty. Include the update message so the reader can distinguish a successful snapshot from unavailable data.</p><p>Suggested asset: <code>assets/images/26-time-locks-overview.png</code></p><figcaption>The list, board information and editing controls have separate purposes.</figcaption></figure>
+
+</section>
+<section id="clock" aria-labelledby="clock-title"><h2 id="clock-title">26.3 Review the board clock and synchronize it only when authorized</h2>
+
+<p>The board clock determines whether a registered date is still in the future. The computer clock supplies the new local date and time when you select Sync clock, but it is not simply substituted every time the lock window refreshes. Reading the form does not synchronize either clock.</p>
+<p>Before an authorized synchronization, stop motion through the normal procedure and establish the approved maintenance condition. Check the computer's displayed calendar date and local time against the site's correct time. The operation copies the computer's local date and time. It is not a time-zone selection dialog, and the form does not ask you to type a replacement board date manually. The supported calendar is the Gregorian calendar from 2000 through 2099.</p>
+<h3>The lock list must be successfully empty</h3>
+<p>Sync clock is available only when the application has an available lock snapshot with zero entries, the required access is present and no operation is busy. If any lock remains, the form says <strong>Remove all locks before synchronizing the clock.</strong> This is a restriction on the operation, not an instruction to delete legitimate locks merely because the displayed time looks inconvenient.</p>
+<p>Any removal needed for an approved clock-service task must itself be authorized and use the correct date and password for every affected entry. Preserve the approved record and the intended final configuration. Do not replace lock management with attempts to move a date backward.</p>
+<div class="table-scroll"><table><caption>Table 26-3. Clock synchronization checkpoints</caption><thead><tr><th scope="col">Stage</th><th scope="col">What to establish</th></tr></thead><tbody>
+<tr><td>Before selecting Sync clock</td><td>Correct computer local date/time, authorized service task, available board and successfully empty lock list.</td></tr>
+<tr><td>Confirmation</td><td>The dialog asks whether to set the controller date/time from this computer; Yes submits, No declines.</td></tr>
+<tr><td>While working</td><td>Wait for completion; the form temporarily prevents competing actions.</td></tr>
+<tr><td>Afterward</td><td>Read the board date/time and status. Look for confirmed synchronization and a valid clock.</td></tr>
+</tbody></table></div>
+<h3>Synchronize before adding the first lock</h3>
+<p>The form requires a successful synchronization in the current dialog before it allows the first lock to be added to an empty list. A plausible date already visible on the board is not sufficient for this first-entry rule. Select Sync clock, review its confirmation, then wait for <strong>Controller clock synchronized with this computer.</strong></p>
+<p>The synchronization confirmation belongs to this dialog's current valid state. Closing and reopening the form loses that confirmation. Deleting a lock also clears it; after deleting the final lock, synchronize again before an approved first replacement entry. A failed operation or loss of access can similarly invalidate the confirmation.</p>
+<p>Clock synchronization is a persistent board operation. It is not undone by closing Time locks or by cancelling the parent Configuration window. If the status says the clock could not be synchronized or did not start advancing, do not assume the copied value has been accepted. Report the condition and have the board clock checked.</p>
+<p>The form displays snapshots and refreshes approximately once per minute while available. A time label that stays unchanged between refreshes is not, by itself, proof that the board clock stopped. Use the operation result and subsequent successful readings, rather than expecting this information panel to behave like a second-by-second wall clock.</p>
+
+</section>
+<section id="add" aria-labelledby="add-title"><h2 id="add-title">26.4 Enter a valid date and add an authorized lock</h2>
+
+<p>Adding a lock creates a persistent future restriction on new runs. Do this only as an authorized administration task, with motion stopped, the approved maintenance condition established, an agreed date and a secure way to retain the lock password. A practice entry on a production controller is a real lock, even if it is described verbally as a test.</p>
+<h3>Read the date format carefully</h3>
+<p>The Date field is labelled <strong>Date (YY/MM/DD)</strong>. YY is the final two digits of the Gregorian year, MM is the month and DD is the day. For example, <code>27/03/15</code> means 15 March 2027. This example demonstrates the format only; choose the approved future date for the actual task.</p>
+<div class="table-scroll"><table><caption>Table 26-4. Accepted date and password input</caption><thead><tr><th scope="col">Item</th><th scope="col">Accepted form</th><th scope="col">Important limit</th></tr></thead><tbody>
+<tr><td>Date with slashes</td><td>YY/MM/DD</td><td>Use a real Gregorian date, with two digits in each part.</td></tr>
+<tr><td>Date with hyphens</td><td>YY-MM-DD</td><td>Use the same separator in both positions.</td></tr>
+<tr><td>Compact date</td><td>YYMMDD</td><td>Six ordinary digits; the form normalizes accepted dates to slash format.</td></tr>
+<tr><td>Lock password</td><td>Exactly eight printable ASCII characters without spaces.</td><td>Use ordinary English letters, digits or permitted printable symbols; local-script characters do not meet this rule.</td></tr>
+<tr><td>Confirm lock password</td><td>Exactly the same value as Lock password.</td><td>Required when adding; capitalization and symbols must match.</td></tr>
+</tbody></table></div>
+<p>A date today or earlier than the valid board date is rejected. A second lock for an already registered date is also rejected. There can be at most 24 registered locks; Add becomes unavailable when that capacity is reached. Do not remove another entry to make space without reviewing its purpose and obtaining authorization.</p>
+<h3>Add in a controlled order</h3>
+<ol><li>Confirm the approved date, the correct machine and the required Engineering access.</li><li>Read the current lock list and board date. If the list is empty, complete the current-dialog synchronization procedure first.</li><li>Enter the date, Lock password and Confirm lock password.</li><li>Review the date again, especially the order of year, month and day.</li><li>Select Add once and wait for the submitted operation and reread to finish.</li><li>Look for <strong>Lock saved.</strong> and verify that the intended date appears in a successfully refreshed list.</li></ol>
+<p>The password is associated with that lock date. It is not the Operator, Engineering or Manufacturer account password merely because those accounts also use passwords. The list does not reveal the lock password later. Record the administrative facts in the service record and retain the secret through the agreed secure process.</p>
+<p>The form clears the password fields after a submitted change attempt. A validation message before submission, such as a mismatch or duplicate date, means the input needs correction. If the board operation fails or its result is unknown, do not assume that no lock was written. Wait for a successful refresh and inspect the actual list before another Add.</p>
+<p>A completed Add is saved immediately on the board. Parent Configuration Cancel is not an undo button for it. There is no ordinary “edit this lock's date” action here: changing an existing record requires separately authorized removal and addition, with each result checked.</p>
+
+</section>
+<section id="delete" aria-labelledby="delete-title"><h2 id="delete-title">26.5 Remove the intended lock and verify the remaining restrictions</h2>
+
+<p>Delete permanently removes the lock for the entered date when its lock password is accepted. It does not disable all locks, sign out of Engineering access or replace the Manufacturer password. The operation must be authorized for the specific entry, including when the entry is already due.</p>
+<p>Prepare for all lock and clock changes with motion stopped and the machine in the approved maintenance condition. These are board changes, and the controller handles the required temporary connection reconfiguration and authentication. If a message says stopped motion or maintenance mode is required, resolve that condition through the normal service procedure. Do not search for a way to force the button while motion is active.</p>
+<h3>Selection helps prevent deleting the wrong date</h3>
+<ol><li>Read the successfully loaded list and identify the exact entry to remove.</li><li>Select it. Confirm that its date has been copied into the Date field.</li><li>Enter that entry's Lock password. Selecting the entry clears previous password text, so enter it after selection.</li><li>Review the date and authorization once more, then select Delete.</li><li>Wait for the result and the list refresh.</li><li>Look for <strong>Lock permanently removed.</strong> and verify that the intended date is absent from an available list.</li></ol>
+<p>Deletion uses the date in the input field, not merely whichever row looks highlighted. If you edit that field after selecting a row, check it carefully before Delete. A valid date that is not registered produces <strong>No lock is registered for this date.</strong> An incorrect date/password pair can be rejected by the board even when the password has the required eight-character format.</p>
+<div class="table-scroll"><table><caption>Table 26-5. Addition and deletion are different operations</caption><thead><tr><th scope="col">Requirement</th><th scope="col">Add</th><th scope="col">Delete</th></tr></thead><tbody>
+<tr><td>Date</td><td>A future date not already registered.</td><td>The exact date of an existing entry.</td></tr>
+<tr><td>Lock password</td><td>The new eight-character credential.</td><td>The existing credential for that date.</td></tr>
+<tr><td>Confirm lock password</td><td>Must match the new credential.</td><td>Not checked for deletion; the existing Lock password is used.</td></tr>
+<tr><td>Clock</td><td>Valid board clock required; empty-list first entry also requires synchronization.</td><td>The form does not require a valid clock to request removal of a known entry.</td></tr>
+<tr><td>Persistence</td><td>Saved immediately when accepted.</td><td>Permanently removed when accepted; parent Cancel does not restore it.</td></tr>
+</tbody></table></div>
+<h3>After removing a due entry</h3>
+<p>Read the entire remaining list. Another due lock, an invalid clock with remaining locks or a storage fault may still prevent new runs. Confirm the controller's current status before planning a new program. Removing a lock does not automatically start a program or resume an interrupted one.</p>
+<p>If the final entry was removed, clock synchronization becomes eligible when the empty list has been successfully read. The previous synchronization confirmation has been cleared. If the authorized task also calls for adding a new first entry, synchronize the clock again in this dialog before attempting Add.</p>
+<p>If the password is unavailable, stop at reporting the date and status to the responsible person. The form does not offer a universal removal password or a local-account substitution. Do not delete other known entries, change the computer calendar or repeatedly try unrelated account passwords in an attempt to clear the restriction.</p>
+<p>Record the removed date, the authorizing person and the confirmed result without recording the secret. If the result is unknown, inspect the refreshed list before retrying. An unavailable list must never be accepted as evidence that the deletion succeeded.</p>
+
+</section>
+<section id="refresh" aria-labelledby="refresh-title"><h2 id="refresh-title">26.6 Interpret refreshes, unavailable data and operation failures</h2>
+
+<p>The form reads information when it opens and refreshes automatically every 60 seconds while visible and available. It skips a scheduled refresh while another operation or the clock-confirmation dialog is in progress. The footer's Updated time is the computer's time of the successful display update; it is not the board-time field itself.</p>
+<p>Automatic refresh preserves typed lock input and the selected date where possible. It does not submit Add or Delete. A refreshed row can change from Scheduled to Due tomorrow or Due as board dates change, but the display's timer is not what enforces the controller restriction. Closing the window does not stop lock enforcement.</p>
+<h3>Partial information can still be valid</h3>
+<p>The lock/clock read and the additional board-information read are handled separately. A firmware or runtime read can fail while the lock list remains available, or lock information can be unavailable while some board information is successfully displayed. Report the failed field specifically instead of describing every value as invalid.</p>
+<div class="table-scroll"><table><caption>Table 26-6. Common failure messages and responses</caption><thead><tr><th scope="col">Message or condition</th><th scope="col">Response</th></tr></thead><tbody>
+<tr><td>Board disconnected</td><td>Use the normal connection procedure; readings resume automatically when access and connection permit.</td></tr>
+<tr><td>Lock information unavailable</td><td>Do not assume zero locks. Wait for an available snapshot or arrange investigation.</td></tr>
+<tr><td>The lock date and password do not match</td><td>Recheck the selected entry and its credential. Do not substitute an account password.</td></tr>
+<tr><td>Please wait at least one second after an incorrect password before retrying</td><td>Observe the board's retry delay and correct the cause before resubmitting.</td></tr>
+<tr><td>Stopped motion and maintenance mode required</td><td>Return to the approved maintenance condition before a board change.</td></tr>
+<tr><td>Clock could not be synchronized or did not start advancing</td><td>Check the board clock through the responsible service procedure.</td></tr>
+<tr><td>Security storage failed validation or could not be saved</td><td>Refresh and preserve the report; board service may be required.</td></tr>
+<tr><td>Operation failed or result unknown</td><td>Do not infer rollback. Obtain fresh board state before another change.</td></tr>
+</tbody></table></div>
+<h3>Wait for the outcome, then inspect state</h3>
+<p>During a submitted operation the shared security dialog shows Working and prevents competing input and user closing. A timeout or connection interruption does not prove that a persistent board operation was cancelled. The board may have accepted a change before its result could be confirmed on screen.</p>
+<p>After a failure, the form invalidates its lock snapshot and synchronization confirmation. It marks lock data unavailable and schedules automatic retries. You can also close and reopen the window once it is no longer busy to request a fresh read. There is no separate Refresh button in this form. For an uncertain Add or Delete, compare the resulting available list with the intended date. For clock work, inspect the valid board date/time and the diagnostic result.</p>
+<h3>Report enough information for service</h3>
+<p>Record machine identity, date of the incident, exact message, operation attempted, intended lock date, displayed board date/time, lock count and status, and whether the last read succeeded. Include available firmware and runtime information when requested. Keep lock passwords out of the report and screenshots.</p>
+<p>Do not interpret a cleared display after a disconnect as a successful deletion. Do not interpret an available Add button as proof that every validation will pass. The form checks input when the action is requested, and the board independently accepts or rejects the change. Return the machine to production only after the responsible person has established the intended persistent state and the normal operating checks are satisfied.</p>
+<figure class="figure-placeholder"><p class="eyebrow">SCREENSHOT TO INSERT · FIGURE 26-2</p><h3>Unavailable information compared with an empty list</h3><p>Capture two authorized training examples: a successful No locks registered display and an unavailable/disconnected display. Keep all password fields empty and include the footer messages. Do not remove real locks to obtain an empty-list illustration.</p><p>Suggested asset: <code>assets/images/26-lock-read-states.png</code></p><figcaption>Missing data and a confirmed empty list lead to different decisions.</figcaption></figure>
+
+</section>
+<aside class="source-note"><h2>About this chapter</h2><p>The lock-management form, date/password validation, board-information reader, security service and controller lock notifications were reviewed. No board clock or lock was changed to prepare this chapter. Screenshot placeholders identify captures still required from an authorized training installation.</p><details><summary>Implementation reviewed</summary><p>TimeLockManagementForm.cs and .Layout.cs; SettingsSecurity.cs; ConfigurationSecurityService.cs; ConfigurationSecurityDialog.cs; ConfigurationForm.Toolbar.cs; controller lock notifications and Core security-admission handling.</p></details></aside></div><footer class="page-footer"><a href="25-passwords.html">Previous chapter</a> · <a href="index.html#chapter-26">Manual contents</a><span>RouterXYZ+TC · 26</span></footer></main></body></html>

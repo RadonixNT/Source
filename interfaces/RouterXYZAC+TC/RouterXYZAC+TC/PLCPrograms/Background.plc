@@ -1,0 +1,170 @@
+// Cyclic machine interlocks. This PLC is not a safety-rated stop device.
+// This program must remain enabled during ordinary operation. It qualifies
+// spindle health/quiet state, owns continuous interlock outputs and evaluates
+// roller bounds supplied by the accepted G-code preparation result.
+// M3/M4 and StopSpindle, WaitSpindle, ReleaseTool and ClampTool consume these scan results; do not replace them with UI
+// observations or wall-clock sleeps. Emergency release never resumes motion.
+// The embedded source is a factory default: saved PLC source is authoritative.
+// ASSIGNED gates optional rotation, piston, pressure, thermal, drive-ready and
+// taper-blow signals by configured physical mapping, never by their live value.
+// Grip sensors are independently optional; stage confirmations retain their delays.
+// Enabled roller sensors are required and qualify the free position before exchange motion.
+// Optional health inputs are level checks,
+// not timed substitutes; an assigned LOW input still inhibits its applicable gate.
+LOGIC PreviousRotation;
+LOGIC RotationChanged;
+LOGIC RunRequested;
+LOGIC EmergencyClosed;
+LOGIC Path0Active;
+LOGIC Path1Active;
+LOGIC Path2Active;
+LOGIC AuxiliaryPathsBusy;
+LOGIC AxesStopped;
+LOGIC StopSpindleRequest;
+TIMER SpindleDecelerationTimer;
+TIMER SpindleQuietTimer;
+REAL RollerSpindleCoordinate;
+REAL RollerMinimum;
+REAL RollerMaximum;
+REAL Roller1Coordinate;
+REAL Roller2Coordinate;
+
+// Capture the raw request before this scan can suppress an unsafe start.
+RunRequested := SpindleCW OR SpindleCCW;
+EmergencyClosed := EmergencySwitch;
+// OperatorInterlocks combines Emergency and NC Pause into one Hold write.
+// Release never restarts interrupted motion. Emergency spindle shutdown stays below.
+RotationChanged := ASSIGNED(SpindleRotationSensor) AND (SpindleRotationSensor <> PreviousRotation);
+PreviousRotation := SpindleRotationSensor;
+Path0Active := TP0.ProgramActive;
+Path1Active := TP1.ProgramActive;
+Path2Active := TP2.ProgramActive;
+AuxiliaryPathsBusy := Path1Active OR TP1.StopCommand
+    OR Path2Active OR TP2.StopCommand;
+AxesStopped := TP0.AxesIdle;
+// Native expiry cannot be cleared by OperatorInterlocks' ordinary Hold assignment.
+StopSpindleRequest := NOT EmergencyClosed OR CONTROLLER.EVALUATIONEXPIRED;
+
+// First allow the configured deceleration time, then demand a complete second
+// without either S3 edge. Static HIGH and static LOW are treated identically.
+// Without an assigned rotation sensor, only the deceleration and quiet delays qualify stop.
+// A configured sensor still restarts the quiet delay on every edge.
+SpindleDecelerationTimer(TYPE := TON,
+    IN := NOT SF.FirstScan AND SpindleFeedbackConfigured AND NOT RunRequested,
+    PT := SpindleOffTime);
+SpindleQuietTimer(TYPE := TON,
+    IN := NOT SF.FirstScan AND SpindleDecelerationTimer.Q AND NOT RotationChanged,
+    PT := 1000);
+SpindleStopped := SpindleFeedbackConfigured AND NOT RunRequested
+    AND SpindleDecelerationTimer.Q AND SpindleQuietTimer.Q;
+
+IF NOT ToolChangeActive THEN SpindleGripCycleActive := FALSE; END_IF;
+// Manual release is permitted only while every path and axis remains stopped.
+// Enabled rollers require mapped, HIGH free-position feedback. Unmapped/disabled
+// mappings cannot bypass the wait. No geometry scan or timer is added here.
+RollersReady := (NOT Roller1Enabled OR (ASSIGNED(Roller1Sensor) AND Roller1Sensor))
+    AND (NOT Roller2Enabled OR (ASSIGNED(Roller2Sensor) AND Roller2Sensor));
+IF NOT ToolChangeActive THEN ToolChangeRollersConfirmed := FALSE; END_IF;
+// An automatic exchange may keep the drawbar open during its controlled TP2
+// withdrawal after ReleaseTool has confirmed the original spindle stop.
+SpindleReleasePermitted := EmergencyClosed AND SpindleToolChangeConfigured
+    AND (NOT ToolChangeActive OR (ToolChangeRollersConfirmed AND RollersReady))
+    AND (NOT ASSIGNED(PressureSensor) OR PressureSensor) AND NOT RunRequested
+    AND ((NOT ToolChangeActive AND SpindleStopped
+            AND NOT Path0Active AND NOT Path1Active AND NOT Path2Active
+            AND AxesStopped)
+        OR (ToolChangeActive AND ToolChangeSpindleStopped
+            AND (SpindleStopped OR SpindleGripCycleActive)));
+SpindleReady := EmergencyClosed AND SpindleFeedbackConfigured AND (NOT ASSIGNED(SpindleThermalOK) OR SpindleThermalOK)
+    AND (NOT ASSIGNED(PressureSensor) OR PressureSensor) AND (NOT ASSIGNED(SpindleDriveReady) OR SpindleDriveReady)
+    AND (NOT ASSIGNED(SpindleToolClamped) OR SpindleToolClamped)
+    AND (NOT ASSIGNED(SpindleToolReleased) OR NOT SpindleToolReleased)
+    AND (NOT ASSIGNED(SpindlePistonRetracted) OR SpindlePistonRetracted) AND NOT SpindleToolRelease AND NOT ToolChangeActive;
+
+IF ASSIGNED(SpindleTaperBlow) THEN
+    SpindleTaperBlow := SpindleToolRelease OR (ASSIGNED(SpindleToolReleased) AND SpindleToolReleased);
+END_IF;
+
+// Z brake: only actual drive enable feedback permits release.
+Brake := Z.Existing AND Z.PdoMapped AND Z.ServoOnCommand AND Z.ReadyToMove
+    AND NOT Z.Fault AND NOT Z.CouplingFault;
+ToolChanging := ToolChangeActive;
+
+// EmergencySwitch is normally closed. This software interlock complements,
+// but cannot replace, the machine's hardwired emergency-stop circuit.
+IF EmergencyClosed THEN
+    IF RunRequested AND (NOT SpindleReady OR (SpindleCW AND SpindleCCW)
+        OR (SpindleCCW AND NOT SpindleReverseConfigured)) THEN
+        StopSpindleRequest := TRUE;
+        // An ordinary M6 waits at TP0 while its exchange callback runs.
+        IF NOT ToolChangeActive THEN TOOLPATH_STOP(TOOLPATH := 0); END_IF;
+    END_IF;
+
+    // Monitor confirmed states throughout the exchange, including Offset stages.
+    // ReleaseTool/ClampTool clear confirmations only while deliberately changing the grip.
+    IF ToolChangeActive THEN
+        IF ToolChangeRollersConfirmed AND NOT RollersReady THEN
+            IF ToolChangeFault = 0 THEN ToolChangeFault := 7; END_IF;
+        ELSIF NOT SpindleToolChangeConfigured OR NOT (NOT ASSIGNED(SpindleThermalOK) OR SpindleThermalOK)
+            OR NOT (NOT ASSIGNED(PressureSensor) OR PressureSensor) OR NOT (NOT ASSIGNED(SpindleDriveReady) OR SpindleDriveReady) THEN
+            IF ToolChangeFault = 0 THEN ToolChangeFault := 2; END_IF;
+        ELSIF ToolChangeSpindleStopped AND (RunRequested
+            OR (NOT SpindleGripCycleActive AND NOT SpindleStopped)) THEN
+            IF ToolChangeFault = 0 THEN ToolChangeFault := 3; END_IF;
+        ELSIF SpindleReleaseConfirmed AND ((ASSIGNED(SpindleToolReleased) AND NOT SpindleToolReleased)
+            OR (ASSIGNED(SpindleToolClamped) AND SpindleToolClamped)) THEN
+            IF ToolChangeFault = 0 THEN ToolChangeFault := 5; END_IF;
+        ELSIF SpindleClampConfirmed AND ((NewTool <> 0 AND ASSIGNED(SpindleToolClamped) AND NOT SpindleToolClamped)
+            OR (ASSIGNED(SpindleToolReleased) AND SpindleToolReleased) OR NOT (NOT ASSIGNED(SpindlePistonRetracted) OR SpindlePistonRetracted)) THEN
+            IF ToolChangeFault = 0 THEN ToolChangeFault := 6; END_IF;
+        END_IF;
+        IF ToolChangeFault <> 0 THEN
+            StopSpindleRequest := TRUE;
+            TOOLPATH_STOP(TOOLPATH := 2);
+        END_IF;
+    END_IF;
+
+END_IF;
+
+IF SpindleToolRelease AND NOT SpindleReleasePermitted THEN
+    SpindleToolRelease := FALSE;
+    IF ASSIGNED(SpindleTaperBlow) THEN SpindleTaperBlow := ASSIGNED(SpindleToolReleased) AND SpindleToolReleased; END_IF;
+    IF ToolChangeActive THEN
+        IF ToolChangeFault = 0 THEN ToolChangeFault := 3; END_IF;
+        TOOLPATH_STOP(TOOLPATH := 2);
+    END_IF;
+END_IF;
+
+IF StopSpindleRequest THEN
+    SpindleCW := FALSE;
+    SpindleCCW := FALSE;
+END_IF;
+
+// Default off on every scan, including stops, PLC waits and invalid/replaced files.
+Roller1 := FALSE;
+Roller2 := FALSE;
+IF NOT StopSpindleRequest AND (SpindleCW OR SpindleCCW)
+    AND NOT ToolChangeActive
+    AND TP0.Running AND NOT TP0.StopCommand AND RollerCuttingBoundsAvailable
+    AND (Roller1Enabled OR Roller2Enabled) THEN
+    // Geometry bounds omit transforms. Convert actual spindle feedback into
+    // the same TP0 frame before adding each signed physical roller offset.
+    // RollerParallelX is derived from Router/OnBridgeAxis (rollers parallel to the bridge).
+    IF RollerParallelX THEN
+        RollerSpindleCoordinate := Y.ActualPosition
+            - TP0.Reference[1] - TP0.Offset[1] - TP0.LiveOffset[1];
+        RollerMinimum := RollerCuttingMinimumY;
+        RollerMaximum := RollerCuttingMaximumY;
+    ELSE
+        RollerSpindleCoordinate := X.ActualPosition
+            - TP0.Reference[0] - TP0.Offset[0] - TP0.LiveOffset[0];
+        RollerMinimum := RollerCuttingMinimumX;
+        RollerMaximum := RollerCuttingMaximumX;
+    END_IF;
+    Roller1Coordinate := RollerSpindleCoordinate + Roller1Offset;
+    Roller2Coordinate := RollerSpindleCoordinate + Roller2Offset;
+    Roller1 := Roller1Enabled AND Roller1Coordinate >= RollerMinimum
+        AND Roller1Coordinate <= RollerMaximum;
+    Roller2 := Roller2Enabled AND Roller2Coordinate >= RollerMinimum
+        AND Roller2Coordinate <= RollerMaximum;
+END_IF;

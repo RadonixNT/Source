@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="390" viewBox="0 0 1000 390" role="img" aria-labelledby="title desc">
+<title id="title">One point, two coordinate readings</title><desc id="desc">In a simplified X example with no correction, the work origin is at machine X 400 millimetres and a point at machine X 500 is work X 100. The physical point is unchanged.</desc><rect width="1000" height="390" fill="#f3f7f7"/>
+<g font-family="Segoe UI, Arial, sans-serif" fill="#22313a"><text x="35" y="45" font-size="27" font-weight="700">Same point — two starting references</text><text x="35" y="78" font-size="18">Simplified X example: all values in mm; no tool or other correction.</text>
+<text x="55" y="124" font-size="19" font-weight="700">Machine reference</text><path d="M80 170H920" stroke="#155765" stroke-width="3"/><path d="M80 159v22m560-22v22m140-22v22" stroke="#155765" stroke-width="3"/>
+<text x="74" y="207" font-size="18">0</text><text x="622" y="207" font-size="18">400</text><text x="765" y="207" font-size="18">500</text>
+<text x="55" y="252" font-size="19" font-weight="700">Work reference</text><path d="M640 280H920" stroke="#ad7424" stroke-width="3"/><path d="M640 269v22m140-22v22" stroke="#ad7424" stroke-width="3"/>
+<text x="635" y="318" font-size="18">0</text><text x="765" y="318" font-size="18">100</text>
+<path d="M780 128V291" stroke="#637a84" stroke-width="2" stroke-dasharray="5 5"/><circle cx="780" cy="170" r="7" fill="#155765"/><circle cx="780" cy="280" r="7" fill="#ad7424"/>
+<text x="788" y="133" font-size="18" font-weight="700">Same point</text><text x="35" y="363" font-size="17">Moving the reference changes the reading; it does not move the point. Not a machine layout.</text></g></svg>

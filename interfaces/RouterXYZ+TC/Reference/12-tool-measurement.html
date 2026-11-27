@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 12 — Tool-length Measurement | RouterXYZ+TC</title>
+<meta name="description" content="Operator procedures for empty-spindle reference measurement, tool-length measurement, probe approach, contact and release, result acceptance and interrupted measurements.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZ+TC · CHAPTER 12</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Tool-length Measurement</h1><p class="lead">Establish the empty-spindle reference, measure the fitted tool against it, and distinguish a probe contact from a completed and accepted measurement.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> This chapter describes the supplied measurement routine. The installed setter, approved contact arrangement, tooling and machine procedure determine whether a measurement is suitable.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-12">Manual contents</a> · <a href="11-tool-exchange.html">Previous chapter: Tool selection and exchange</a></nav></header>
+<div class="body"><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Understand what tool-length measurement establishes</a></li>
+<li><a href="#controls">Find the measurement command and identify which mode it will use</a></li>
+<li><a href="#preparation">Prepare the setter, tool and entire movement area</a></li>
+<li><a href="#settings">Understand the probe settings and the approach clearance</a></li>
+<li><a href="#reference">Measure and verify the empty-spindle reference</a></li>
+<li><a href="#tool">Measure the installed numbered tool</a></li>
+<li><a href="#contact-sequence">Recognize the first search, release and precision contact</a></li>
+<li><a href="#return">Wait for retract, return and final acceptance</a></li>
+<li><a href="#results">Read the measured length and verify the machining correction</a></li>
+<li><a href="#interruption">Stop a measurement and recover without trusting an unaccepted contact</a></li>
+<li><a href="#problems">Interpret a rejection or measurement result code</a></li>
+<li><a href="#practice">Work through a measuring example and review the procedure</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">12.1 Understand what tool-length measurement establishes</h2>
+
+<p>Different tools project different distances below the spindle. Even the same cutter can have a different projection after it is replaced or repositioned in its holder. The control system needs the correct length information so that the machining coordinates account for the tool actually fitted.</p>
+<p>The tool setter is the installed device that signals contact during the approved measuring procedure. The supplied routine moves the spindle to the configured setter area, makes an initial contact search, releases the setter, makes a slower final contact search, and returns. Only a successfully completed routine supplies a contact position for acceptance.</p>
+<h3>Two measurements have different purposes</h3>
+<p>First, the machine measures its <strong>empty-spindle reference</strong> using the machine builder's approved contact arrangement. This records the machine Z position at reference contact. Later, with a numbered tool fitted, it measures that tool's contact position against the same setter arrangement.</p>
+<p>The tool length is the second contact's machine Z coordinate minus the recorded empty-spindle reference Z. In the intended coordinate arrangement, a tool projecting below the spindle contacts the setter while the spindle is higher, so the resulting length is positive.</p>
+<table><caption>Table 12-1. Four values that must not be confused</caption><thead><tr><th scope="col">Value</th><th scope="col">What it describes</th><th scope="col">What it does not do</th></tr></thead><tbody>
+<tr><td>Empty-spindle reference</td><td>The measured machine Z contact for the approved empty-spindle arrangement.</td><td>Set the workpiece origin.</td></tr>
+<tr><td>Tool contact Z</td><td>The machine Z coordinate captured at the tool's final precision contact.</td><td>By itself establish a completed, accepted measurement.</td></tr>
+<tr><td>Tool Length</td><td>The accepted difference between tool contact Z and reference Z.</td><td>Change the magazine station or identify the cutter.</td></tr>
+<tr><td>Tool Offset.Z</td><td>An independent configured correction added to the measured length for machining.</td><td>Replace the need for a valid measurement and setup.</td></tr>
+</tbody></table>
+<h3>This is not workpiece zero setting</h3>
+<p>Setting a work origin tells the program where the job is located. Measuring tool length tells it about the tool fitted to the spindle. These tasks can both affect the relationship between machine and work coordinates, but they answer different questions.</p>
+<p>Do not set the workpiece Z origin to hide a wrong tool length. That may make one displayed location appear correct while leaving other tools or later operations wrong. Resolve the tool data and the work origin through their separate approved procedures.</p>
+<aside class="learning-example"><h3>A replacement cutter in the same holder</h3><p>The magazine number is unchanged, but the replacement cutter projects farther from the holder. Choosing that number again does not measure the new projection. Follow the approved measurement procedure and verify the accepted result before relying on the old tool data for machining.</p></aside>
+<p>Measurement does not assess cutter diameter, wear, cutting-edge damage, holder quality or whether the tool is appropriate for the material. It also does not establish that every return path is clear. Those remain part of the physical setup and job checks.</p>
+<p>The empty-spindle contact arrangement is installation-specific. Do not improvise a contact surface, fit a temporary object or probe with an unapproved spindle component. This chapter explains the application's behaviour; the machine documentation must identify exactly which physical arrangement may contact the setter.</p>
+
+</section>
+<section id="controls" aria-labelledby="controls-title"><h2 id="controls-title">12.2 Find the measurement command and identify which mode it will use</h2>
+
+<p>The English main-window command is <strong>Measure Tool</strong>, next to the Tool selector in the spindle area. Some design views use the caption Measure Tool. It is a measurement command, not an Apply button for a tool choice and not a way to enter a length manually.</p>
+<p>The same command serves two purposes. It chooses its mode from the <strong>recorded current tool</strong> at the time of the request. It does not ask you to choose between reference and tool measurement from a separate mode list.</p>
+<table><caption>Table 12-2. How the measurement mode is chosen</caption><thead><tr><th scope="col">Recorded current tool</th><th scope="col">Requested operation</th><th scope="col">Additional requirement</th></tr></thead><tbody>
+<tr><td>Blank / zero</td><td>Measure the empty-spindle reference.</td><td>The spindle must actually be empty and the operator must approve the confirmation.</td></tr>
+<tr><td>A valid numbered tool</td><td>Measure the fitted tool's length.</td><td>A previously accepted empty-spindle reference is required.</td></tr>
+<tr><td>Invalid or uncertain tool record</td><td>No reliable measurement mode can be inferred from the physical setup.</td><td>Reconcile the actual tool and record before requesting measurement.</td></tr>
+</tbody></table>
+<h3>The current tool must describe reality</h3>
+<p>If the Tool field is blank while a tool is physically installed, pressing the measurement command can request reference measurement for the wrong physical condition. If the field contains a number but the spindle is empty, the application can associate a contact with a tool that is not there. Applicable sensor checks help, but they do not replace the operator's verification of the actual assembly.</p>
+<p>Use the tool-exchange procedure to establish the correct recorded and physical state. Do not edit CurrentTool simply to select a preferred measurement mode. The number also affects tool correction and later exchange routes.</p>
+<h3>Read the empty-spindle confirmation</h3>
+<p>For a reference request that passes the initial checks, the application asks: <strong>“Continue with reference measurement while the spindle is empty?”</strong> The accompanying description explains that measurement will continue without a tool recorded in the spindle.</p>
+<p>Choose Yes only when the physical spindle is empty and the approved reference-contact arrangement is ready. Choose No if those facts are uncertain. Cancelling at this dialog prevents the measurement from being started. After confirmation, the application checks admission again before starting the routine.</p>
+<p>For a numbered tool, there is no equivalent empty-spindle Yes/No prompt. Prepare the complete operation before pressing the command; an accepted request can begin the spindle-stop and measuring sequence.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 12-1 · CONTROL AND CONFIRMATION SCREENSHOTS REQUIRED</p><h3>One command, two modes</h3><p>Insert an English main-window crop showing Tool and Measure Tool, followed by the empty-spindle confirmation dialog. Label the recorded tool that determines the mode. Show the Yes and No choices without accepting a live request merely to obtain the picture.</p><p>Suggested image: <code>assets/images/12-measurement-control.png</code>. Use an approved demonstration or recorded view; identify Simulation if that is the environment shown.</p><figcaption>The confirmation applies to an empty-spindle reference request, not to every numbered-tool measurement.</figcaption></figure>
+<h3>Watch both the status message and the report</h3>
+<p>The main progress area presents measurement status, including measuring, cancelled, rejected and accepted-result messages. It is a shared status area, so a message is not guaranteed to remain there indefinitely. The operation report also records accepted reference and length results and rejection reasons.</p>
+<p>A button that is available is not proof that the probe settings and reference are valid. Some detailed conditions are checked when the action is requested so that the application can explain the rejection. Read that response before repeating the request.</p>
+
+</section>
+<section id="preparation" aria-labelledby="preparation-title"><h2 id="preparation-title">12.3 Prepare the setter, tool and entire movement area</h2>
+
+<p>Measurement is an automatic motion operation. Prepare the setter, the full approach and return route, and the actual contact arrangement before pressing the command. A clear setter top is not enough if the head must pass an obstruction on its way there or return into an unsuitable space afterward.</p>
+<p>Use the approved machine procedure to inspect and prepare the setter contact surface. Material, contamination, an incorrectly positioned setter or unsuitable tooling can change the contact or make probing unsafe. The application cannot determine that the surface being contacted is the correct one.</p>
+<table><caption>Table 12-3. Pre-measurement checks</caption><thead><tr><th scope="col">Check</th><th scope="col">What to establish</th></tr></thead><tbody>
+<tr><td>Measurement purpose</td><td>You intend either an empty-spindle reference or the fitted tool's length, and the recorded tool selects that mode.</td></tr>
+<tr><td>Physical assembly</td><td>The actual tool or approved empty-spindle contact arrangement is correctly prepared.</td></tr>
+<tr><td>Setter</td><td>The installed device, surface condition and location agree with the commissioned setup.</td></tr>
+<tr><td>Probe input</td><td>ToolHeightSensor is correctly assigned to the required physical digital input and operates through the approved check.</td></tr>
+<tr><td>Reference</td><td>For a numbered tool, an accepted reference exists and still belongs to the current physical setup.</td></tr>
+<tr><td>Machine readiness</td><td>Connection, complete homing, stopped axes and required spindle conditions are valid.</td></tr>
+<tr><td>Approach and return</td><td>Every segment is clear for the actual tool, holder and head, including the final return height.</td></tr>
+<tr><td>Other activity</td><td>No machining program, tool operation, homing, positioning or competing path is active.</td></tr>
+<tr><td>People and stop response</td><td>The area is prepared, and the operator can observe and use the prescribed stopping response.</td></tr>
+</tbody></table>
+<h3>The tool-setter input is required</h3>
+<p>The measurement requires <strong>ToolHeightSensor</strong> to be assigned to a physical digital input. This is different from some optional spindle feedback signals. An installation without an optional grip or health input does not thereby gain permission to measure without the tool-setter input.</p>
+<p>The routine depends on contact and release behaviour from that signal. A fixed value, a stuck sensor or an incorrectly configured signal is not a valid substitute. Do not force an input or change its mapping to make a measurement appear successful.</p>
+<h3>Readiness includes more than homing</h3>
+<p>All configured axes must have the required homing state, including the second gantry motor. The relevant axes must be ready and stopped, the machining path must be stopped, and all motion paths must be idle. A pending tool exchange, measurement or correction synchronization blocks a new measurement.</p>
+<p>The supplied background interlocks and measurement routine must be running or available as required. The spindle run output must be configured. Assigned pressure, thermal and drive-ready inputs must satisfy their required states. The grip must not be commanded open; applicable released and piston indications must agree with the closed/retracted condition. A numbered tool also needs its applicable clamped indication.</p>
+<p>Those checks do not identify the cutter, verify the setter surface or prove that an empty-spindle contact arrangement is mechanically permitted. Complete the physical checks even when the command is available.</p>
+<aside class="learning-example"><h3>A valid reference from a previous setup</h3><p>The screen says the reference was measured, but the setter has since been moved. The stored flag does not detect that physical change. Have the reference and affected tool data re-established under the approved procedure before trusting them for machining.</p></aside>
+<p>During the supplied measurement, spindle run commands are held off, and the routine waits for its stopped qualification before measurement motion begins. Still follow <a href="10-spindle.html">Chapter 10</a> and the machine's access procedure; a software condition does not authorize reaching into the machine.</p>
+
+</section>
+<section id="settings" aria-labelledby="settings-title"><h2 id="settings-title">12.4 Understand the probe settings and the approach clearance</h2>
+
+<p>The measurement settings are under <strong>ToolChanger → ToolLengthMeasurment</strong>. The spelling shown here matches the current settings group. These are machine-setup values; ordinary measurement should use the approved commissioned values rather than trial-and-error edits.</p>
+<table><caption>Table 12-4. Measurement settings and their meanings</caption><thead><tr><th scope="col">Setting</th><th scope="col">Meaning</th><th scope="col">Operator distinction</th></tr></thead><tbody>
+<tr><td>ProbePosition</td><td>The configured X/Y/Z probe location in machine coordinates.</td><td>Its X/Y locates the approach; its Z is used to calculate the approach height. It is not the newly measured reference.</td></tr>
+<tr><td>ApproachClearance</td><td>A positive Z amount added to ProbePosition.Z to obtain the approach/retract coordinate.</td><td>Not an automatically measured gap below the current cutter.</td></tr>
+<tr><td>SearchVelocity</td><td>The first downward search speed and upward probe-release speed.</td><td>Not the speed used for every movement in the cycle.</td></tr>
+<tr><td>FineSearchVelocity</td><td>The final precision-contact search speed.</td><td>A separate setting from the first search.</td></tr>
+<tr><td>ReferenceOffsetZ</td><td>The accepted empty-spindle machine Z contact.</td><td>A measured reference, presented read-only.</td></tr>
+<tr><td>ReferenceValid</td><td>Whether an empty-spindle reference has been accepted; shown as Not measured or Measured.</td><td>Not a live inspection of whether the physical setup has remained unchanged.</td></tr>
+</tbody></table>
+<h3>Calculate the approach height before relying on it</h3>
+<p>The supplied routine uses the configured ProbePosition.Z plus ApproachClearance. It does not add the fitted tool's measured length to that approach coordinate. The actual tool must therefore clear the setter and surrounding equipment at that machine position.</p>
+<p>For example, a configured probe Z of 20 mm and an approach clearance of 100 mm produce an approach coordinate of 120 mm. This arithmetic does not prove a 100 mm gap between the cutter tip and the setter. A long tool can project into that space. The numbers are illustrative and must not be copied into a machine configuration.</p>
+<p>It is especially important to understand this when measuring a newly fitted tool whose length is not yet known. The approved setup must provide adequate approach clearance for the range of assemblies that will be measured. Successful numerical validation only establishes that the configured coordinate fits the permitted travel.</p>
+<h3>Traverse and search speeds have different jobs</h3>
+<p>Travel to the setter and the return use the configured TraverseVelocity. SearchVelocity is used to find the first contact and to move upward until the setter releases. FineSearchVelocity is used for the second, precision contact. Changing a jog slider does not establish these measurement speeds.</p>
+<p>All relevant speed and clearance values must be positive and suitable for the physical setter. Do not increase a search speed to shorten a slow-looking cycle. The initial approach is a positioning movement, not a contact search, and the setter input does not serve as a general collision detector along that route.</p>
+<h3>The horizontal approach has a fixed decision band</h3>
+<p>The supplied routine compares the starting X and Y with ProbePosition. If either differs by more than 0.5 mm, it performs a Z-first transfer using Z MaxCourse before moving to the probe X/Y and then the approach Z. If both are within that band, it keeps the current X/Y and goes directly to the approach Z.</p>
+<p>This is a route decision, not a guarantee that any point within 0.5 mm is physically suitable for the cutter and setter. Use the approved alignment and contact-area requirements of the installation. Do not borrow the different positioning tolerances described for other commands.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 12-2 · SETTER AND SETTINGS IMAGES REQUIRED</p><h3>The actual setter and its commissioned approach</h3><p>Supply a photograph identifying the approved contact surface and the permitted empty-spindle arrangement, plus an English settings crop showing ProbePosition, ApproachClearance, SearchVelocity, FineSearchVelocity and the reference fields. Label the approach coordinate separately from actual cutter clearance.</p><p>Suggested image: <code>assets/images/12-setter-settings.png</code>. Photograph under the machine's access/isolation procedure; mark all shown values as installation-specific.</p><figcaption>The configured approach must suit the actual tool assembly; the application does not calculate clearance from tool shape.</figcaption></figure>
+<p>Search and return timeouts in the supplied routine use the configured HomeTimeout duration. This does not turn measurement into homing or give permission to alter that machine-wide setting to hide a missed contact. An unexpected timeout requires assessment of the relevant stage.</p>
+
+</section>
+<section id="reference" aria-labelledby="reference-title"><h2 id="reference-title">12.5 Measure and verify the empty-spindle reference</h2>
+
+<p>The empty-spindle reference gives later tool measurements a common baseline. Perform this procedure only with the machine builder's approved empty-spindle contact arrangement. A blank Tool display is a prerequisite for choosing the mode, but the operator must also establish that the spindle is physically empty.</p>
+<p>If a tool is fitted, first use the approved unloading procedure and wait for the complete exchange to finish. Do not remove a tool informally and leave its number recorded, or change the number to zero while the assembly remains fitted.</p>
+<ol class="journey">
+<li><strong>Establish the correct physical and recorded empty state.</strong><p>Complete the unloading, closing and verification procedure. Confirm that Tool normally shows blank/zero.</p></li>
+<li><strong>Prepare the setter and approved reference-contact surface.</strong><p>Check the physical arrangement, commissioned probe settings, full approach and final return.</p></li>
+<li><strong>Confirm machine readiness.</strong><p>Complete required homing, stop other operations, and wait for tool correction synchronization to finish.</p></li>
+<li><strong>Press Measure Tool once.</strong><p>Read any rejection. If the request is admissible, read the empty-spindle confirmation.</p></li>
+<li><strong>Confirm only the prepared empty-spindle operation.</strong><p>Choose Yes to permit the automatic routine; choose No if the physical condition or purpose is uncertain.</p></li>
+<li><strong>Observe the whole measuring cycle.</strong><p>Expect spindle-stop qualification, positioning, first contact, release, precision contact, retract and return.</p></li>
+<li><strong>Check the accepted reference result.</strong><p>Look for the empty-spindle reference success message and the updated ReferenceOffsetZ and ReferenceValid values.</p></li>
+</ol>
+<table><caption>Table 12-5. Interpreting the reference result</caption><thead><tr><th scope="col">Observation</th><th scope="col">Meaning</th><th scope="col">Next action</th></tr></thead><tbody>
+<tr><td>Confirmation cancelled before the routine starts</td><td>No new measurement was started by that request.</td><td>Resolve the preparation or leave the previous reference unchanged.</td></tr>
+<tr><td>A contact is observed during the cycle</td><td>The sensor has responded at that stage.</td><td>Continue observing; contact alone is not an accepted reference.</td></tr>
+<tr><td>Successful routine and accepted empty-spindle result</td><td>The final contact Z is saved as ReferenceOffsetZ and ReferenceValid becomes Measured.</td><td>Verify that the value is plausible for the approved setup.</td></tr>
+<tr><td>Interrupted or unsuccessful cycle</td><td>No new contact from that unsuccessful attempt is accepted as the reference.</td><td>Assess the actual machine state and the reason before retrying.</td></tr>
+</tbody></table>
+<h3>ReferenceValid records acceptance, not ongoing physical validity</h3>
+<p>The read-only reference status tells you that a reference measurement was accepted. It does not sense whether the setter was moved, the contact arrangement changed or the relevant machine geometry was disturbed afterward. A reference from an earlier setup may remain displayed as Measured even though it must no longer be trusted for the changed installation.</p>
+<p>If a new attempt fails, an existing accepted reference can remain visible. Do not mistake that old status for success of the latest attempt. Read the time and content of the new result message and report.</p>
+<h3>Re-measuring the reference does not re-measure all tools</h3>
+<p>Accepting a new empty-spindle reference updates the reference fields. It does not automatically revisit every stored tool length or physically remeasure the magazine. Any change that makes the old baseline unsuitable requires an approved plan for the affected tool data as well.</p>
+<aside class="learning-example"><h3>The setter was moved during service</h3><p>A new reference can correctly describe the setter's new position, while individual tool lengths remain stored from earlier measurements. The operator should have the applicable setup and tool measurements verified together, rather than assume that a fresh reference alone certifies every tool.</p></aside>
+<p>A reference value can be zero or negative in a valid machine-coordinate arrangement; it is the actual accepted contact coordinate, not a positive tool length. Do not judge it solely by its sign. Compare it with the commissioned expectation and resolve a surprising result before measuring production tools.</p>
+
+</section>
+<section id="tool" aria-labelledby="tool-title"><h2 id="tool-title">12.6 Measure the installed numbered tool</h2>
+
+<p>Measure a numbered tool after its physical installation and recorded identity have been established through the approved exchange procedure. The result is stored for that current tool number. The measurement does not identify the cutter automatically or ask which tool record should receive the result.</p>
+<p>A valid accepted empty-spindle reference is required. If it has not been established, the application refuses the numbered-tool measurement. If the reference exists but no longer matches the approved physical setup, resolve that before relying on a new length.</p>
+<ol class="journey">
+<li><strong>Complete the tool exchange and verify identity.</strong><p>Confirm the actual assembly and the normal current-tool display. Wait for all exchange and correction stages to finish.</p></li>
+<li><strong>Check the tool's suitability for the setter.</strong><p>Use the approved contact point and arrangement for this cutter. Confirm that the approach clears the actual projection and that the tool can be measured without damage.</p></li>
+<li><strong>Verify the reference and prepared route.</strong><p>Check the applicable reference status, setter condition, return location and machine readiness.</p></li>
+<li><strong>Press Measure Tool once.</strong><p>For a numbered tool, an accepted request starts without the empty-spindle confirmation dialog. Read any refusal before another attempt.</p></li>
+<li><strong>Observe both contacts and the complete return.</strong><p>Do not treat the initial touch, second touch or first upward movement as completion.</p></li>
+<li><strong>Read the accepted tool-length result.</strong><p>Confirm that it names the intended tool and that the value is plausible for the actual assembly.</p></li>
+<li><strong>Wait for correction synchronization.</strong><p>The new length is followed by applying the corresponding machining correction. Resolve any synchronization rejection before further tool operations or machining preparation.</p></li>
+</ol>
+<table><caption>Table 12-6. What a numbered-tool measurement changes</caption><thead><tr><th scope="col">Item</th><th scope="col">Effect of an accepted result</th></tr></thead><tbody>
+<tr><td>Current tool's Length</td><td>Replaced by the accepted positive contact-minus-reference value and saved.</td></tr>
+<tr><td>Current machining tool correction</td><td>Synchronization is requested using that length plus the configured correction.</td></tr>
+<tr><td>Recorded current tool number</td><td>Measurement does not perform a tool exchange or choose a different tool number.</td></tr>
+<tr><td>Empty-spindle reference</td><td>Not replaced by a numbered-tool measurement.</td></tr>
+<tr><td>Other tools' stored lengths</td><td>Not remeasured by this operation.</td></tr>
+<tr><td>Work origins and magazine positions</td><td>Not redefined by the length-measurement result.</td></tr>
+</tbody></table>
+<h3>The tool must stay the same throughout</h3>
+<p>The application captures the current tool number for the request. If that recorded number changes before the measurement is accepted, the operation is rejected rather than storing the contact under a different tool. Do not edit tool identity or configuration during measurement.</p>
+<p>A failure or interruption before acceptance leaves the previous confirmed length in place. That retained number may still be unsuitable for a newly replaced or repositioned cutter. Retaining data is not the same as validating the current physical assembly.</p>
+<aside class="learning-example"><h3>A replaced cutter fails its first measurement</h3><p>Tool 4 still has a stored length from the previous cutter. The new attempt times out before completion. The old value remains, but it does not become correct for the replacement merely because the screen still shows it. Resolve the failed measurement before approving the tool for the job.</p></aside>
+<h3>Measurement success and correction acceptance are separate checks</h3>
+<p>The tool-length success message is issued when the new length has been accepted and saved. The application then synchronizes the machining correction. If the controller refuses that correction, the measured length can already be stored while the applied correction still needs attention.</p>
+<p>Do not keep measuring in an attempt to clear a correction error. Record the measured value and the exact synchronization message. The cause may be the allowed travel, coordinate state or configuration rather than an unsuccessful probe contact.</p>
+<p>The supplied measurement command does not resume the machining program or issue a spindle-start command at completion. After verification, prepare the next activity deliberately. If measurement changed the active tool length, recheck the job's approach and clearance assumptions before a new Run request.</p>
+
+</section>
+<section id="contact-sequence" aria-labelledby="contact-sequence-title"><h2 id="contact-sequence-title">12.7 Recognize the first search, release and precision contact</h2>
+
+<p>The supplied cycle deliberately contacts the setter twice. The first contact locates it; the upward release separates the contact surfaces; the second search captures the precision contact used for the result. Knowing this sequence helps you distinguish expected movement from an interruption or an incomplete measurement.</p>
+<figure class="concept-figure"><img src="assets/images/12-contact-sequence.svg" alt="First downward search, upward release and slower precision search. The final contact Z is captured during precision search, followed by retract and return before acceptance."><figcaption>Figure 12-3. The two-contact sequence. The routine waits for the relevant stops before proceeding between search stages.</figcaption></figure>
+<h3>Spindle stop and approach happen first</h3>
+<p>The routine removes forward, reverse and speed requests and waits for the supplied spindle-stopped qualification. It then positions to the approach coordinate using the route decision described earlier. The spindle commands remain off throughout measurement.</p>
+<p>The approach move is not the precision search. It must arrive with the required physical clearance for the actual tool. Do not rely on the measuring sensor to protect a tool whose projection makes the configured approach too low.</p>
+<table><caption>Table 12-7. Search-stage behaviour</caption><thead><tr><th scope="col">Stage</th><th scope="col">Movement and observation</th><th scope="col">When the stage advances</th></tr></thead><tbody>
+<tr><td>First search</td><td>Z searches downward toward its configured lower travel coordinate at SearchVelocity while the setter is not active.</td><td>The setter becomes active, a Z stop is requested, and stopped status is reached.</td></tr>
+<tr><td>Release</td><td>Z moves upward toward its upper travel coordinate at SearchVelocity while the setter remains active.</td><td>The setter clears, a Z stop is requested, and stopped status is reached.</td></tr>
+<tr><td>Precision search</td><td>Z searches downward at FineSearchVelocity.</td><td>The setter becomes active; the current actual machine Z is captured and Z is stopped.</td></tr>
+<tr><td>After final stop</td><td>The cycle proceeds to retract and return.</td><td>Successful return is required before the result is published for acceptance.</td></tr>
+</tbody></table>
+<h3>The release is controlled by the sensor, not a fixed lift distance</h3>
+<p>The upward release stage ends according to the setter signal and the axis stopping response. It is not a promise to lift a particular number of millimetres. A short upward movement followed by another downward search can therefore be the expected sequence.</p>
+<p>Likewise, if the setter is already active when the first-search stage is entered, the supplied routine proceeds through stopping and release rather than demanding another first downward contact. This does not make an unexpectedly active sensor acceptable during preparation. Investigate an unexplained active signal before starting.</p>
+<h3>Which position is captured?</h3>
+<p>The precision stage captures the actual machine Z when the active contact is observed. The axis then stops. The settled position after stopping can differ slightly from the captured contact because the stopping response follows detection. Do not copy the later stationary Z display and call it the measured contact value.</p>
+<p>The operation is not accepted merely because that contact coordinate was captured internally. The routine still needs to finish the retract and return successfully, and the application must validate and store the result.</p>
+<aside class="learning-example"><h3>The tool touched, backed away and touched again</h3><p>The first touch is followed by an upward release and then a slower final search. These are expected stages, not an automatic retry after a failed measurement. Keep observing until the final return and accepted result, rather than pressing the command again after the first touch.</p></aside>
+<p>If contact never appears, never releases or cannot be confirmed through the required sequence, the relevant stage times out. Travel limits are not the intended contact surface. Do not wait for a visibly unsuitable approach to reach a limit; use the prescribed stopping response if the movement is inconsistent with the approved setup.</p>
+
+</section>
+<section id="return" aria-labelledby="return-title"><h2 id="return-title">12.8 Wait for retract, return and final acceptance</h2>
+
+<p>The final precision touch is followed by more movement. The routine retracts toward the configured approach Z and returns toward the machine position captured when measurement started. Do not approach the setter or treat the operation as finished when the tool first lifts off the contact surface.</p>
+<p>The captured starting position uses the actual X, Y and Z coordinates at routine activation. The return belongs to that measurement attempt. If an operation is interrupted and a new request is later started from somewhere else, that new attempt has a different starting and return position.</p>
+<table><caption>Table 12-8. Return behaviour after a successful precision search</caption><thead><tr><th scope="col">Stage</th><th scope="col">Expected behaviour</th><th scope="col">Operator check</th></tr></thead><tbody>
+<tr><td>Initial retract</td><td>Z moves upward toward the approach coordinate if below it, then stops.</td><td>The tool and holder can leave the setter along that route.</td></tr>
+<tr><td>Horizontal return was required by the starting route decision</td><td>Z moves to the configured upper traverse coordinate before returning X/Y.</td><td>The whole raised return envelope remains clear.</td></tr>
+<tr><td>X/Y return</td><td>X and Y return toward their captured starting coordinates.</td><td>Do not assume the exact reverse of the outbound geometric path.</td></tr>
+<tr><td>Final Z return</td><td>Z returns toward the captured starting Z and stops.</td><td>The final height is suitable for the actual fitted assembly.</td></tr>
+<tr><td>Routine succeeds</td><td>The final contact coordinate is published with successful completion.</td><td>Read the application's accepted reference or tool-length result.</td></tr>
+</tbody></table>
+<h3>The route depends on the starting X/Y relationship</h3>
+<p>If the starting X/Y was outside the routine's 0.5 mm decision band around the probe, the supplied sequence makes the raised horizontal transfer and corresponding horizontal return. On return it commands X and Y toward their starting coordinates individually. Do not assume a particular straight-line diagonal or an exact retracing of the outward path when checking obstructions.</p>
+<p>If both starting coordinates were within the band, no X/Y repositioning was requested. After retracting, the routine returns Z without a horizontal return stage. The tool still needs a physically suitable contact location and vertical clearance in that case.</p>
+<p>The return uses the beginning-of-cycle decision; it is not an invitation for the operator to jog or reposition the machine between stages. Let the operation finish or stop it through the appropriate controls.</p>
+<h3>A retract is not always a trip to the upper limit</h3>
+<p>The first retract after contact uses the calculated approach coordinate. It is followed by the upper traverse stage only when the horizontal return is needed. A vertical-only cycle can therefore look much shorter than one that started across the table.</p>
+<p>If the actual Z is already at or above the approach coordinate at the retract stage, the supplied routine does not first move downward to it just to reproduce a fixed travel distance. This describes the control behaviour; it does not establish that an unsuitable approach setting is acceptable.</p>
+<aside class="learning-example"><h3>The tool is clear of the setter, but the cycle is still active</h3><p>After precision contact, the spindle rises and stops briefly. It may still need to travel across the machine and lower to its starting height. Keep observing until the final result instead of treating the first upward stop as permission to inspect the setter.</p></aside>
+<h3>Completion is required before the contact becomes a result</h3>
+<p>The supplied routine publishes its successful contact result after the return and final stopped condition. A return timeout therefore prevents that attempt from being accepted even if both touches appeared correct.</p>
+<p>For the reference, acceptance updates the reference fields. For a numbered tool, acceptance also checks that the calculated length is positive before storing it, and then starts machining-correction synchronization. These later checks are why “the tool touched” is an incomplete description of measurement success.</p>
+<p>A failed or cancelled cycle must not be expected to perform the normal retract and return. Establish the actual position and use the recovery procedure described later. Neither the success route nor the starting position is a guaranteed destination after interruption.</p>
+
+</section>
+<section id="results" aria-labelledby="results-title"><h2 id="results-title">12.9 Read the measured length and verify the machining correction</h2>
+
+<p>An accepted reference result and an accepted tool-length result name different values. The reference is a machine Z contact coordinate. A numbered tool's Length is a difference between two contact coordinates. Neither should be confused with the current Z display after the machine has returned.</p>
+<p>For a numbered tool, the supplied calculation is <strong>Tool Length = tool contact Z − ReferenceOffsetZ</strong>. The calculated length must be finite and greater than zero. A zero or negative result is rejected rather than saved as a normal tool length.</p>
+<table><caption>Table 12-9. Illustrative length calculation</caption><thead><tr><th scope="col">Quantity</th><th scope="col">Example value</th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td>Accepted empty-spindle reference Z</td><td>20.000 mm</td><td>The common reference contact.</td></tr>
+<tr><td>Current tool's precision contact Z</td><td>80.250 mm</td><td>The tool contacts while the spindle is higher.</td></tr>
+<tr><td>Calculated Tool Length</td><td>60.250 mm</td><td>80.250 − 20.000.</td></tr>
+<tr><td>Configured Tool Offset.Z</td><td>+0.500 mm</td><td>An independent correction; measurement does not erase it.</td></tr>
+<tr><td>Resulting Z machining tool correction</td><td>60.750 mm</td><td>60.250 + 0.500.</td></tr>
+</tbody></table>
+<p>The numbers illustrate the relationship only. They are not recommended lengths, corrections or setter coordinates. A positive result is necessary for acceptance but is not a complete physical plausibility check. Wrong tool identity or an unsuitable contact arrangement can still produce a positive number.</p>
+<h3>Check identity, magnitude and context</h3>
+<p>Read which tool the success message names. Compare the accepted Length with the expected range for that actual assembly under the approved setup procedure. Consider whether the cutter or projection changed, whether the reference belongs to the current setup and whether the setter was contacted at the approved surface.</p>
+<p>A displayed result with several decimal places describes the stored numerical value. It is not a claim that the complete mechanical measurement is accurate to every displayed digit. Do not infer repeatability or machining accuracy from formatting alone.</p>
+<h3>The configured correction remains separate</h3>
+<p>Length measurement updates the current tool's Length. The tool's configured X/Y/Z Offset remains independent. When the machining correction is synchronized, X and Y use their configured correction values and Z uses Length plus Offset.Z.</p>
+<p>That means a successful new measurement can coexist with a previously configured additional correction. Do not assume the success message reset all tool-related adjustments. Review an unexpected machining coordinate with both measured Length and configured Offset in view.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 12-4 · ACCEPTED-RESULT SCREENSHOT REQUIRED</p><h3>Reference, measured tool length and separate correction</h3><p>Insert an English report/settings view, or a clearly labelled set of crops, showing a genuine accepted reference, a numbered-tool length result and that tool's separate Length and Offset values. Include enough context to identify the tool and the current attempt.</p><p>Suggested image: <code>assets/images/12-measured-result.png</code>. Label the returned current Z display separately from contact Z. If correction synchronization later fails, show it as a separate outcome rather than labelling the entire setup ready.</p><figcaption>A measured length, a stored correction and a returned machine position are different pieces of information.</figcaption></figure>
+<h3>A new reference is not a batch recalculation</h3>
+<p>The application does not automatically remeasure every tool when the reference is accepted. Likewise, measuring one tool does not update the remaining magazine tools. Keep the job's verification records consistent with the actual work performed.</p>
+<p>If a successful tool result is followed by a correction error, preserve both messages. The new Length may already be stored. Do not describe that situation as “the measurement never changed anything,” and do not immediately undo the length or alter work zero to make the error disappear.</p>
+<p>Before machining, verify that the correct tool is fitted, its accepted data are plausible and its machining correction has been accepted. Then use the normal job-start checks for work origin, clearance and spindle operation. Measurement alone does not make the complete job ready.</p>
+
+</section>
+<section id="interruption" aria-labelledby="interruption-title"><h2 id="interruption-title">12.10 Stop a measurement and recover without trusting an unaccepted contact</h2>
+
+<p>A measurement can be interrupted before approach, while contacting the setter, during retract or on the return. The appropriate recovery depends on where the machine actually stopped. Do not assume that cancelling causes it to lift away or return to the starting position automatically.</p>
+<p>For an ordinary interruption, use the application's appropriate stopping control. Its Pause and Reset paths cancel the active tool operation and request stopping of all motion. For immediate danger or an unsuitable response, use the installed emergency procedure.</p>
+<ol class="journey">
+<li><strong>Request the prescribed stop.</strong><p>Do not rely on closing a window, releasing the measurement button or changing the feed control to cancel the cycle.</p></li>
+<li><strong>Observe the actual stopping response.</strong><p>Keep clear until the machine is in the state required by its operating procedure.</p></li>
+<li><strong>Identify the interrupted stage.</strong><p>Record whether the cycle was approaching, searching, releasing, retracting or returning.</p></li>
+<li><strong>Check the tool's physical relationship to the setter.</strong><p>It may still be touching or pressing on the device. Use the approved inspection and recovery method.</p></li>
+<li><strong>Check whether a result was accepted before the interruption.</strong><p>Read the report and stored values. Distinguish an unsuccessful probe cycle from a later correction-synchronization problem.</p></li>
+<li><strong>Resolve the cause and prepare a new attempt deliberately.</strong><p>Verify the tool record, reference, sensor, approach and return route again before starting.</p></li>
+</ol>
+<table><caption>Table 12-10. Data and position after interruption</caption><thead><tr><th scope="col">Situation</th><th scope="col">What can be relied on</th><th scope="col">What must not be assumed</th></tr></thead><tbody>
+<tr><td>Empty-spindle confirmation declined</td><td>That request did not start the routine.</td><td>That the preparation or physical reference has been verified.</td></tr>
+<tr><td>Cycle cancelled before successful acceptance</td><td>The previous confirmed calibration remains the stored basis.</td><td>That it is valid for a newly changed physical setup.</td></tr>
+<tr><td>Precision contact occurred but return failed</td><td>The attempt did not produce an accepted new result.</td><td>That the observed touch is sufficient to use a new length.</td></tr>
+<tr><td>Length accepted, correction subsequently rejected</td><td>The new Length can already be saved.</td><td>That the new machining correction is active or that no data changed.</td></tr>
+<tr><td>Connection lost</td><td>The pending measurement cannot be treated as completed.</td><td>That the tool retracted, that the old reference is newly verified or that reconnect completes the cycle.</td></tr>
+</tbody></table>
+<h3>There is no automatic undo of the physical movement</h3>
+<p>The unsuccessful routine's recovery path is not the normal success return route. Treat the head's location as the location actually reached, not the intended starting point. An operator stop or emergency response also does not restore the initial physical position.</p>
+<p>If the tool remains near or against the setter, do not issue Go Home, parking, homing or another automatic movement as a generic escape. First establish an appropriate departure route for the actual contact condition. A valid destination elsewhere does not make the first movement safe.</p>
+<aside class="learning-example"><h3>A stop during the final search</h3><p>The tool stops close to the setter before the cycle finishes. The old stored length is retained. Before remeasuring, establish the actual contact condition and recover through the approved route. Pressing the measurement command again creates a new attempt from its new starting position; it does not resume the interrupted search.</p></aside>
+<h3>Retained calibration is not a new verification</h3>
+<p>The application deliberately avoids replacing confirmed data with an unaccepted contact. That protects the stored result from a failed cycle. It does not certify that the old value remains suitable after the tool has moved in its holder, the cutter has changed or the setter has been disturbed.</p>
+<p>After recovery, use the normal readiness and measurement procedure again. If the actual tool, reference, sensor condition or accepted data cannot be established through the approved operator checks, leave the operation stopped and obtain assistance. Do not alter work zero or tool identity to conceal the uncertainty.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">12.11 Interpret a rejection or measurement result code</h2>
+
+<p>First determine whether the request was refused before the routine began, the measuring cycle ended unsuccessfully, or a result was accepted but the machining correction could not be synchronized. These are different problems, even if the final visible symptom is an unavailable control.</p>
+<p>The report uses <strong>MeasureToolLength</strong> for the measuring operation. A status message such as <strong>Tool Z measurement rejected</strong> is followed by a reason. Read the complete message, operation name and exit reason rather than relying on a number alone.</p>
+<table><caption>Table 12-11. Supplied measurement-routine results</caption><thead><tr><th scope="col">Result</th><th scope="col">Stage or condition</th><th scope="col">Operator interpretation</th></tr></thead><tbody>
+<tr><td>0</td><td>The routine completed the contact, retract and return sequence successfully.</td><td>The application still validates and accepts the returned contact as a reference or positive tool length.</td></tr>
+<tr><td>1</td><td>Machine or motion-path readiness was unsuitable.</td><td>Check stopped/homed state, competing activity and the preceding report.</td></tr>
+<tr><td>2</td><td>Invalid settings or target.</td><td>Have probe coordinates, approach clearance, speeds and travel checked.</td></tr>
+<tr><td>3</td><td>Spindle-stop wait timed out.</td><td>Assess spindle rundown and its required feedback; no measurement success is implied.</td></tr>
+<tr><td>4</td><td>First search or its stopping stage timed out.</td><td>Check actual alignment and contact response through the approved procedure.</td></tr>
+<tr><td>5</td><td>Probe release or its stopping stage timed out.</td><td>Check whether the setter cleared and whether the tool remains in contact.</td></tr>
+<tr><td>6</td><td>Precision search or final search stop timed out.</td><td>The final measuring stage did not complete; do not use the attempt as a new calibration.</td></tr>
+<tr><td>7</td><td>Required spindle configuration or applicable health condition was lost.</td><td>Check the relevant pressure, thermal, drive-ready and configuration information.</td></tr>
+<tr><td>8</td><td>The retract/return phase timed out.</td><td>A contact may have occurred, but the attempt was not completed and accepted.</td></tr>
+</tbody></table>
+<h3>Timeout identifies an unfinished stage, not its single cause</h3>
+<p>A first-search timeout could involve alignment, sensor response, motion readiness or the allowed duration. The number does not prove that the sensor alone is defective. Similarly, a release timeout needs assessment of both the physical contact and the signal; it is not permission to extend the upward motion indefinitely.</p>
+<p>The first-search, release and precision stages use the configured HomeTimeout duration, including their associated stop waits. The return timer covers the retract and subsequent return phases together. These are not separate operator-adjustable “try longer” buttons.</p>
+<h3>Common action-level rejections</h3>
+<table><caption>Table 12-12. Rejections that need a setup or state check</caption><thead><tr><th scope="col">Reported situation</th><th scope="col">What to check next</th></tr></thead><tbody>
+<tr><td>Measure the empty-spindle reference first</td><td>Establish the approved empty state and complete reference measurement before a numbered tool.</td></tr>
+<tr><td>ToolHeightSensor needs a physical input</td><td>Have the installed probe mapping verified; do not substitute a forced value.</td></tr>
+<tr><td>Another tool operation is pending</td><td>Read the current exchange/measurement/correction state and let it finish or recover properly.</td></tr>
+<tr><td>Grip mechanism not closed/retracted or tool not confirmed clamped</td><td>Reconcile the actual assembly with applicable grip feedback.</td></tr>
+<tr><td>Measurement routine unavailable</td><td>Have its loaded/enabled state and any configuration error assessed by authorized personnel.</td></tr>
+<tr><td>Measured tool length must be positive</td><td>Check the actual tool, recorded identity, reference and contact arrangement. Do not alter work zero to change the arithmetic.</td></tr>
+<tr><td>Current tool offset not acknowledged</td><td>Check the correction-synchronization message separately from the measured value.</td></tr>
+</tbody></table>
+<p>An aborted or stopped routine must be read with its exit reason. The result meanings above describe the supplied routine; customized machine-control programs can require matching installation documentation.</p>
+<h3>Report the attempt clearly</h3>
+<p>Record whether it was reference or numbered-tool measurement, the actual fitted assembly, the recorded tool number, the accepted reference in use and the current attempt's message. State which movements and contacts were observed and whether the machine completed its return.</p>
+<p>Include relevant probe settings and the sensor's observed state without changing them to create a preferred result. If a new length was already accepted, record that number and any later correction error. Keep physical observations separate from screen messages.</p>
+<p>After the machine is stopped appropriately, preserve the report before restarting or repeating the operation. Repeated attempts can obscure the original sequence and initiate new movement as soon as a blocking condition disappears. If the cause is not clear through the approved operator checks, refer it for assessment.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">12.12 Work through a measuring example and review the procedure</h2>
+
+<p>This example combines the reference, contact, stored length and machining correction. It is a reading exercise using imaginary approved values. It does not supply a safe setter position or suitable search speeds for any real machine.</p>
+<h3>Example: establish the reference, then measure tool 4</h3>
+<p>The empty spindle has been prepared through the approved contact arrangement. A complete reference cycle returns successfully and the application accepts ReferenceOffsetZ = 20.000 mm. The reference status becomes Measured.</p>
+<p>The operator then installs tool 4 through the approved exchange, waits for its full completion and verifies the actual and recorded tool. The setter and route are prepared for tool 4's projection. A complete measuring cycle captures a precision contact at machine Z = 80.250 mm and returns successfully.</p>
+<p>The application calculates a Length of 60.250 mm and saves it for tool 4. If that tool has a configured Z Offset of +0.500 mm, the requested Z machining tool correction becomes 60.750 mm. The operator checks that this correction is accepted before preparing the next job operation.</p>
+<table><caption>Table 12-13. Follow the example through its acceptance steps</caption><thead><tr><th scope="col">Step</th><th scope="col">Accepted information</th><th scope="col">What still needs attention</th></tr></thead><tbody>
+<tr><td>Reference cycle accepted</td><td>Reference Z = 20.000 mm; reference marked Measured.</td><td>The numbered tool still needs its own approved measurement.</td></tr>
+<tr><td>Tool 4 precision contact occurs</td><td>No new stored Length yet.</td><td>Retract, return and routine success remain necessary.</td></tr>
+<tr><td>Tool 4 result accepted</td><td>Length = 80.250 − 20.000 = 60.250 mm.</td><td>Plausibility and correction synchronization still require attention.</td></tr>
+<tr><td>Correction accepted</td><td>Z tool correction = 60.250 + 0.500 = 60.750 mm.</td><td>The rest of the job setup and start checks still apply.</td></tr>
+</tbody></table>
+<h3>Change the outcome: the return times out</h3>
+<p>Suppose the same precision contact occurred, but the return stage timed out. That attempt does not produce an accepted new length. The operator records the stage, establishes the physical position and resolves the failed return. An observed touch is not enough to enter 60.250 mm manually as though the normal cycle had succeeded.</p>
+<h3>Change the outcome: correction is refused afterward</h3>
+<p>Now suppose the complete cycle succeeded and the Length was saved, but the controller rejected the new machining correction. The new measurement and the rejected correction are separate outcomes. Preserve both messages and have the correction issue assessed; repeating the probe cycle is not automatically the appropriate remedy.</p>
+<h3>Review questions</h3>
+<dl>
+<dt>What decides whether the command measures a reference or a tool?</dt><dd><p>The recorded current tool. Blank/zero selects reference measurement with an empty-spindle confirmation; a numbered tool selects its length measurement.</p></dd>
+<dt>Does a Measured reference status prove the setter has not moved?</dt><dd><p>No. It records an accepted reference, not a continuous check of physical setup.</p></dd>
+<dt>Does ApproachClearance guarantee that amount of space below the cutter?</dt><dd><p>No. It is added to the configured probe Z to obtain a machine coordinate. Tool length is not added automatically to that approach.</p></dd>
+<dt>Why does the tool touch twice?</dt><dd><p>The first search finds contact, the upward movement releases it, and the precision search captures the final contact coordinate.</p></dd>
+<dt>Is the Z position after stopping necessarily the captured contact Z?</dt><dd><p>No. Contact is captured when the signal is observed; the subsequent stopping response can change the settled position.</p></dd>
+<dt>What must happen after precision contact before the attempt is accepted?</dt><dd><p>The retract and return must succeed, and the application must accept the returned contact as the intended reference or a valid positive length.</p></dd>
+<dt>Does measurement reset the tool's extra Offset.Z?</dt><dd><p>No. That configured correction remains separate and is added to Length for machining.</p></dd>
+<dt>Does a failed attempt prove the retained old length is suitable?</dt><dd><p>No. It only means that the failed attempt did not replace it. The old value may belong to a previous cutter or setup.</p></dd>
+</dl>
+<h3>Use simulation to learn the sequence, not to certify the hardware</h3>
+<p>Where the approved simulation setup supports measurement, it can help an operator learn the two modes, search stages and report meanings. The supplied simulation models setter contact from configured geometry and simulated tool projection. A simulated success does not verify a real sensor, cutter, holder or contact surface.</p>
+<p>Before independent operation, be able to explain the selected mode, expected approach, actual tool identity, accepted reference, search sequence and response to interruption. Use the installation's physical verification and training procedure in addition to the screen sequence.</p>
+<aside class="note"><strong>Documentation basis and images.</strong> This chapter describes the measurement command, supplied measuring routine, result acceptance, tool data and correction synchronization reviewed on 8 October 2026. The sequence diagram is conceptual. Three marked spaces specify the installation screenshots and setter photograph still required. Actual contact arrangements and customized saved routines need matching machine documentation.</aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZ+TC · Operator Manual · Chapter 12</span><a href="index.html#chapter-12">Return to the contents</a></footer></main></body></html>

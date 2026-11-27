@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 3 — Startup, Login, Connection and Shutdown | RouterXYZ+TC</title>
+<meta name="description" content="A step-by-step operator guide to opening RouterXYZ+TC, password access, operating mode, connection, startup difficulties and orderly shutdown.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#stages">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZ+TC · CHAPTER 3</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Startup, Login, Connection and Shutdown</h1>
+<p class="lead">Understand what happens between opening the application and preparing the machine for work. Learn how to recognize a successful connection, deal with an incomplete start and close the application correctly.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> Written for the machine operator. Physical power-up and power-down follow the instructions for the installed machine.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-03">Manual contents</a> · <a href="02-safe-operation.html">Previous chapter: Safe operation</a></nav></header>
+<div class="body"><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#stages">Understand the stages of starting work</a></li>
+<li><a href="#launch">Open the correct application and recognize the first screen</a></li>
+<li><a href="#operator-login">Enter the operator password when requested</a></li>
+<li><a href="#access-retry">Understand read-only access and retrying login</a></li>
+<li><a href="#mode">Confirm whether you are using Simulation or the real machine</a></li>
+<li><a href="#connection">Wait for connection and read its result</a></li>
+<li><a href="#startup-complete">Decide whether startup is complete</a></li>
+<li><a href="#startup-problems">Deal with an incomplete start or failed connection</a></li>
+<li><a href="#reconnection">Reconnect or change mode deliberately</a></li>
+<li><a href="#shutdown">Close the application in an orderly way</a></li>
+<li><a href="#saved-information">Understand saved settings and respond to a save failure</a></li>
+<li><a href="#practice">Follow a complete example and check your understanding</a></li>
+</ol></nav>
+<section id="stages" aria-labelledby="stages-title"><h2 id="stages-title">3.1 Understand the stages of starting work</h2>
+
+<p>Starting the operator application is only one part of starting work. The computer must open the correct application, the application must grant the required operator access, and the controller connection must become available in the intended operating mode. Machine preparation and job preparation then follow. Keeping these stages separate makes startup much easier to understand.</p>
+<p>The <strong>application</strong> is the window you use to enter commands and read information. The <strong>controller</strong> is the system that carries out machine control. A visible window does not prove that the controller is connected, just as opening a telephone's contact list does not prove that a call has connected. You must look for the result of the connection, not merely the presence of the window.</p>
+<table><caption>Table 3-1. Four different questions during startup</caption><thead><tr><th scope="col">Question</th><th scope="col">What a successful result means</th><th scope="col">What it does not mean</th></tr></thead><tbody>
+<tr><td>Has the application opened?</td><td>The operator window is available.</td><td>The machine is connected or ready to move.</td></tr>
+<tr><td>Has operator access been accepted?</td><td>The current application session permits operator interaction, subject to other conditions.</td><td>Every operation is available or engineering changes are authorized.</td></tr>
+<tr><td>Is the intended connection established?</td><td>The controller is available in the intended mode and the required communication is operational.</td><td>Homing, tool checks or workpiece setup are complete.</td></tr>
+<tr><td>Is the machine prepared for the next action?</td><td>The checks for that particular action have been completed.</td><td>Every later action is automatically approved.</td></tr>
+</tbody></table>
+<p>In the ordinary application startup, the operator-access check comes before the automatic connection request. If an operator password has been configured, a dialog asks for it. If no operator password has been configured, that access step can pass without a dialog. The application then requests connection when operator access is available. Connection takes place in the selected operating mode.</p>
+<p>You may also see an informational notice when the selected mode is Simulation. Read it rather than dismissing it by habit. A notice about mode and a message about connection are different kinds of information: one concerns what sort of operation is selected, while the other concerns whether the connection succeeded.</p>
+<aside class="learning-example"><h3>“The program is open, but I cannot use the machine”</h3><p>This statement does not identify one specific fault. Operator access may not have been accepted, connection may still be in progress, or the machine may need further preparation. First identify which stage is incomplete. Restarting everything before understanding the stage can conceal useful information.</p></aside>
+<p>This chapter ends at an orderly application shutdown. It does not ask you to home an axis or start a cutting job. Use <a href="02-safe-operation.html">Chapter 2</a> for the pre-start and stopping principles, and the later operating chapters for the machine actions themselves.</p>
+
+</section>
+<section id="launch" aria-labelledby="launch-title"><h2 id="launch-title">3.2 Open the correct application and recognize the first screen</h2>
+
+<p>Before opening the software for real machine operation, complete the relevant start-of-shift preparation described in Chapter 2 and the physical startup instructions supplied with your machine. This manual cannot specify the order of cabinet switches, compressed-air supplies or other installed services: those belong to the machine's own instructions.</p>
+<p>Use the RouterXYZ+TC shortcut or application location provided for this installation. A computer may contain copies used for training, maintenance or an earlier setup. The fact that a window has the expected appearance does not establish that you opened the approved installation. If more than one shortcut exists and their purposes are unclear, ask which one belongs to this machine.</p>
+<ol class="journey">
+<li><strong>Check that the machine has been handed over for your use.</strong><p>Read any maintenance or handover information. Opening the software must not become an accidental request to resume somebody else's unfinished work.</p></li>
+<li><strong>Open the approved RouterXYZ+TC application.</strong><p>Use the provided shortcut in the normal way. Allow the window to appear before trying to open it again.</p></li>
+<li><strong>Look for a dialog in front of the main window.</strong><p>The application may first ask for Operator access. A dialog is a smaller window that expects your response before you can continue interacting with the window behind it.</p></li>
+<li><strong>Read the first message completely.</strong><p>Distinguish a password request, a Simulation notice and a connection warning. Each calls for a different response, explained in the following sections.</p></li>
+</ol>
+<p>The main window is opened maximized in the reviewed application. Its size and theme can differ from an illustration in this manual because the screen, language and saved appearance settings may differ. Identify controls by their meaning and caption rather than by an assumed pixel position.</p>
+<p>The application is designed to run as a single instance. Repeatedly opening the shortcut is not a way to create another independent controller connection or resolve a pending dialog. If the expected window is not obvious, check the Windows taskbar and any open dialog before trying again. If startup fails, retain the exact message rather than deleting files or changing the installation.</p>
+<p>When the application first appears, look at the job information as well as the title. Do not assume that yesterday's machining file is loaded, that a visible preview is current, or that a previous stopped job is ready to continue. Establish the current state from the displayed information and then follow the preparation procedure for the job you intend to run.</p>
+<aside class="learning-example"><h3>A window behind another window</h3><p>You open the application and the main controls seem unavailable. A password dialog may be waiting in front of it. Respond to that dialog first; clicking the controls behind it does not complete the access check.</p></aside>
+<p><strong>Expected result:</strong> the application window or its startup access dialog is visible and you can identify what it is asking you to do. If no usable window appears or an unfamiliar error prevents startup, stop at that point and report the message to the responsible person.</p>
+
+</section>
+<section id="operator-login" aria-labelledby="operator-login-title"><h2 id="operator-login-title">3.3 Enter the operator password when requested</h2>
+
+<p>The <strong>Operator access</strong> dialog asks whether you may use the application's operator functions during the current session. A <strong>session</strong> here means the period while this application remains open. This is a local application access check; it is not asking you to sign in to an online service or enter your Windows password unless your site has deliberately assigned the same password.</p>
+<p>The dialog has a <strong>Password</strong> field and an <strong>Open</strong> action. The password is concealed as you type. Obtain the assigned operator password through your site's normal arrangements; the manual does not provide a universal password.</p>
+<ol class="journey">
+<li><strong>Confirm the dialog title.</strong><p>For ordinary startup, expect Operator access. Engineering access is a different request and is explained in the next section.</p></li>
+<li><strong>Enter the assigned operator password.</strong><p>Click in the Password field if necessary. Use the intended keyboard language and check whether Caps Lock is affecting what you type.</p></li>
+<li><strong>Select Open, or press Enter.</strong><p>The application checks the entry. Wait for the result rather than submitting repeatedly.</p></li>
+<li><strong>Read the outcome.</strong><p>After successful acceptance, the dialog closes. In ordinary startup, the application can then begin its automatic connection attempt. The closing of the password dialog is not the connection result.</p></li>
+</ol>
+<h3>If the password is incorrect</h3>
+<p>The dialog reports <strong>Incorrect password.</strong> and clears the entered text. It remains available for another attempt and returns focus to the password field. Re-enter the correct password carefully if you know it. If it is unknown or repeatedly rejected, ask the responsible person; do not try changing machine settings to work around the access check.</p>
+<p>While a password check is being processed, its controls can be temporarily unavailable. This is a waiting state, not a reason to press the keys repeatedly. If an error is reported instead of a normal password result, record the message and distinguish that error from an incorrect password.</p>
+<h3>If no password dialog appears</h3>
+<p>The local Operator account may have no password configured. In that case the application accepts operator access automatically and no entry is needed. A missing prompt is therefore not necessarily a startup fault. Conversely, it does not prove that the machine is connected or that every settings field is available.</p>
+<table><caption>Table 3-2. Outcomes of the operator-access step</caption><thead><tr><th scope="col">What you see</th><th scope="col">Meaning</th><th scope="col">Next action</th></tr></thead><tbody>
+<tr><td>Dialog closes after an accepted password</td><td>Operator access has been accepted for this application session.</td><td>Check the operating mode and connection result.</td></tr>
+<tr><td>Incorrect password</td><td>The entered password was not accepted.</td><td>Correct the entry or obtain assistance.</td></tr>
+<tr><td>No access prompt</td><td>The account may not require a configured local password.</td><td>Continue checking mode and connection; do not infer machine readiness.</td></tr>
+<tr><td>You choose Close</td><td>The dialog closes without granting missing operator access.</td><td>Read the next section before attempting to operate.</td></tr>
+</tbody></table>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 3-1 · APPLICATION SCREENSHOT REQUIRED</p><h3>The Operator access dialog</h3><p>Insert an English-language capture of the real dialog with an empty Password field. Mark its title, Password field, Open button, Close button and explanatory status text. Do not include an actual password, even as an example.</p><p>Suggested image: <code>assets/images/03-operator-access.png</code>.</p><figcaption>This image should show the access question. It should not suggest that successful access also establishes a machine connection.</figcaption></figure>
+
+</section>
+<section id="access-retry" aria-labelledby="access-retry-title"><h2 id="access-retry-title">3.4 Understand read-only access and retrying login</h2>
+
+<p>Choosing <strong>Close</strong> in the Operator access dialog closes that dialog, not the application. If operator access has not been accepted, the main window can remain visible while machine-operating interaction stays unavailable. The Configuration window can still provide a read-only view. <strong>Read-only</strong> means you may inspect the permitted information without being allowed to change it.</p>
+<p>This behavior is useful when you need to identify the installation or explain a problem without operating the machine. It is also easy to misunderstand: the presence of controls does not mean you have permission to use them. If you deliberately closed the password request, do not interpret the unavailable controls as proof of a failed machine connection.</p>
+<h3>How to return to the access question</h3>
+<ol class="journey">
+<li><strong>Open Configuration when it is available.</strong><p>Configuration provides another opportunity to complete the missing access check. It may be unavailable during a connection change or other busy operation; allow the current operation to settle.</p></li>
+<li><strong>Respond to Operator access if requested.</strong><p>Enter the assigned password and use Open. If you close it again or the password is not accepted, no additional operator access is granted.</p></li>
+<li><strong>Identify any further access request.</strong><p>Once Operator access is available, opening Configuration can also request Engineering access. Read the title rather than assuming the first password failed.</p></li>
+<li><strong>Return to the connection check.</strong><p>Successful later login does not by itself establish a connection. Check the actual state and use the authorized connection procedure if needed.</p></li>
+</ol>
+<p>The automatic startup connection is requested at the original startup access check. If you declined that check and log in later through Configuration, do not assume the earlier automatic attempt is waiting to run. In the reviewed behavior, opening Configuration and accepting access is not itself a Connect command. Ask for authorized assistance if the machine remains disconnected and you cannot use the connection controls.</p>
+<h3>Operator and Engineering are different access levels</h3>
+<p><strong>Operator access</strong> supports ordinary operation. <strong>Engineering access</strong> permits additional settings and service functions. Engineering access requires accepted Operator access first. Closing an Engineering access request does not remove Operator access that has already been accepted; the Configuration window opens at the access level currently available.</p>
+<p>Successful access checks are retained while the application remains open, so repeatedly opening Configuration need not ask for the same password again. They are not saved as a permanent login for the next application session. A new session performs the required checks again; accounts without configured passwords can again be accepted automatically.</p>
+<aside class="learning-example"><h3>A second password window appears</h3><p>You entered the operator password successfully, then opened Configuration and saw Engineering access. This is a request for a higher access level, not a repetition of the operator login. If engineering work is not part of your assigned task, close that request and continue at your permitted level.</p></aside>
+<p>Do not share a higher-level password simply to make all controls available. If an operation exceeds your assigned role, have the authorized person perform it. The later password chapter explains password management; ordinary startup does not require changing passwords or lock settings.</p>
+
+</section>
+<section id="mode" aria-labelledby="mode-title"><h2 id="mode-title">3.5 Confirm whether you are using Simulation or the real machine</h2>
+
+<p>The operating mode tells the application what kind of controller operation to use. It is one of the first things to identify after opening the application, because the same operator controls can be used while practicing in Simulation and while operating in Normal mode.</p>
+<p><strong>Simulation</strong> provides simulated machine behavior. It is useful for learning and checking workflows, but a successful simulated movement does not establish the physical condition of the real machine. <strong>Normal</strong> is the selection for real machine operation. Neither selection, by itself, proves that the corresponding connection has succeeded.</p>
+<table><caption>Table 3-3. Mode selection and physical MM status</caption><thead><tr><th scope="col">Selected mode</th><th scope="col">Connection indicator</th><th scope="col">How to interpret it</th></tr></thead><tbody>
+<tr><td>Simulation</td><td>Simulation</td><td>The lamp lights when the simulated session is operational. Axis indicators show simulated axis readiness.</td></tr>
+<tr><td>Normal</td><td>Online</td><td>The lamp lights when the physical MM is identified. Check the normal runtime connection and axis readiness before motion.</td></tr>
+</tbody></table>
+<p>The Online lamp follows the physical MM board. Settings under Controller / PLC show its eight-digit MM UID. Detection works before license import and with zero connected drives.</p>
+<h3>The Simulation startup notice</h3>
+<p>When the selected startup mode is Simulation, the application shows an informational notice as the main window appears. Acknowledge the notice only after reading its meaning. It informs you about the mode; it is not a question asking whether the physical setup is correct, and it is not the success message for connection.</p>
+<p>The automatic connection request can already be in progress when the notice appears. The notice is not a separate permission step that postpones connection until you acknowledge it.</p><p>There is no equivalent requirement to show that Simulation notice when Normal is selected. The absence of a notice therefore does not establish a successful real-machine connection. Likewise, dismissing the notice does not change the selected mode.</p>
+<h3>Saved mode and today's intention</h3>
+<p>The mode is a saved setting. The supplied default is Simulation, but an installed application may reopen with a previously saved Normal selection. Do not assume that every startup will choose Simulation or that the application knows whether today is a practice session. Verify the current selection against your intended task.</p>
+<aside class="learning-example"><h3>Practice yesterday, production today</h3><p>The previous session used Simulation. Today you intend to operate the real machine. Opening the application and accepting the operator password do not, by themselves, change the mode to Normal. Identify the selected mode and have the appropriate change made before following real-machine preparation.</p></aside>
+<p>The mode is available in Configuration under the Controller group as <strong>Mode</strong>. There is also a configurable ChangeMode keyboard command. Do not test unfamiliar shortcuts while trying to identify the current mode: changing it is an operating action that can cause a disconnect and reconnect. The section on <a href="index.html#chapter-20">Simulation Mode</a> will cover practice in more detail; the mode-change procedure later in this chapter explains the connection consequences.</p>
+<p><strong>Expected result:</strong> you can state which mode is intended, which mode is currently indicated and whether the connection result has been established. If those answers do not agree, resolve the difference before commanding movement.</p>
+
+</section>
+<section id="connection" aria-labelledby="connection-title"><h2 id="connection-title">3.6 Wait for connection and read its result</h2>
+
+<p>During ordinary startup, the application requests connection automatically after Operator access is available. You normally do not need to issue a second Connect command while that attempt is in progress. Connection prepares communication with the selected controller environment, so it can take longer than opening a simple window.</p>
+<p>During a connection change, some controls are temporarily unavailable. This prevents competing actions while the application is establishing or ending the connection. Wait for the reported result. Do not repeatedly change mode, press shortcuts or close and reopen the application because the first few moments appear quiet.</p>
+<figure class="concept-figure"><img src="assets/images/03-startup-checkpoints.svg" width="1000" height="380" alt="Five startup checkpoints: open the application, complete access, connect in the selected mode, verify the result and then prepare the machine."><figcaption>Figure 3-2. Follow the result of each stage. The Simulation notice may appear during startup; it does not replace the connection check.</figcaption></figure>
+<table><caption>Table 3-4. Connection states you may encounter</caption><thead><tr><th scope="col">State</th><th scope="col">Plain-language meaning</th><th scope="col">Operator response</th></tr></thead><tbody>
+<tr><td>Offline</td><td>No active controller connection is established.</td><td>Do not issue machine movement; determine whether connection is intended and authorized.</td></tr>
+<tr><td>Connecting</td><td>A connection attempt is underway.</td><td>Wait for its result and read any message that appears.</td></tr>
+<tr><td>Online</td><td>The controller connection has reached its online state.</td><td>Check the intended mode, active connection indication and other messages before machine preparation.</td></tr>
+<tr><td>Disconnecting</td><td>The connection is being ended.</td><td>Allow it to finish before issuing another connection-related action.</td></tr>
+<tr><td>Failed</td><td>The attempted connection did not complete successfully.</td><td>Read and retain the failure details; resolve the cause before retrying.</td></tr>
+</tbody></table>
+<p>These state words may appear in status information. They describe progress, not a checklist of buttons you must press. The application can also report a configuration problem before a connection is started. In that case waiting longer will not supply a valid configuration; the reported issue must be addressed.</p>
+<p>When contact with the MM is lost, the lamp goes out and the UID becomes unavailable. Check the selected mode, runtime connection result and axis status separately.</p>
+<aside class="learning-example"><h3>The caption says Online, but the indication is inactive</h3><p>The word can describe the real-operation mode without establishing that communication is ready. Read the current state and any warning. Do not use a movement command as a connection test.</p></aside>
+<p>Connection is not an automatic homing or job-resume command. A successful result means you can proceed to the relevant readiness checks, not directly to cutting. You must still establish the machine reference, tooling and work setup as required for the next operation.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 3-3 · APPLICATION SCREENSHOT REQUIRED</p><h3>Recognizing a completed connection</h3><p>Insert a stationary main-window capture showing the connection caption, its active indication and the status area. Use separate labelled captures if showing both Normal and Simulation. Describe the actual capture state; do not recolour an indication or paste a caption from another state.</p><p>Suggested image: <code>assets/images/03-connection-result.png</code>.</p><figcaption>Show where to read connection information. The illustration does not certify that the photographed machine is ready to cut.</figcaption></figure>
+
+</section>
+<section id="startup-complete" aria-labelledby="startup-complete-title"><h2 id="startup-complete-title">3.7 Decide whether startup is complete</h2>
+
+<p>After a successful connection, take a moment to read the settled main window. Do not make the first available button your next action by habit. Instead, decide whether you have completed application startup and what machine-preparation step is required next.</p>
+<p>The distinction is practical. If the application is open, access is accepted and the intended connection is established, startup may be complete even though the machine is not yet homed. That is not necessarily a fault. Homing is a separate operation with its own checks and motion sequence. A command that depends on homing can remain unavailable until that operation is complete.</p>
+<table><caption>Table 3-5. A successful application start still leaves these questions</caption><thead><tr><th scope="col">Check</th><th scope="col">What to establish</th><th scope="col">Where to continue</th></tr></thead><tbody>
+<tr><td>Messages</td><td>No unresolved startup warning is being overlooked.</td><td>Read the full message and use the startup-troubleshooting section when needed.</td></tr>
+<tr><td>Axes and homing</td><td>Which readiness conditions are reported and whether homing is required.</td><td>The main-window and homing chapters.</td></tr>
+<tr><td>Current tool</td><td>The reported tool state agrees with the required physical checks.</td><td>The tool-selection and tool-measurement procedures.</td></tr>
+<tr><td>Job information</td><td>The correct file and revision will be used for today's work.</td><td>The opening-and-checking-a-program chapter.</td></tr>
+<tr><td>Work setup</td><td>The material, holding arrangement and work origin are prepared for this job.</td><td>The pre-start checks and work-origin procedure.</td></tr>
+</tbody></table>
+<p>The axis-ready indications and the Homed indication answer different questions. A ready drive is not proof that the machine reference has been established. In the reviewed application, the overall homed condition includes every configured axis, including the second motor of the gantry. One axis appearing ready does not establish completion for the whole machine.</p>
+<p>Similarly, the absence of an axis alarm is not a complete inspection of the machine. Read messages about other equipment or unfinished operations, and complete the physical checks from Chapter 2. Treat the screen as information to compare with the setup, not as a replacement for that comparison.</p>
+<aside class="learning-example"><h3>Connection succeeds, but Run is unavailable</h3><p>The controller may be connected while the machine still needs homing or the job has not been prepared. Check those conditions before assuming the connection must be restarted. A reconnect is not a substitute for completing the missing preparation.</p></aside>
+<p>If the next planned action is homing, first use the homing procedure. If the machine is already in the required referenced state, establish the next job-preparation requirement instead. Do not press Home, select a tool or change a reference merely to make the screen resemble a sample screenshot.</p>
+<p><strong>Expected result:</strong> you can explain why startup is complete and name the next intended preparation step. Keep the job stopped until that step's prerequisites are satisfied. The successful end of this chapter's startup process is an understood state, not an automatic command to start machining.</p>
+
+</section>
+<section id="startup-problems" aria-labelledby="startup-problems-title"><h2 id="startup-problems-title">3.8 Deal with an incomplete start or failed connection</h2>
+
+<p>A failed startup step should be identified before you attempt a remedy. Password access, machine settings and controller connection are separate matters. Entering a different password will not repair invalid machine settings, and repeated connection attempts will not grant missing operator access.</p>
+<p>If connection fails, the application can show <strong>The controller connection failed.</strong> with further details. Read those details and retain them for the person assisting you. The short headline tells you which stage failed; the additional information may distinguish causes that look identical from the main screen.</p>
+<table><caption>Table 3-6. Find the incomplete startup stage</caption><thead><tr><th scope="col">Observed condition</th><th scope="col">What to check first</th><th scope="col">Appropriate next step</th></tr></thead><tbody>
+<tr><td>Main window is visible but operating controls are unavailable</td><td>Was Operator access accepted? Is a dialog or connection change still active?</td><td>Complete or resolve that stage before diagnosing a machine fault.</td></tr>
+<tr><td>Incorrect password is shown</td><td>The assigned password, keyboard language and letter case.</td><td>Correct the entry or request access assistance.</td></tr>
+<tr><td>Invalid machine settings are reported</td><td>The reported field or diagnostic and whether settings were recently changed.</td><td>Have the responsible authorized person correct the configuration; do not invent values.</td></tr>
+<tr><td>Connection failed</td><td>The intended mode, exact message and physical startup checks permitted by the machine instructions.</td><td>Report unresolved causes before requesting another attempt.</td></tr>
+<tr><td>Connection is successful but a motion command is unavailable</td><td>The prerequisites for that command, including homing and job preparation.</td><td>Complete the required preparation instead of assuming a connection fault.</td></tr>
+<tr><td>Communication becomes unavailable after startup</td><td>The machine's actual condition and current messages.</td><td>Use the interruption response from Chapter 2, then the authorized recovery procedure.</td></tr>
+</tbody></table>
+<h3>Use the report to preserve the sequence</h3>
+<p>The application keeps a session report of operations and messages. In the main window, double-clicking the program-progress/status area opens the report through the assigned report command. This is useful when an earlier message has been replaced by a later status. Read it or provide the relevant portion to authorized support; you do not need to understand every technical line.</p>
+<p>For a useful report, note what you did immediately before the problem: opened the application, accepted login, changed mode, requested Connect or attempted shutdown. Include the exact visible message, the intended mode and whether the problem occurred before or after a successful connection. Do not include passwords.</p>
+<aside class="learning-example"><h3>A failure after switching to Normal</h3><p>Simulation worked, but the next connection attempt in Normal failed. This does not show that the operator password is wrong. Tell support that the failure occurred after the mode change, and retain the connection details. The two modes do not prove the same physical conditions.</p></aside>
+<p>A retry is appropriate after the cause has been understood and addressed under the permitted procedure. Do not disconnect cables, alter controller settings or disable checks merely to see whether a different warning appears. Those changes can create a second problem and make the original event harder to understand.</p>
+<p>If the application appears frozen while the physical machine may be active, do not rely on the last displayed picture. Follow the machine's stopping or emergency arrangements as the situation requires. Closing the window or forcing the application to end is not the physical stopping procedure. See <a href="02-safe-operation.html#unexpected">the unexpected-condition guidance in Chapter 2</a>.</p>
+
+</section>
+<section id="reconnection" aria-labelledby="reconnection-title"><h2 id="reconnection-title">3.9 Reconnect or change mode deliberately</h2>
+
+<p>Disconnecting, connecting and changing mode are deliberate operating actions. They are not ordinary steps to repeat whenever a control is unavailable. Use them when the intended task calls for a connection change and the relevant machine conditions have been established.</p>
+<p><strong>Disconnect</strong> ends the controller connection while leaving the application open. <strong>Connect</strong> requests connection in the selected mode. A <strong>mode change</strong> applies the new choice and starts the corresponding connection change; if an existing connection is present, the application ends it before attempting the new one.</p>
+<h3>Using the connection controls</h3>
+<p>The Configuration toolbar contains Connect and Disconnect controls. In the reviewed window these are icon buttons with names shown as tooltips when you rest the pointer over them. Their use in Configuration requires Engineering access as well as the appropriate connection state. A greyed control may therefore reflect access, an operation in progress or an already established connection, rather than a broken button.</p>
+<ol class="journey">
+<li><strong>Establish the reason and required machine condition.</strong><p>Complete the approved stop and preparation steps. Do not use disconnection as an emergency stopping method or as permission for physical access.</p></li>
+<li><strong>Open Configuration and use the authorized access level.</strong><p>If Engineering access is required and you do not have it, have the responsible person perform the connection operation.</p></li>
+<li><strong>Identify the intended toolbar action by its tooltip.</strong><p>Use Disconnect only when ending the connection is intended. Use Connect only when the cause of any previous failure has been addressed and connection is intended.</p></li>
+<li><strong>Wait for the result before requesting another action.</strong><p>Allow a disconnection to finish before reconnecting. For connection, check the reported state and messages as described earlier.</p></li>
+<li><strong>Recheck readiness after connection.</strong><p>Do not assume that a previous homing state, interrupted operation or job-start condition has survived in a usable form. Follow the checks required by the resulting state.</p></li>
+</ol>
+<p>Connection commands can also be assigned application keyboard shortcuts. Their actual assignments depend on the installation. Do not guess a key combination or assume that a shortcut has the same presentation as the Configuration toolbar. Use only the assigned procedure you have been shown.</p>
+<h3>Changing the selected mode</h3>
+<p>With the machine idle and no loading, motion, tool operation or connection change in progress, open Configuration, find the Controller group and identify Mode. Read the current value before changing it. Select and accept the required choice only when that change is intended and permitted. If the field is unavailable, resolve the reason rather than changing other settings to unlock it.</p>
+<p><strong>A committed mode change takes effect immediately.</strong> It is not just a draft that waits for the Configuration window's OK button. The application can disconnect and reconnect as part of that change. Selecting Cancel in Configuration does not undo this live mode operation. Afterward, check the actual mode and connection result before returning to the operating controls.</p>
+<aside class="learning-example"><h3>“I selected Normal, then cancelled Configuration”</h3><p>Cancelling the configuration dialog does not guarantee a return to Simulation. Once the mode edit has been accepted, the connection change has already been requested. Establish the actual current state; do not proceed on the assumption that Cancel reversed it.</p></aside>
+<p>The ChangeMode keyboard command also changes the selection. A keyboard shortcut is therefore not a harmless way to inspect mode. This chapter intentionally directs new operators to identify the current state first and use the machine's assigned procedure for changing it.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 3-4 · APPLICATION SCREENSHOT REQUIRED</p><h3>Configuration: connection controls and Mode</h3><p>Capture the real English Configuration window at an authorized access level, with the Controller group and Mode field visible. Label Connect and Disconnect using the actual toolbar icons and tooltips. State whether the capture is disconnected, connected or simulated.</p><p>Suggested image: <code>assets/images/03-settings-connection-mode.png</code>. Do not include credentials or change the real machine's mode merely to stage a screenshot.</p><figcaption>Identify the controls and the immediate effect of an accepted Mode change. Availability depends on access and current state.</figcaption></figure>
+
+</section>
+<section id="shutdown" aria-labelledby="shutdown-title"><h2 id="shutdown-title">3.10 Close the application in an orderly way</h2>
+
+<p>At the end of work, distinguish three actions: bringing the machining operation to the required stopped condition, closing the operator application and carrying out the physical machine's power-down procedure. They are related, but they are not interchangeable. The application cannot tell this manual the correct order of physical cabinet switches or installed services.</p>
+<p>Begin by finishing the job or stopping it through the applicable operating procedure. If you intend to continue it later, record its condition and any remaining work. Closing the application is not a way to preserve a live paused job as though it will simply resume next time.</p>
+<ol class="journey">
+<li><strong>Complete or stop the current operation deliberately.</strong><p>Use the appropriate procedure for cutting, homing, positioning, tool exchange or measurement. Allow motion and stopping to complete. Address an interrupted operation before treating the machine as ready to leave.</p></li>
+<li><strong>Establish the required spindle and physical machine condition.</strong><p>Follow the installed machine's end-of-work instructions. Remember that a motion stop alone does not prove spindle standstill; see Chapter 2.</p></li>
+<li><strong>Finish work in open dialogs.</strong><p>Review any pending edits and messages. Save or cancel them according to their own procedures. Return to the main window when their work is complete.</p></li>
+<li><strong>Use the application's Exit control.</strong><p>When ordinary closing is permitted, the application saves its settings and proceeds with shutdown. Watch for a message instead of assuming that the click has already finished the process.</p></li>
+<li><strong>Allow the application to finish.</strong><p>Its cleanup includes ending the controller connection. Avoid immediately removing computer power or treating a disappearing window as confirmation of every physical machine condition.</p></li>
+<li><strong>Complete the site's machine and computer shutdown or handover procedure.</strong><p>Leave a clear record of unresolved issues and the actual job state if another operator will take over.</p></li>
+</ol>
+<h3>Why Exit may be unavailable</h3>
+<p>The application's ordinary Exit control is not available while a connection change or relevant motion/program operation is active. Closing is also rejected if active movement or an operation still requires the application. This is intentional: the application should not disappear simply because the operator clicked its close control during work.</p>
+<p>A stationary head does not prove that every operation has ended. A program can still be active while waiting, including at zero feed. A tool-changing or measuring sequence may be unfinished. Read the current status, use the relevant stopping or recovery procedure and wait for the settled condition. Do not repeatedly click Exit or force the process closed to bypass the restriction.</p>
+<h3>If a machining file is still loading</h3>
+<p>Loading and preparing a file can continue for a time after selection. The ordinary Exit control can remain unavailable during loading; allow preparation to finish or use the application's loading-cancellation control before closing. If a window-close request is made while preparation is active, the application requests cancellation and waits for the loading work to finish before trying to close again. Allow this cancellation to complete. Do not assume the program file has been deleted or edited because preparation was cancelled.</p>
+<table><caption>Table 3-7. Similar-looking window actions with different effects</caption><thead><tr><th scope="col">Action</th><th scope="col">Meaning</th><th scope="col">Do not assume</th></tr></thead><tbody>
+<tr><td>Minimize the main window</td><td>Reduce the window to the Windows taskbar.</td><td>Motion stops, access is revoked or the application has shut down.</td></tr>
+<tr><td>Close an access or configuration dialog</td><td>End that dialog according to its own rules.</td><td>The main application also closes.</td></tr>
+<tr><td>Disconnect the controller</td><td>End the controller connection while the application remains open.</td><td>The machine has been physically isolated.</td></tr>
+<tr><td>Exit the application normally</td><td>Save application settings and perform its shutdown/connection cleanup.</td><td>The installed machine's physical power-down or isolation procedure has been completed.</td></tr>
+</tbody></table>
+<p><strong>Expected result:</strong> no unresolved operation or save message prevents closing, the application has completed its normal exit, and the separate machine shutdown or handover procedure is complete. If a settings-save error keeps the application open, follow the next section.</p>
+
+</section>
+<section id="saved-information" aria-labelledby="saved-information-title"><h2 id="saved-information-title">3.11 Understand saved settings and respond to a save failure</h2>
+
+<p>The application saves its settings during a normal exit. This allows accepted configuration and preferences to be available in a later session. Saving settings is different from keeping an operation running, and it is different from proving that the physical machine still matches those settings.</p>
+<p>Some actions have their own earlier save points, including accepted settings and successful tool-state or measurement updates. Normal exit is therefore not an “undo everything since startup” operation. If you have made an authorized change, use that change's own procedure to confirm its result rather than expecting application closure to either accept or cancel all previous actions together.</p>
+<table><caption>Table 3-8. Information to distinguish when closing and reopening</caption><thead><tr><th scope="col">Information or condition</th><th scope="col">How to think about it</th><th scope="col">What to check next time</th></tr></thead><tbody>
+<tr><td>Saved mode and preferences</td><td>Application settings can be retained across sessions.</td><td>The selected mode and settings still suit today's intended task.</td></tr>
+<tr><td>Accepted operator or engineering login</td><td>Successful access belongs to the current application session.</td><td>Complete any required access request in the new session.</td></tr>
+<tr><td>Tool information</td><td>Recorded values describe the established tool state or measurements.</td><td>The physical tooling has not changed in a way that invalidates them.</td></tr>
+<tr><td>Interrupted machining</td><td>A stopped job is work that needs an understood restart decision.</td><td>The file, setup, tool and intended starting place are correct before any new Run.</td></tr>
+<tr><td>Machine's physical condition</td><td>It is not established by a saved software preference.</td><td>Complete the required physical and readiness checks again.</td></tr>
+</tbody></table>
+<h3>If settings cannot be saved</h3>
+<p>The reviewed application reports <strong>Configuration could not be saved. The application will remain open.</strong> when a handled settings-save error prevents normal closing. The close attempt is cancelled. This is deliberately different from closing silently and leaving you to assume that the save succeeded.</p>
+<ol class="journey">
+<li><strong>Read and retain the error details.</strong><p>Record the message and which authorized settings were changed during the session. Do not include passwords in the report.</p></li>
+<li><strong>Recognize that the application is still open.</strong><p>Do not assume its controller cleanup has completed merely because you pressed Exit. Maintain the required stopped machine condition.</p></li>
+<li><strong>Obtain assistance to resolve the saving problem.</strong><p>Do not delete configuration data or change Windows permissions as an improvised operator remedy.</p></li>
+<li><strong>Retry ordinary closing after the cause is addressed.</strong><p>Check that no further save error appears. If the result remains uncertain, record that uncertainty for the next operator or responsible person.</p></li>
+</ol>
+<p>A save error does not provide a reliable list of which individual values reached storage. Do not assume that all changes were saved, or that none were. Have important settings verified after the problem is resolved, following the authorized procedure.</p>
+<aside class="learning-example"><h3>Saved mode does not mean saved readiness</h3><p>The application reopens in Normal because that mode was saved. Operator access and the new connection must still be established, and machine preparation must still be checked. A remembered selection is useful information, not a remembered permission to cut.</p></aside>
+<p>Forcing the application to end skips the opportunity to complete its ordinary closing process and address the reported error. It is not the normal answer to a save warning. Keep the application and machine in an understood condition while the responsible person resolves the problem.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">3.12 Follow a complete example and check your understanding</h2>
+
+<p>Imagine that you are beginning an ordinary production shift on a machine you have been trained to use. The machine's physical startup checks have been completed, and the approved application shortcut is identified. Your immediate task is to establish a usable application session, not to start cutting.</p>
+<h3>Example: an ordinary start</h3>
+<p>You open RouterXYZ+TC and see Operator access. You enter the assigned password and select Open. The dialog closes. You now check the operating mode and wait for the automatic connection result. Because the intended task is real operation, the selected mode must be Normal; you also confirm the active connection indication and read the current messages rather than relying on the Online caption alone.</p>
+<p>The connection succeeds, but the machine is not yet homed. You identify homing as the next required preparation step and follow its procedure. You have completed application startup without confusing it with completion of machine or job preparation.</p>
+<h3>Example: startup is interrupted at login</h3>
+<p>You do not have the operator password available, so you close the access dialog. The main window remains visible, but this does not grant permission to operate. Later, the responsible person provides the assigned access. You use Configuration to return to Operator access and complete the check. If Engineering access is then requested, you recognize it as a different level.</p>
+<p>You check connection again instead of assuming that successful later login has automatically connected the machine. If a manual connection is needed and you cannot use the authorized controls, the responsible person performs it. You then verify its result before continuing.</p>
+<h3>Example: an orderly end of work</h3>
+<p>You finish or stop the operation using the appropriate procedure, establish the required spindle and machine condition, and finish any dialog work. You select Exit and watch the result. If a save error appears, you recognize that the application has remained open and obtain assistance. If normal exit completes, you finish the separate machine shutdown or handover procedure.</p>
+<h3>Questions to discuss with your trainer</h3>
+<ol class="journey">
+<li><strong>Why can the main window be visible while machine controls remain unavailable?</strong><p>Access, a pending dialog, connection or a required preparation condition may still be incomplete. Identify the stage before attempting a remedy.</p></li>
+<li><strong>What does a successful operator password prove?</strong><p>It establishes operator access for the current application session. It does not establish connection, homing or physical setup.</p></li>
+<li><strong>Does the word Online alone prove a working real-machine connection?</strong><p>No. Check the actual connection indication and state as well as the selected mode.</p></li>
+<li><strong>Does Cancel undo an accepted Mode change?</strong><p>No. That change is a live operation and can already have requested a reconnect.</p></li>
+<li><strong>What should you do when Exit does not close the application?</strong><p>Identify whether an active operation, loading work or a save error is preventing completion. Address the actual condition through its procedure instead of forcing closure.</p></li>
+<li><strong>Does reopening the application resume an interrupted job?</strong><p>Do not assume so. Establish the new session, connection, machine condition and intended job-start point before any operating command.</p></li>
+</ol>
+<p>Use <a href="#connection">the connection-state table</a> when interpreting startup and <a href="#shutdown">the shutdown procedure</a> when ending work. The next planned chapter, <a href="index.html#chapter-04">Main Window and Status Indicators</a>, explains the main screen in more detail.</p>
+<aside class="source-note"><p><strong>Scope of this chapter.</strong> Startup, access, connection, mode-changing and closing behavior were checked against the RouterXYZ+TC application and its shared configuration dialogs on 8 October 2026. Installed settings and assigned keyboard shortcuts can differ. Reserved screenshots must be captured from the delivered application; no invented interface images are used.</p></aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZ+TC · Operator Manual · Chapter 3</span><a href="index.html#chapter-03">Return to the contents</a></footer></main></body></html>

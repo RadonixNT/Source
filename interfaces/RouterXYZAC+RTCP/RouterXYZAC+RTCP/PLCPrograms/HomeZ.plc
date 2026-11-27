@@ -1,0 +1,59 @@
+// Router generated home SHA256: 49BD3CA28F7356590B9987631939413D0B4B0DFD4F91A6C7628391EE9CA53B19
+// Generated from Axes/HomeSequence, gantry selection and home-sensor mappings.
+// Editing this source makes it engineer-owned; automatic regeneration then stops.
+// Result: 0 success; 1 sensor/stop timeout; 2 invalid direction; 3 coupling failure.
+INTEGER Stage := 0;
+INTEGER Phase := 0;
+INTEGER Result := 0;
+INTEGER TimeoutMs := 120000;
+TIMER SearchTimeout;
+TIMER ReleaseTimeout;
+TIMER CouplingTimeout;
+REAL DisplaceVelocity := 0.0;
+REAL ZPosition := 0.0;
+REAL ZDisplace := 0.0;
+REAL ZVelocity := 0.0;
+REAL ZReturn := 0.0;
+INTEGER ZDirection := -1;
+LOGIC ZSeen := FALSE;
+LOGIC ZReleased := FALSE;
+IF SF.FirstScan THEN
+Stage := 0; Phase := 0; Result := 0; TimeoutMs := Controller.HomeTimeout * 1000;
+ZPosition := Z.HomePosition; ZDisplace := Z.HomeDisplace;
+ZVelocity := Z.HomeVelocity; ZReturn := Z.HomeReturnVelocity; ZDirection := Z.HomeDirection;
+ZSeen := FALSE; ZReleased := FALSE;
+IF ZDirection <> -1 AND ZDirection <> 1 THEN Result := 2; END_IF;
+END_IF;
+SearchTimeout(TYPE := TON, IN := (Phase = 1 OR Phase = 2) AND Result = 0, PT := TimeoutMs);
+ReleaseTimeout(TYPE := TON, IN := (Phase = 3 OR Phase = 4) AND Result = 0, PT := TimeoutMs);
+CouplingTimeout(TYPE := TON, IN := Phase = 0 AND Result = 0, PT := 60000);
+IF SearchTimeout.Q OR ReleaseTimeout.Q THEN Result := 1; END_IF;
+IF CouplingTimeout.Q THEN Result := 3; END_IF;
+IF Result <> 0 THEN
+AXES_STOP(Z);
+IF Z.Stopped THEN
+END_FUNCTION(Result := Result);
+END_IF;
+ELSIF Stage = 0 THEN
+IF Phase = 0 THEN
+IF Result = 0 THEN Phase := 1; END_IF;
+ELSIF Phase = 1 THEN
+IF ZSeen OR HomeSensorZ THEN ZSeen := TRUE; AXES_STOP(Z); ELSE AXIS_HOME(Z := ZDirection, Velocity := ZVelocity); END_IF;
+IF ZSeen THEN Phase := 2; END_IF;
+ELSIF Phase = 2 THEN
+AXES_STOP(Z); IF Z.Stopped THEN Phase := 3; END_IF;
+ELSIF Phase = 3 THEN
+IF ZReleased OR NOT HomeSensorZ THEN ZReleased := TRUE; AXES_STOP(Z); ELSE AXIS_HOME(Z := -ZDirection, Velocity := ZReturn); END_IF;
+IF ZReleased THEN Phase := 4; END_IF;
+ELSIF Phase = 4 THEN
+AXES_STOP(Z); IF Z.Stopped THEN
+AXIS_SET_HOME(Axis := Z, Position := ZPosition - ZDisplace);
+Phase := 5; END_IF;
+ELSIF Phase = 5 THEN
+IF ZDisplace <> 0.0 THEN
+DisplaceVelocity := ZVelocity;
+TOOLPATH_SYNC_RUN(Homing := TRUE, Z := ZPosition, Velocity := DisplaceVelocity);
+END_IF;
+END_FUNCTION(Result := 0);
+END_IF;
+END_IF;

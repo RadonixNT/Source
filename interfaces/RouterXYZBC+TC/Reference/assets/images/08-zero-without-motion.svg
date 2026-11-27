@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400" role="img" aria-labelledby="t d">
+<title id="t">Zero setting changes the reference without moving the axis</title><desc id="d">A stationary machine X at 500 initially has reference X 400 and work X 100. Setting X zero stores reference X 500, giving work X zero when that reference is applied and corrections are zero.</desc>
+<rect width="1000" height="400" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#173e4b" text-anchor="middle">
+<text x="500" y="40" font-size="25" font-weight="700">Set X0 changes the reference, not the physical position</text>
+<rect x="45" y="90" width="380" height="180" rx="12" fill="#e4eff1" stroke="#94b0b9"/>
+<text x="235" y="127" font-size="22" font-weight="700">Before</text><text x="235" y="168" font-size="21">Machine X: 500 mm</text><text x="235" y="206" font-size="21">Applied reference X: 400 mm</text><text x="235" y="244" font-size="21">Work X: 100 mm</text>
+<path d="M449 180H548L532 167M548 180L532 193" fill="none" stroke="#316f7c" stroke-width="3"/><text x="499" y="223" font-size="17">Set X0</text>
+<rect x="575" y="90" width="380" height="180" rx="12" fill="#dbeee8" stroke="#7ba594"/>
+<text x="765" y="127" font-size="22" font-weight="700">After</text><text x="765" y="168" font-size="21">Machine X: 500 mm</text><text x="765" y="206" font-size="21">Applied reference X: 500 mm</text><text x="765" y="244" font-size="21">Work X: 0 mm</text>
+<text x="500" y="319" font-size="20" font-weight="700">The axis stays at the same machine position.</text>
+<text x="500" y="355" font-size="17">Example assumes the selected reference is also the applied reference, with zero corrections.</text>
+<text x="500" y="383" font-size="16" fill="#576e77">Conceptual example only. It does not establish where the actual material datum is.</text>
+</g></svg>

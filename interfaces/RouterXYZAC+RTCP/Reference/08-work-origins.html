@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 8 — Work Origins and Zero Setting | RouterXYZAC+RTCP</title>
+<meta name="description" content="An operator guide to choosing G54–G59 work origins, setting current X/Y/Z zero, editing saved references and checking the effect on a prepared machining job.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+RTCP · CHAPTER 8</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Work Origins and Zero Setting</h1>
+<p class="lead">Tell the application where the job belongs: identify the intended origin, choose the correct stored reference, and verify every accepted change before machining.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> This chapter explains software reference controls. Physical edge finding, surface measurement and tool setup must follow the approved method for the installed machine. Example numbers are not settings to enter.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-08">Manual contents</a> · <a href="07-manual-motion.html">Previous chapter: Manual motion</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZAC update — 10 November 2026.</strong> G54-G59 retain A/C as well as XYZ. The main reference editors remain XYZ; angular references are edited in Configuration. See the <a href="XYZAC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Understand what the work origin tells the machine</a></li>
+<li><a href="#controls">Find the available reference controls</a></li>
+<li><a href="#preparation">Establish the physical meaning before changing a number</a></li>
+<li><a href="#selection">Select and identify the intended G54–G59 row</a></li>
+<li><a href="#zero-xy">Set X or Y zero from an established position</a></li>
+
+<li><a href="#numeric-edit">Edit a known reference value carefully</a></li>
+<li><a href="#accept-cancel">Finish Configuration and distinguish acceptance from cancellation</a></li>
+<li><a href="#program-origins">Understand which origins the machining file actually uses</a></li>
+<li><a href="#verification">Verify the origin change before any machining start</a></li>
+<li><a href="#problems">Resolve unexpected values without hiding the original problem</a></li>
+<li><a href="#practice">Work through a setup example and check your understanding</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">8.1 Understand what the work origin tells the machine</h2>
+
+<p>A machining file describes positions relative to an agreed starting reference. The work origin is that reference for the job: the point identified as work X zero, Y zero and Z zero. Establishing it connects the positions in the file to the actual location of the workpiece or fixture on the machine.</p>
+<p>Homing and work-origin setup answer different questions. Homing establishes the machine's own reference. Work-origin setup locates this job within that machine reference. A machine can be correctly homed while the selected work origin belongs to yesterday's material or another fixture.</p>
+<p>The origin is not automatically the nearest corner, the centre of the material or its top surface. Those are possible choices made when the job is prepared. Your task is to identify and establish the choice required by the approved job information, not to choose a convenient zero independently.</p>
+<table><caption>Table 8-1. Information that must agree before setting a work origin</caption><thead><tr><th scope="col">Item</th><th scope="col">Question to resolve</th></tr></thead><tbody>
+<tr><td>Horizontal origin</td><td>Which corner, centre, fixture datum or other defined point represents work X/Y zero?</td></tr>
+<tr><td>Height origin</td><td>Does work Z zero refer to the material top, fixture/table reference or another documented plane?</td></tr>
+<tr><td>Stored reference name</td><td>Which of G54–G59 does this job require?</td></tr>
+<tr><td>Physical setup</td><td>Does the current material location and orientation match that definition?</td></tr>
+<tr><td>Tool state</td><td>Is the fitted tool identified and is its applicable correction valid?</td></tr>
+</tbody></table>
+<p>A <strong>datum</strong> is simply an agreed reference feature or surface from which a position is established. If the job sheet uses that word, ask which physical feature it identifies. Do not substitute a visually convenient edge for a specified datum.</p>
+<h3>Setting zero changes a relationship, not the machine's location</h3>
+<p>The main-window <strong>Set X0</strong>, <strong>Set Y0</strong> and <strong>Set Z0</strong> commands update one coordinate of the selected stored reference using the current commanded machine position and applied corrections. They do not move the axis, search for an edge or measure the workpiece.</p>
+<p>That absence of immediate movement does not make a reference change unimportant. The new reference can change where later programmed movement goes. A part can retain the same dimensions while its entire intended location shifts across the table or its cutting heights change.</p>
+<aside class="learning-example"><h3>The correct shape in the wrong place</h3><p>The preview contains the right rectangle, but the selected origin belongs to another fixture. The file may still look recognizable because the shape is unchanged. The reference determines its placement, so checking only the shape cannot establish a correct setup.</p></aside>
+<p>Use <a href="05-coordinates.html">Chapter 5</a> for the underlying coordinate ideas and <a href="07-manual-motion.html">Chapter 7</a> for deliberate manual movement. This chapter connects those ideas to choosing and changing the stored job reference.</p>
+
+</section>
+<section id="controls" aria-labelledby="controls-title"><h2 id="controls-title">8.2 Find the available reference controls</h2>
+
+<p>The reviewed main window exposes <strong>Set X0</strong>, <strong>Set Y0</strong> and <strong>Set Z0</strong>. Each acts on one axis coordinate of the selected reference. These are actions, not text fields: pressing one requests an immediate reference update when the command is permitted. Do not click one simply to inspect its present value.</p>
+<p>The reviewed main-window layout hides its direct reference-number fields and reference selector. You should therefore not expect a visible G54–G59 drop-down beside the zero buttons in this layout. Use the <strong>Configuration</strong> window's <strong>Reference</strong> branch to inspect or change the stored rows and the selection.</p>
+<table><caption>Table 8-2. Where to look and what each control does</caption><thead><tr><th scope="col">Location or label</th><th scope="col">Purpose</th><th scope="col">Important distinction</th></tr></thead><tbody>
+<tr><td>Main window: Set X0</td><td>Update selected reference X from the current position and corrections.</td><td>Does not update Y or Z.</td></tr>
+<tr><td>Main window: Set Y0</td><td>Update selected reference Y.</td><td>Does not move to a material edge.</td></tr>
+<tr><td>Main window: Set Z0</td><td>Update selected reference Z.</td><td>Does not measure the tool or locate the surface.</td></tr>
+<tr><td>Configuration → Reference → CurrentReference</td><td>Select one of the six stored reference rows.</td><td>The numeric selection identifies a row; it is not a coordinate.</td></tr>
+<tr><td>Configuration → Reference → G54 through G59</td><td>Inspect or edit the named row's X/Y/Z reference coordinates.</td><td>Opening a row for inspection is not the same as selecting it for the zero buttons.</td></tr>
+<tr><td>Main window: Machine position / Work position</td><td>Read the coordinate presentation.</td><td>A work readout can depend on the prepared program's reference as well as corrections.</td></tr>
+</tbody></table>
+<h3>Access is part of the procedure</h3>
+<p>Complete the required operator login before machine interaction. On entering Configuration, the application may request engineering credentials according to its configured access session. Follow the authorized login process and the access available for the relevant fields. Do not borrow credentials or change permissions to carry out an unexplained reference edit.</p>
+<p>If you are authorized to use the main zero buttons but cannot inspect or change the selected reference through Configuration, have the responsible person confirm the required row before proceeding. Guessing the selection is not an acceptable substitute for knowing which setup you are changing.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 8-1 · SETTINGS SCREENSHOT REQUIRED</p><h3>The Reference branch and the selected row</h3><p>Supply an English Configuration screenshot with Reference expanded, CurrentReference visible and a named G54–G59 row expanded to show X, Y and Z. Label the distinction between the row being inspected and the value that selects the active row.</p><p>Suggested image: <code>assets/images/08-reference-settings.png</code>. Do not fabricate a main-window reference selector: it is hidden in the reviewed layout.</p><figcaption>The values belong to the illustrated setup only. The screenshot must show the actual authorized editing surface.</figcaption></figure>
+<p>The selected row and the origin actually used by a file are related but can differ. A file can explicitly request G55 even while the selector identifies G54. The zero buttons still edit the selected row. Sections 8.4 and 8.9 explain this distinction before it becomes a setup mistake.</p>
+
+</section>
+<section id="preparation" aria-labelledby="preparation-title"><h2 id="preparation-title">8.3 Establish the physical meaning before changing a number</h2>
+
+<p>Begin with the approved job information. Identify the required work-reference name, horizontal datum and Z-zero plane. If the drawing or setup sheet does not make those clear, obtain the missing setup information before changing the reference. The software cannot infer the intended origin from the material's appearance.</p>
+<p>Then establish the machine reference and the physical setup. Complete the required homing procedure, confirm that the material and fixtures are secured in their intended positions, and check the actual fitted tool and its applicable correction. A changed tool assembly can affect the relationship between head position and tool tip.</p>
+<table><caption>Table 8-3. Prepare the origin-setting task</caption><thead><tr><th scope="col">Requirement</th><th scope="col">What must be known</th></tr></thead><tbody>
+<tr><td>Job identity</td><td>The file and setup sheet belong to the actual part and revision being prepared.</td></tr>
+<tr><td>Reference name</td><td>Which G54–G59 row the job needs, including any additional rows used later in the file.</td></tr>
+<tr><td>Horizontal datum</td><td>The actual feature defining X/Y zero and the approved way to establish it.</td></tr>
+<tr><td>Height datum</td><td>The surface or plane defining Z zero, including any required measurement allowance.</td></tr>
+<tr><td>Machine and tool state</td><td>A valid machine reference and valid correction for the actual installed tool.</td></tr>
+<tr><td>Existing setup information</td><td>The old reference values and their purpose, especially if the row is used by another job or fixture.</td></tr>
+</tbody></table>
+<h3>Position first, change the reference only when settled</h3>
+<p>If setting zero from the current position, reach the approved datum using the installed measurement and movement procedure. Then allow movement and stopping to finish. Do not press a zero button while jogging or while a measurement operation is still active.</p>
+<p>The application blocks connected reference editing during motion, active program state, homing, positioning and program preparation. Zero commands also require a connection. Numeric reference editing can be available offline, but an offline edit cannot establish where the physical tool currently is.</p>
+
+<h3>Touching an edge is not always placing the tool reference on it</h3>
+<p>If a measuring method uses a cutter edge, probe tip, spacer or gauge, its geometry matters. The point being sensed can differ from the axis centre or tool reference used by the coordinates. The zero button does not ask what gauge was used and does not infer a cutter radius or spacer thickness from contact.</p>
+<aside class="learning-example"><h3>A spacer above a surface</h3><p>A tool tip is positioned on top of a known spacer resting on the intended Z-zero surface. The tip is not at that surface; it is above it. Pressing Set Z0 there would declare the current corrected position to be zero for the selected reference. The approved method must account for the spacer instead of treating any contact as surface zero.</p></aside>
+<p>This manual deliberately does not prescribe a contact test with a rotating cutter, a paper thickness or an improvised probing move. Use the method qualified for the installed machine and tooling. The following sections explain the software action after that method has established what the position means.</p>
+<p>If the current position should represent a known nonzero work coordinate, do not press zero merely to simplify the display. Have the corresponding reference value established by the approved setup calculation, then enter it through the numeric editing procedure.</p>
+
+</section>
+<section id="selection" aria-labelledby="selection-title"><h2 id="selection-title">8.4 Select and identify the intended G54–G59 row</h2>
+
+<p>RouterXYZAC+RTCP stores six named work-reference rows: <strong>G54</strong>, <strong>G55</strong>, <strong>G56</strong>, <strong>G57</strong>, <strong>G58</strong> and <strong>G59</strong>. Each row contains X, Y, Z, A and C coordinates; angular values are in degrees. These names identify separate stored origins; they are not six accuracy levels or six stages of homing.</p>
+<table><caption>Table 8-4. CurrentReference selection values</caption><thead><tr><th scope="col">CurrentReference value</th><th scope="col">Selected stored row</th></tr></thead><tbody>
+<tr><td>0</td><td>G54</td></tr><tr><td>1</td><td>G55</td></tr><tr><td>2</td><td>G56</td></tr><tr><td>3</td><td>G57</td></tr><tr><td>4</td><td>G58</td></tr><tr><td>5</td><td>G59</td></tr>
+</tbody></table>
+<p>The value 0 in CurrentReference selects G54. It does not set any coordinate to zero. Likewise, a row named G55 does not imply that any of its coordinates should be 55. Keep the row's identity separate from the numbers stored inside it.</p>
+<ol class="journey">
+<li><strong>Identify the required row from the job information.</strong><p>Do not assign the job to an unused-looking row without confirming what the file expects.</p></li>
+<li><strong>Open Configuration and locate Reference.</strong><p>Complete the requested access process. Read CurrentReference and translate its value using the table above.</p></li>
+<li><strong>Inspect the intended named row.</strong><p>Read all three coordinates, not only the one you plan to change. Record the existing values when they belong to a setup that must be recoverable.</p></li>
+<li><strong>Change CurrentReference only if required.</strong><p>Commit the intended selection and read the accepted value. The selected row must pass its coordinate validation; an invalid row can be rejected.</p></li>
+<li><strong>Finish the Configuration transaction deliberately.</strong><p>Use the acceptance or cancellation process in Section 8.8. After returning to the main window, remember which row the zero buttons will edit.</p></li>
+</ol>
+<h3>Viewing a row does not select it</h3>
+<p>Expanding G55 in the Configuration tree lets you inspect or edit G55. It does not, by itself, make CurrentReference select G55. If CurrentReference is still 0, a later Set X0 on the main window acts on G54.</p>
+<p>Changing the selection does not erase the other rows. Each keeps its stored coordinates until explicitly changed. This is useful for multiple fixtures, but it also means an old origin can remain present after the physical fixture has been moved or removed. Stored does not mean currently verified.</p>
+<aside class="learning-example"><h3>Two fixtures, two reference rows</h3><p>A documented setup uses G54 for the left fixture and G55 for the right. Both rows may contain valid numbers. Selecting the wrong one can place a perfectly valid job at the wrong fixture. Confirm the fixture, reference name and file together; numeric validation alone cannot distinguish the intended choice.</p></aside>
+<p>A file that explicitly requests a reference can use it independently of this initial selection. Therefore, selection is necessary to know what the zero buttons edit, but it does not prove that every line in a loaded file will use that row. Review the file's required origins as described in Section 8.9.</p>
+
+</section>
+<section id="zero-xy" aria-labelledby="zero-xy-title"><h2 id="zero-xy-title">8.5 Set X or Y zero from an established position</h2>
+
+<p>Use <strong>Set X0</strong> or <strong>Set Y0</strong> only after the approved setup method has established that the current corrected position should represent zero on that axis. The software command does not find the material edge. It records the reference implied by the position you have already established.</p>
+<p>You can establish X and Y at different physical locations according to the approved method. Setting X does not require you to overwrite Y at the same time. This is why the controls are separate: each changes only the selected row's corresponding coordinate.</p>
+<ol class="journey">
+<li><strong>Confirm the selected reference and the job requirement.</strong><p>Check CurrentReference through Configuration as needed. Verify that this is the row you intend to modify, not merely a row recently viewed in the tree.</p></li>
+<li><strong>Establish the X or Y datum using the approved physical method.</strong><p>Account for the actual measuring tool, edge geometry or gauge. Follow the manual-motion procedure for every positioning move.</p></li>
+<li><strong>Wait until the machine is settled.</strong><p>Finish jogging, measurement and any other operation. Confirm the tool state and applicable corrections.</p></li>
+<li><strong>Press only the corresponding zero button once.</strong><p>Use Set X0 for X or Set Y0 for Y. The action updates that selected reference coordinate without requesting axis travel.</p></li>
+<li><strong>Check the accepted stored coordinate and resulting presentation.</strong><p>Inspect the named row if necessary. If the prepared program uses that reference, its corresponding work readout should reflect the new relationship. If it uses another reference, the visible readout may not become zero.</p></li>
+<li><strong>Complete the other axis only when its own datum is established.</strong><p>Do not press all zero buttons as a batch merely because one axis has been positioned correctly.</p></li>
+</ol>
+<figure class="concept-figure"><img src="assets/images/08-zero-without-motion.svg" alt="Before and after Set X0: machine X remains 500; applied reference changes from 400 to 500; work X changes from 100 to zero, assuming no corrections and matching selected and applied references."><figcaption>Figure 8-2. A reference change can alter the work readout without physical movement. The conditions beneath the diagram are part of the example.</figcaption></figure>
+<h3>What value is actually stored?</h3>
+<p>For the chosen axis, the zero command takes the current commanded machine position and subtracts the applied tool offset and additional live correction. It stores that result in the selected reference row. It does not simply write the numeral zero into the reference coordinate field.</p>
+<table><caption>Table 8-5. Illustrative X-zero calculation</caption><thead><tr><th scope="col">Current machine X</th><th scope="col">Applied X corrections</th><th scope="col">New selected reference X</th></tr></thead><tbody>
+<tr><td>500 mm</td><td>0 mm total</td><td>500 mm.</td></tr>
+<tr><td>502 mm</td><td>2 mm tool correction, no additional correction</td><td>500 mm.</td></tr>
+</tbody></table>
+<p>The example does not prescribe a correction. It shows why copying the Machine position into a reference field is not always equivalent to using Set X0. If corrections are present, the zero command accounts for them.</p>
+<p>If the expected result is not obtained, do not press the button repeatedly. Read the selected row, messages and file's reference requirements. Changing the wrong row repeatedly cannot make the intended row correct.</p>
+
+</section>
+<section id="zero-z" aria-labelledby="zero-z-title"><h2 id="zero-z-title">8.6 Set Z zero at the intended work surface</h2>
+
+<p>Work Z zero defines the job's height reference. For one job it may be the material's top surface; for another it may be a fixture or table plane. A change between those conventions can alter cutting depth even when every number is entered accurately. Confirm the convention before positioning the tool.</p>
+
+<table><caption>Table 8-6. Two height-related tasks with different purposes</caption><thead><tr><th scope="col">Task</th><th scope="col">Question it answers</th><th scope="col">What it does not replace</th></tr></thead><tbody>
+
+<tr><td>Set Z0</td><td>Which selected work-reference Z value makes the current corrected position zero?</td><td>Measuring the tool or confirming the physical surface.</td></tr>
+</tbody></table>
+<ol class="journey">
+<li><strong>Confirm the required Z-zero plane.</strong><p>Use the setup sheet or approved job instructions. Do not assume every file uses the material top.</p></li>
+<li><strong>Confirm the actual tool and valid correction.</strong><p>Complete any required measurement through its own procedure and verify its successful result before using that tool to establish the job reference.</p></li>
+<li><strong>Establish the intended position by the approved method.</strong><p>Account for any gauge, spacer or probe arrangement. If the current position represents a nonzero work height, do not declare it zero.</p></li>
+<li><strong>Wait for a settled machine and confirm the selected row.</strong><p>The zero command must not be issued during the approach or measurement. Recheck that it will change the intended G54–G59 row.</p></li>
+<li><strong>Press Set Z0 once and check the accepted result.</strong><p>Read the stored Z reference and the program's resulting work-coordinate presentation. Wait for any preparation caused by the change.</p></li>
+<li><strong>Verify the setup using the approved checking method.</strong><p>A displayed zero is not an independent measurement of tool contact or cutting depth. Complete the required physical and job checks before machining.</p></li>
+</ol>
+<h3>A corrected-position example</h3>
+<p>Suppose an explanatory setup has machine Z 150 mm, an applied Z tool correction of 50 mm and no additional correction. Set Z0 stores selected reference Z 100 mm. With that reference applied, work Z is 150 − 100 − 50 = 0 mm. The head did not move and no measurement was made by the button.</p>
+<p>If an additional live correction were present, the zero command would subtract that too. This is why you must understand the existing corrections before changing the origin. Do not remove or add corrections simply to make a sample calculation match your display.</p>
+<aside class="learning-example"><h3>A tool is replaced after zero setting</h3><p>A replacement cutter projects farther from its holder, but its old measurement is retained. Repeatedly changing the work Z origin to compensate can conceal the tool-data problem and affect other tools in the job. Verify the replacement tool through the prescribed measurement process rather than treating work zero as a general depth-repair control.</p></aside>
+
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 8-3 · APPROVED SETUP ILLUSTRATION REQUIRED</p><h3>The specified Z-zero plane and measuring arrangement</h3><p>Supply a labelled photograph or drawing of the installation's approved method. Identify the intended zero plane, tool reference, and any gauge or spacer whose thickness must be accounted for. Clearly separate a material-top example from a fixture-plane example.</p><p>Suggested image: <code>assets/images/08-z-datum-method.png</code>. Have the responsible setup specialist approve the illustration before use as an operating instruction.</p><figcaption>This placeholder does not prescribe a probing or contact method. The installed procedure determines how the physical datum is established.</figcaption></figure>
+
+</section>
+<section id="numeric-edit" aria-labelledby="numeric-edit-title"><h2 id="numeric-edit-title">8.7 Edit a known reference value carefully</h2>
+
+<p>Use numeric editing when an approved setup provides the reference coordinate or when an authorized correction has been calculated. The reference field expects the stored origin coordinate, not the work coordinate you want to see and not a relative movement distance.</p>
+<p>For example, if the selected G54 X reference is 400 mm and you enter 2, the new candidate is 2 mm. It is not an instruction to add 2 mm to 400. If the approved change is to increase that reference by 2 mm, the final value would be 402 mm. Confirm the intended final coordinate before editing.</p>
+<ol class="journey">
+<li><strong>Stop and identify the exact row and axis.</strong><p>In Configuration → Reference, open the named G54–G59 row. Distinguish editing this row from changing CurrentReference.</p></li>
+<li><strong>Record the old value and the reason for changing it.</strong><p>Include the row name, axis and units. Keep any existing fixture/setup record consistent with the authorized change.</p></li>
+<li><strong>Enter the complete new reference coordinate.</strong><p>Use the approved millimetre value, including its sign and decimal point. Do not enter a desired work readout unless it has first been converted to the correct reference value.</p></li>
+<li><strong>Confirm the field edit and reread it.</strong><p>Use the editor's normal confirmation, such as Enter. Escape cancels an unfinished field edit and restores its accepted value; it is not a general undo for earlier committed changes.</p></li>
+<li><strong>Resolve any validation error.</strong><p>A rejected value has not become the intended setup. Read the accepted value and error information before proceeding.</p></li>
+<li><strong>Check the rest of the row and finish Configuration.</strong><p>Verify that untouched axes remain as intended, then follow the acceptance/cancellation process in Section 8.8 and review the prepared job.</p></li>
+</ol>
+<table><caption>Table 8-7. What a numeric reference edit means</caption><thead><tr><th scope="col">Situation</th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td>Reference X is 400; replace it with 402</td><td>The stored origin shifts by positive 2 mm on X.</td></tr>
+<tr><td>Reference X is 400; replace it with 2</td><td>The stored origin becomes machine-related reference coordinate 2, not 402.</td></tr>
+<tr><td>At fixed machine X 500, change reference X from 400 to 402 with zero corrections</td><td>The displayed work X for that applied reference changes from 100 to 98.</td></tr>
+<tr><td>Change only G55 Y</td><td>Other coordinates and other rows are not automatically copied or zeroed.</td></tr>
+</tbody></table>
+<h3>When the current point should have a known nonzero work coordinate</h3>
+<p>The relationship is: reference coordinate equals machine coordinate minus the applied corrections minus the intended work coordinate at that point. In an explanatory X example, machine X 500 with no corrections should represent work X 20. The corresponding reference is 480, not 20 and not 500.</p>
+<p>Use that relationship to understand an approved calculation, not to improvise a measurement method. If the corrections or physical datum are uncertain, obtain the correct setup value before editing.</p>
+<h3>Validation is a boundary check, not proof of the setup</h3>
+<p>Reference coordinates must be finite and within the configured axis course limits. The application marks invalid saved coordinates for explicit correction instead of silently replacing them with a convenient new origin. A row can become invalid after a machine-limit change even though its saved value has not changed.</p>
+<p>A valid number can still belong to the wrong fixture, wrong row or wrong height convention. Passing validation does not prove that the material is at the specified datum or that the entire program fits inside the available travel.</p>
+<p>The stored reference supports more precision than some main-window presentations show. Trailing zeros and rounding can change how a value looks. Verify accepted values through the appropriate editor and use the approved measurement precision; do not infer machining accuracy from displayed digits.</p>
+
+</section>
+<section id="accept-cancel" aria-labelledby="accept-cancel-title"><h2 id="accept-cancel-title">8.8 Finish Configuration and distinguish acceptance from cancellation</h2>
+
+<p>A confirmed field edit can affect the current reference and prepared-job presentation before the Configuration window closes. Do not think of every number inside Configuration as an inert draft waiting for OK. Field confirmation, final validation and saving are related but separate stages.</p>
+<p>When the changed reference is relevant to an open job, the application may update its placement or start preparing it again. Keep the machine stopped and allow these operations to settle. Do not make unrelated changes while trying to determine the effect of one reference edit.</p>
+<table><caption>Table 8-8. Editing and completion actions</caption><thead><tr><th scope="col">Action</th><th scope="col">Meaning for reference work</th></tr></thead><tbody>
+<tr><td>Type an unfinished field value</td><td>A draft is being entered. Confirm or cancel it deliberately.</td></tr>
+<tr><td>Confirm the field</td><td>The value is submitted to the bound reference and validation. An accepted change can affect the current job immediately.</td></tr>
+<tr><td>Press OK in Configuration</td><td>The dialog performs its acceptance checks and saves accepted settings. Resolve any reported validation or save failure.</td></tr>
+<tr><td>Press Cancel in Configuration</td><td>The dialog restores the edits recorded for that dialog session. It is not a universal undo for earlier actions elsewhere.</td></tr>
+<tr><td>Set X0, Set Y0 or Set Z0 before opening Configuration</td><td>An earlier main-window reference action. A later Configuration Cancel does not undo it simply because the row was viewed there.</td></tr>
+</tbody></table>
+<h3>Accept an intentional change</h3>
+<p>Before OK, reread the named row's coordinates and CurrentReference. Confirm that the change belongs to the intended setup and that no unrelated field was changed. If validation fails, use the reported field or branch information to resolve the actual issue. Do not replace other origins with zeros merely to make the dialog accept.</p>
+<p>If saving fails, distinguish the current in-memory accepted value from what will be available after restarting. Read the message and resolve the save problem through the normal procedure. Do not assume that closing the application will silently repair it.</p>
+<p>After Configuration closes successfully, wait for any preparation and check the resulting main-window presentation. Acceptance confirms the software transaction, not physical correctness of the job origin.</p>
+<h3>Cancel an abandoned Configuration edit</h3>
+<p>Use Cancel when you do not intend to keep the dialog's changes. The dialog records its own committed edits and attempts to restore those values. Changes outside that transaction, including earlier main-window zero actions, are outside that cancellation scope. Closing Configuration is not a recovery method for an unknown sequence of prior edits.</p>
+<p>After cancellation, inspect the row and the selection if their restoration matters to the next operation. Let any triggered preparation finish and read restoration errors if reported. Do not infer a successful rollback solely from the window disappearing.</p>
+<aside class="learning-example"><h3>Cancel after inspecting an accidental zero</h3><p>You accidentally used Set X0 on the main window, then opened Configuration to inspect the result. Pressing Cancel leaves that earlier zero-setting action outside the dialog's undo scope. Recover the correct value from the known setup record or re-establish the datum through the approved procedure; do not guess the old number.</p></aside>
+<p>The six reference rows and their selection belong to saved application settings. Normal application exit saves settings through the existing mechanism, while Configuration OK also persists accepted settings. Keep the setup record accurate and pay attention to save errors; never assume a restart resets the origins to harmless defaults.</p>
+<p>Detailed Configuration behaviour is covered later in <a href="index.html#chapter-21">Using the Configuration Window</a>. For this chapter, the essential habit is to know which change was accepted, which transaction could restore it, and what the actual reference values are before movement resumes.</p>
+
+</section>
+<section id="program-origins" aria-labelledby="program-origins-title"><h2 id="program-origins-title">8.9 Understand which origins the machining file actually uses</h2>
+
+<p>The selected reference is the application's initial choice and the target of the main-window zero buttons. A machining file can also name work references explicitly. Those names are part of the file's intended setup and can determine which stored rows its movements use.</p>
+<p>You do not need a programming background to understand the consequence: the file may say “use G55 here.” Selecting G54 in Configuration does not rewrite that instruction to G54. Obtain the job's required origin list from the approved setup information and have unfamiliar file requirements explained before running.</p>
+<table><caption>Table 8-9. Selected reference and file requirements</caption><thead><tr><th scope="col">File situation</th><th scope="col">What to verify</th><th scope="col">Effect to expect</th></tr></thead><tbody>
+<tr><td>The file uses the selected initial reference without naming another work system</td><td>The intended CurrentReference and its stored coordinates.</td><td>Changing that relevant selection or origin can change job placement.</td></tr>
+<tr><td>The file uses one explicit reference, such as G55, without initial-reference or machine-coordinate movement</td><td>G55's stored coordinates, even if the selector identifies G54.</td><td>The prepared job uses the explicit origin independently of that initial selector.</td></tr>
+<tr><td>The file uses more than one work reference</td><td>Every used row and the fixture/setup belonging to each.</td><td>A relevant change may require the prepared job to be rebuilt, not simply shifted as one object.</td></tr>
+<tr><td>The file includes machine-coordinate movement</td><td>The machine-coordinate destinations as well as work-reference setup.</td><td>Those destinations must not be assumed to shift with the work origin.</td></tr>
+<tr><td>You edit a row unused by the file</td><td>That you really intended to modify that separate setup.</td><td>The current preview may remain unchanged.</td></tr>
+</tbody></table>
+<h3>The important mismatch: zero button and displayed program</h3>
+<p>Suppose CurrentReference selects G54, while the loaded file explicitly uses only G55. Pressing Set X0 changes G54 X. The program may continue to be presented using G55, so the visible Work X does not necessarily become zero. That can be consistent software behaviour rather than a failed zero button.</p>
+<p>Do not try to force the visible readout to zero by repeatedly changing whatever row happens to be selected. First establish the file's requirement and the intended row. If the task is to set up G55, select and verify G55 through the approved process before using zero commands intended for it.</p>
+<h3>What happens after a relevant edit</h3>
+<p>For a simple job using one work reference and no machine-coordinate movements, the application can update the placement of its retained geometry. You may see the preview shift without a lengthy loading process. This is still a meaningful change to where the job belongs.</p>
+<p>When the coordinate relationships are more complex, the application prepares the retained program text again using the updated references. The file on disk is not rewritten by the reference edit. An unused-row edit need not alter the current prepared job, because the job does not depend on that row.</p>
+<p>A machine-coordinate instruction, commonly identified as G53 in the file, refers to the machine frame for that movement. The exact mixed-reference path may need preparation again, but do not assume that changing the work origin moves every machine-coordinate endpoint. This is one reason a simple “shift everything by this amount” expectation can be wrong.</p>
+<aside class="learning-example"><h3>Two fixture origins in one file</h3><p>A job uses G54 for one fixture and G55 for another. Changing G54 is not a request to move the second fixture's operations by the same amount. Both portions and the movements between them must be checked after the application prepares the updated job.</p></aside>
+<h3>Do not compare unlike coordinate presentations</h3>
+<p>For a job using several origins, a displayed work coordinate for the prepared path need not equal the local coordinate written on every file line. The line can use another reference or machine coordinates. Verify the row values and the prepared placement rather than diagnosing a setup solely from two matching or nonmatching numerals.</p>
+<p>Wait for all preparation to finish. If the application reports that reloading is required or preparation failed, resolve that condition before running. The mere presence of an old-looking preview does not certify that it reflects the final accepted references.</p>
+
+</section>
+<section id="verification" aria-labelledby="verification-title"><h2 id="verification-title">8.10 Verify the origin change before any machining start</h2>
+
+<p>After a reference change, verify both the stored setup and its effect on the prepared job. These checks answer different questions. The table tells you what values were accepted; the preview and job information tell you whether the intended operations have been placed as expected.</p>
+<p>Do not immediately press Run or Go Ref to “see whether the zero is right.” Those are movement requests, not passive checks. First establish the reference and tool state, complete the required inspection and prepare any verification movement through the approved procedure.</p>
+<ol class="journey">
+<li><strong>Check the exact changed row and axis.</strong><p>Read the stored coordinate and confirm that it matches the intended setup. Confirm the unchanged axes as well.</p></li>
+<li><strong>Check the selected reference and the file's reference requirements.</strong><p>Know both what the zero buttons edit and what the machining file uses. Verify every used row for a multi-origin job.</p></li>
+<li><strong>Wait for preparation to finish successfully.</strong><p>Resolve reload or preparation messages. A previous preview must not be assumed current after an unsuccessful update.</p></li>
+<li><strong>Inspect job placement, heights and transitions.</strong><p>Compare the prepared job with the actual material, fixtures and required datum. Include noncutting travel and movements between references, not only the cutting outline.</p></li>
+<li><strong>Recheck tool and correction.</strong><p>Confirm that the present tool information is valid and that subsequent tools will be handled through their correct setup procedure.</p></li>
+<li><strong>Recheck the intended starting point and operating state.</strong><p>After preparation or a reset, do not assume an earlier selected start line or continuation situation is still appropriate. Treat the next start deliberately.</p></li>
+</ol>
+<table><caption>Table 8-10. Evidence to check after changing an origin</caption><thead><tr><th scope="col">Evidence</th><th scope="col">What it helps establish</th><th scope="col">What it cannot establish alone</th></tr></thead><tbody>
+<tr><td>Stored row and CurrentReference</td><td>The accepted values and selected row.</td><td>The physical material location.</td></tr>
+<tr><td>Work-position readout</td><td>The current prepared coordinate relationship.</td><td>Tool contact, measurement accuracy or every file line's local coordinate frame.</td></tr>
+<tr><td>Preview placement and dimensions</td><td>Whether the displayed job is consistent with the intended setup.</td><td>Unmodelled fixtures, tool clearance or physical correctness of the datum.</td></tr>
+<tr><td>Successful preparation</td><td>The application has prepared the job with its accepted inputs.</td><td>That the operator selected the correct physical reference.</td></tr>
+</tbody></table>
+<h3>Shape, size and location are separate observations</h3>
+<p>A simple origin shift can preserve part dimensions while changing location. If a rectangle remains the expected width and length, that does not prove it is over the intended material. Conversely, a preview that does not visibly move may be using a different row from the one edited.</p>
+<p>Review the actual numbers and the required references, not only the apparent size of the drawing. A fitted or zoomed view can make different placements look similar. Use the available machine context and the approved physical checking process.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 8-4 · BEFORE/AFTER EXAMPLE REQUIRED</p><h3>The same job before and after a documented origin edit</h3><p>Supply a controlled Simulation example with the named reference row, accepted old/new coordinate and resulting preview. Keep enough machine context visible to distinguish a shift from a zoom or view change. Identify the file's actual required reference.</p><p>Suggested image: <code>assets/images/08-origin-preview-comparison.png</code>. Explain which dimension remains unchanged and which placement coordinate changes.</p><figcaption>The example demonstrates placement. It is not evidence that a real tool clears the installed fixtures.</figcaption></figure>
+<p>If the check fails, leave the job unstarted. Identify whether the problem is the selected row, stored coordinates, tool information, file requirement or physical setup. Changing additional offsets without identifying the cause makes the original mistake harder to recover.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">8.11 Resolve unexpected values without hiding the original problem</h2>
+
+
+<table><caption>Table 8-11. Questions to investigate after an unexpected reference result</caption><thead><tr><th scope="col">Observation</th><th scope="col">Check first</th><th scope="col">Do not assume</th></tr></thead><tbody>
+<tr><td>A zero button is unavailable</td><td>Access, connection, movement, program activity, preparation and tool/positioning operations.</td><td>That reconnecting or changing an origin numerically is the appropriate workaround.</td></tr>
+<tr><td>A reference edit is rejected</td><td>The error message, numeric format, axis course limits and current operation state.</td><td>That the typed candidate became the accepted value.</td></tr>
+<tr><td>Set X0 does not make visible Work X zero</td><td>The selected row versus the file's applied reference and the completion of any update.</td><td>That repeated pressing will select the correct row.</td></tr>
+<tr><td>The head appears still but work coordinates change</td><td>The reference or correction that changed.</td><td>That the head must have moved by the same amount.</td></tr>
+<tr><td>The preview does not shift after an edit</td><td>Whether the edited row is used by the file.</td><td>That no reference value was changed.</td></tr>
+<tr><td>A previously saved row is marked invalid</td><td>Its values and the current configured course limits.</td><td>That replacing it with zero restores the fixture setup.</td></tr>
+<tr><td>Cutting height appears wrong after replacing a tool</td><td>The actual tool, valid measurement/correction and the documented Z-zero plane.</td><td>That work Z should be changed immediately.</td></tr>
+<tr><td>Cancel did not reverse an earlier main-window zero action</td><td>Whether the action occurred before the Configuration transaction.</td><td>That Cancel is a history-wide undo.</td></tr>
+<tr><td>Reload or preparation failure is reported</td><td>The full message and the final accepted reference values.</td><td>That the old preview is ready to run.</td></tr>
+</tbody></table>
+<h3>Recover an accidental edit from evidence</h3>
+<p>If the correct previous value is known from a reliable setup record, restore it through the authorized editing procedure while the machine is appropriately stopped. Then complete all normal preparation and verification checks. Restoring a number does not reverse physical movement that may have occurred after the mistake.</p>
+<p>If the previous value is unknown, re-establish the datum using the approved setup method. Do not estimate it from a remembered readout or subtract a guessed amount from the wrong coordinate panel. A zero-looking display is not evidence that the old origin has been recovered.</p>
+<p>The operation report records accepted reference coordinate changes with the row, axis and old/new values, and records accepted selection changes. These entries can help reconstruct what happened. Match them to the current session and physical setup; an earlier recorded value is not automatically appropriate after the workpiece has moved.</p>
+<aside class="learning-example"><h3>The wrong row was changed</h3><p>You intended to establish G55 X but CurrentReference selected G54. The report and stored row show a G54 change. First preserve that evidence and determine the correct value needed to restore G54. Then establish G55 deliberately. Simply switching to G55 afterward does not undo the unintended change to G54.</p></aside>
+<h3>Keep machine-reference and job-reference problems separate</h3>
+<p>If machine position is uncertain after a collision, loss of reference or mechanical intervention, do not compensate by changing the work origin until the job appears aligned. Resolve the machine condition and required homing first. A shifted work reference can conceal the original problem and affect later tools or other workpieces.</p>
+<p>Likewise, do not widen travel limits to make a rejected origin valid. Determine whether the coordinate, machine setup or limit configuration is wrong through authorized investigation. The ordinary operator's task is to report a complete observation and avoid further unverified movement.</p>
+<p>If the required datum, reference name or tool correction cannot be established from the approved job information, obtain clarification from the person responsible for setup. That is a necessary input to the operation, not something the application can choose on your behalf.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">8.12 Work through a setup example and check your understanding</h2>
+
+<p>The example below combines selection, zero setting and verification. All numbers are imaginary and assume a valid established machine reference, a correctly identified tool and an approved physical setup method. They explain the software relationships; they are not a contact procedure or values to enter on a real machine.</p>
+<h3>One selected and applied reference</h3>
+<p>Assume the job requires G54, CurrentReference selects G54, and the prepared file uses that same reference. There are no X/Y corrections. The applied Z tool correction is 50 mm, with no additional live corrections.</p>
+<p>The approved setup method establishes X zero at machine X 400 and Y zero at machine Y 200. At the documented Z-zero plane, the commanded machine Z is 150. After each corresponding position has been established and motion has settled, the separate zero commands produce the following reference coordinates.</p>
+<table><caption>Table 8-12. Illustrative zero-setting results</caption><thead><tr><th scope="col">Axis</th><th scope="col">Machine position at its established zero point</th><th scope="col">Applied correction</th><th scope="col">Stored G54 coordinate</th></tr></thead><tbody>
+<tr><td>X</td><td>400 mm</td><td>0 mm</td><td>400 mm.</td></tr>
+<tr><td>Y</td><td>200 mm</td><td>0 mm</td><td>200 mm.</td></tr>
+<tr><td>Z</td><td>150 mm</td><td>50 mm</td><td>100 mm.</td></tr>
+</tbody></table>
+<p>The three physical positions need not have been established simultaneously. Each button updates only its axis. After all three are established, the stored row is X 400, Y 200, Z 100. Its Z value differs from the machine Z used in the example because the tool correction has been accounted for.</p>
+<p>Later, at an illustrative machine position X 420, Y 230, Z 155 with the same applied reference and corrections, the displayed work position is X 20, Y 30, Z 5. That arithmetic confirms the coordinate relationship only. It does not prove fixture clearance, correct physical measurement or a suitable cutting start.</p>
+<h3>Now change the file requirement</h3>
+<p>Suppose instead that the file explicitly uses G55 while the selected row remains G54. The same zero-button actions still change G54. They do not establish G55 just because that is what the file needs. The correct response is to identify and prepare the required row deliberately, then verify the accepted values and resulting job placement.</p>
+<p>This comparison explains why a reliable routine begins with the origin name. A careful physical measurement applied to the wrong stored row is still the wrong setup for the intended job.</p>
+<h3>Questions to discuss before independent setup</h3>
+<ol class="journey">
+<li><strong>Does successful homing establish the new workpiece origin?</strong><p>No. Homing establishes the machine reference. The job datum must be located separately.</p></li>
+<li><strong>Does Set X0 move the head to an edge?</strong><p>No. It changes the selected reference's X coordinate using the current position and corrections.</p></li>
+<li><strong>Does CurrentReference 0 mean all coordinates are zero?</strong><p>No. It selects G54.</p></li>
+<li><strong>Does opening G55 in the Configuration tree select it for the zero buttons?</strong><p>No. Check CurrentReference separately.</p></li>
+<li><strong>Why can Set Z0 store 100 when machine Z reads 150?</strong><p>In the example, an applied Z correction of 50 is subtracted. The stored reference is not simply the machine reading.</p></li>
+<li><strong>Does a spacer contact automatically account for spacer thickness?</strong><p>No. The approved measurement method must account for the physical geometry before the software reference is established.</p></li>
+<li><strong>What happens if an origin field containing 400 is replaced with 2?</strong><p>The candidate reference becomes 2. It is not an addition of 2 to the old value.</p></li>
+<li><strong>Can a file use G55 while CurrentReference selects G54?</strong><p>Yes. Explicit file requirements can determine the applied origin independently of the initial selection.</p></li>
+<li><strong>Does Configuration Cancel undo a Set X0 pressed before Configuration opened?</strong><p>No. That action is outside the later dialog's change journal.</p></li>
+<li><strong>Does a valid row and recognizable preview prove physical setup correctness?</strong><p>No. Verify the actual datum, tool, fixtures, placement and required starting conditions.</p></li>
+</ol>
+<p>Before handing over the machine, identify the job, required reference rows, accepted selection, tool state and any incomplete preparation or verification. Do not leave another operator to infer those facts from a work readout that happens to display zero.</p>
+<p>The next chapter, <a href="index.html#chapter-09">Positioning, Return to Work and Parking</a>, covers movement commands that use established coordinate information. Complete the reference checks here before treating any such destination as ready for movement.</p>
+<aside class="source-note"></aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZAC+RTCP · Operator Manual · Chapter 8</span><a href="index.html#chapter-08">Return to the contents</a></footer></main></body></html>

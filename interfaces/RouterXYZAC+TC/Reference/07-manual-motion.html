@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 7 — Manual Motion and Position Jog | RouterXYZAC+TC</title>
+<meta name="description" content="A detailed operator guide to continuous and step jog, speed and percentage, diagonal movement, machine-coordinate destinations, keyboard controls and stopping.">
+<link rel="stylesheet" href="assets/manual.css"><link rel="stylesheet" href="assets/introduction.css"></head>
+<body class="chapter-intro"><a class="skip-link" href="#purpose">Skip to chapter text</a><main class="book">
+<header class="cover"><p class="eyebrow">RADONIX · ROUTERXYZAC+TC · CHAPTER 7</p><p class="edition">Operator Manual · English · 8 October 2026</p>
+<h1>Manual Motion and Position Jog</h1>
+<p class="lead">Move an axis deliberately: choose the right kind of movement, check the direction and values, and know what ends the command before you begin.</p>
+<p class="review-status"><strong>Expanded draft for review.</strong> Numerical examples explain control behaviour. They are not recommended speeds, clearances or destinations for the installed machine.</p>
+<nav aria-label="Manual navigation"><a href="index.html#chapter-07">Manual contents</a> · <a href="06-homing.html">Previous chapter: Homing</a></nav></header>
+<div class="body"><aside class="document-status"><strong>XYZAC update — 10 November 2026.</strong> All five axes have velocity, step, destination and Goto controls. Page selection and Step Jog mode are not persisted. See the <a href="XYZAC.html">current machine contract</a>.</aside><nav aria-label="In this chapter"><p class="eyebrow">READING GUIDE</p><h2>In this chapter</h2><ol class="chapter-index">
+<li><a href="#purpose">Choose the kind of movement before touching a control</a></li>
+<li><a href="#panel">Find the axis rows, direction controls and mode</a></li>
+<li><a href="#readiness">Prepare for a deliberate manual movement</a></li>
+<li><a href="#editing">Enter and confirm a value before requesting movement</a></li>
+<li><a href="#continuous">Use Continuous Jog as a held direction command</a></li>
+<li><a href="#step">Use Step Jog for one known displacement</a></li>
+<li><a href="#speed">Combine axis speed and jog percentage correctly</a></li>
+<li><a href="#diagonal">Treat a diagonal command as two axis movements</a></li>
+<li><a href="#destination">Move one axis to an absolute machine coordinate</a></li>
+<li><a href="#keyboard">Use keyboard movement with the same care as screen controls</a></li>
+<li><a href="#stopping">Stop the movement and verify the resulting state</a></li>
+<li><a href="#problems">Investigate an unavailable control or an unexpected result</a></li>
+<li><a href="#practice">Practise the decisions and check your understanding</a></li>
+</ol></nav>
+<section id="purpose" aria-labelledby="purpose-title"><h2 id="purpose-title">7.1 Choose the kind of movement before touching a control</h2>
+
+<p><strong>Manual motion</strong> means that you request movement directly through the operator controls instead of letting a machining file determine the next move. It is useful during preparation and approved positioning tasks. It still moves the real axes in Normal mode, with the actual cutter, holder, bridge and fixtures in place.</p>
+<p>The word <strong>jog</strong> is commonly used for this direct manual movement. In this application, the manual controls provide three different ways to describe what you want: keep moving while a direction control is held, move by a specified step, or move to a specified machine coordinate. These requests can look similar on the screen but end in different ways.</p>
+<table><caption>Table 7-1. Three kinds of manual movement</caption><thead><tr><th scope="col">Kind</th><th scope="col">What you specify</th><th scope="col">Normal ending</th></tr></thead><tbody>
+<tr><td><strong>Continuous Jog</strong></td><td>An axis, direction and speed.</td><td>Releasing the held direction command requests its jog to stop.</td></tr>
+<tr><td><strong>Step Jog</strong></td><td>An axis, direction, step distance and speed.</td><td>The issued finite step finishes. Releasing the button does not cancel it.</td></tr>
+<tr><td><strong>Goto X / Goto Y / Goto Z</strong></td><td>An absolute machine-coordinate destination and speed for one axis.</td><td>The finite move reaches its destination. Releasing the button does not cancel it.</td></tr>
+</tbody></table>
+<p>“Finite” means that the request contains an intended end position or distance. It does not mean that the movement is necessarily short. A large step or a distant destination can produce substantial travel after a brief click. Choose the movement type and inspect its values before you issue the request.</p>
+<p>Manual movement is also different from changing a work origin. Moving X changes the physical position. Setting work X zero changes the reference used to describe that position. If your task is to establish a work origin, follow the later <a href="index.html#chapter-08">Work Origins and Zero Setting</a> procedure; do not confuse editing a reference with moving to a coordinate.</p>
+<aside class="learning-example"><h3>“Move a little to the right” is not a complete instruction</h3><p>First identify the actual axis and positive or negative direction for the installed machine. Then decide whether the task needs a held movement, a known displacement or a destination. Finally check the speed and route. The same short verbal instruction can otherwise lead to three very different commands.</p></aside>
+<p>The diagonal controls request movement on X and Y together. They use the same selected continuous or step behaviour, but each axis uses its own speed and, in step mode, its own distance. They need additional care because both routes are involved. Their operation is explained in Section 7.8.</p>
+<p>This chapter teaches the controls and a repeatable operating method. It is not a cutting technique, probing procedure or method for recovering a trapped cutter. Use the installed machine procedure for those tasks and obtain assistance if the required physical movement is unclear.</p>
+
+</section>
+<section id="panel" aria-labelledby="panel-title"><h2 id="panel-title">7.2 Find the axis rows, direction controls and mode</h2>
+
+<p>Start by reading the manual-motion area as a set of related controls. The direction buttons request motion. The nearby fields describe speed, step distance or destination. The mode determines how a direction button behaves. The position readouts show the controller's current reported position; they are not the same as the destination fields.</p>
+<p>The main axis rows are X, Y, Z, A and C. Each has its own velocity, step and position values (mm/s and mm for XYZ; degrees/s and degrees for A/C), with a corresponding <strong>Goto</strong> command. Read across the correct row. Editing the X speed does not establish the Y speed, and entering a Z destination does not prepare an X movement.</p>
+<table><caption>Table 7-2. Reading the manual-motion controls</caption><thead><tr><th scope="col">Control or field</th><th scope="col">Meaning</th><th scope="col">Question to ask</th></tr></thead><tbody>
+<tr><td>X+, X−, Y+, Y−, Z+, Z−, A+, A−, C+, C−</td><td>Request the named axis in its positive or negative direction, using the selected jog mode.</td><td>Which physical direction does this mean on this installation?</td></tr>
+<tr><td>Continuous Jog / Step Jog</td><td>Select the behaviour of the direction controls.</td><td>Will release request a stop, or will one finite step continue?</td></tr>
+<tr><td>V(mm/s)</td><td>The axis's base jog speed in millimetres per second.</td><td>Is this the approved speed before applying the jog percentage?</td></tr>
+<tr><td>Step(mm)</td><td>A positive displacement magnitude for a step command.</td><td>How far will one accepted step request travel?</td></tr>
+<tr><td>Position(mm)</td><td>An absolute machine-coordinate destination for that axis's Goto command.</td><td>Is this a destination, rather than a distance or work coordinate?</td></tr>
+<tr><td>Jog percentage</td><td>Scales the speed captured for a new manual-movement request.</td><td>Am I reading the jog percentage rather than the machining-feed percentage?</td></tr>
+<tr><td>Goto X / Goto Y / Goto Z</td><td>Start a finite single-axis move to the corresponding Position value.</td><td>Have I checked the full route to that machine coordinate?</td></tr>
+<tr><td>Pause in the manual-motion area</td><td>Stops all motion while preserving the main program cursor.</td><td>Do I understand its effect on any retained machining-program state?</td></tr>
+</tbody></table>
+<h3>Use labels and accepted values</h3>
+<p>The mode control displays the selected behaviour. Read <strong>Continuous Jog</strong> or <strong>Step Jog</strong> instead of relying only on its colour or position. Step Jog is off at each launch; the selection is session-only and is not saved. The Goto commands remain destination commands regardless of the selected jog mode.</p>
+<p>The direction signs describe coordinate directions. X+ increases X; X− decreases X. They do not promise a universal left or right from every viewing position. Likewise, Y and Z directions must be learned on the installed machine. See <a href="05-coordinates.html#axes">Chapter 5</a> for the meaning of positive and negative coordinates.</p>
+<p>The additional gantry motor YG is handled as part of the configured Y arrangement. The ordinary operator rows are X, Y, Z, A and C. Do not search for a separate YG field to correct bridge alignment; that belongs to machine setup and recovery.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 7-1 · APPLICATION SCREENSHOT REQUIRED</p><h3>The complete manual-motion area</h3><p>Supply an English main-window screenshot showing the X/Y/Z/A/C rows, all three field headings, Goto buttons, direction and diagonal controls, selected jog mode, jog percentage and nearby Pause controls. Include the Machine position panel for comparison.</p><p>Suggested image: <code>assets/images/07-manual-motion-panel.png</code>. Number the controls and identify the separate machining-feed percentage so that the two percentages cannot be confused.</p><figcaption>Capture an idle state. The screenshot illustrates control locations; its numeric values are not recommended operating settings.</figcaption></figure>
+
+</section>
+<section id="readiness" aria-labelledby="readiness-title"><h2 id="readiness-title">7.3 Prepare for a deliberate manual movement</h2>
+
+<p>Before a manual movement, establish four things: the machine can accept the request, the requested direction is understood, the whole route is clear, and you know how to stop this kind of movement. A small button or short click does not make these checks optional.</p>
+<p>Complete operator login where required, confirm the intended connection and distinguish Simulation from Normal mode. Simulation changes what you can verify physically: a successful simulated move does not establish that the real cutter clears a clamp. Check the actual installed setup before physical use.</p>
+<p>The application prevents ordinary jog requests while a machining program, homing, managed positioning or a tool operation is active, and while program loading prevents the interaction. The relevant axis must be ready for jogging. A paused machining job can still retain active program state; an apparently stationary head is not proof that manual movement is available.</p>
+<table><caption>Table 7-3. Pre-movement checks</caption><thead><tr><th scope="col">Check</th><th scope="col">What to establish</th></tr></thead><tbody>
+<tr><td>Access and connection</td><td>You have operator access and the machine is operational in the intended mode.</td></tr>
+<tr><td>Operation state</td><td>No conflicting operation owns the movement. Relevant readiness and alarm indications are understood.</td></tr>
+<tr><td>Reference</td><td>For Goto, every configured motor is homed. For other manual movement, follow the installed procedure for the current reference state.</td></tr>
+<tr><td>Axis and direction</td><td>The command corresponds to the physical movement you intend, from your actual viewing position.</td></tr>
+<tr><td>Route and surroundings</td><td>The tool, holder, head, bridge, material, fixtures and other people permit the complete movement and stopping response.</td></tr>
+<tr><td>Mode and values</td><td>The correct jog mode, axis speed, jog percentage and relevant distance or destination have been checked.</td></tr>
+<tr><td>Stopping method</td><td>You know whether release requests stopping or whether a finite move needs a separate stopping command.</td></tr>
+</tbody></table>
+<h3>Homing requirements differ between controls</h3>
+<p>The reviewed Goto controls require the complete machine to be homed, including the additional gantry motor. The ordinary direction-jog admission does not impose that same all-motors-homed check. This can be useful within an approved preparation or recovery procedure, but it is not a promise that movement before homing is appropriate in every situation.</p>
+<p>If the reference is uncertain, do not use displayed absolute positions to infer a clear destination. Follow <a href="06-homing.html">Homing the Machine</a> and the installation's approved recovery rules. Do not try to bypass an unavailable Goto by accumulating steps toward an uncertain absolute location.</p>
+<h3>Manual movement does not plan around obstacles</h3>
+<p>A single-axis direction or Goto command does not inspect clamps or automatically raise Z before horizontal travel. If the cutter is low, an X movement remains an X movement at that height. Any preliminary clearance movement must be part of the approved procedure, checked in its own right.</p>
+<aside class="learning-example"><h3>A clear endpoint, an obstructed route</h3><p>The intended X destination lies beyond a clamp and looks clear. The cutter's current height would carry it through the clamp on the way there. The clear destination does not make the route clear. Do not issue the movement until the required preparation has been completed.</p></aside>
+<p>Do not use a manual jog as an improvised tool-release, probing or collision-recovery operation. If the tool is embedded in material or the bridge position is questionable, establish the correct recovery method before moving. A control becoming enabled is not a physical inspection of the situation.</p>
+
+</section>
+<section id="editing" aria-labelledby="editing-title"><h2 id="editing-title">7.4 Enter and confirm a value before requesting movement</h2>
+
+<p>Entering a value and issuing movement are separate actions. Changing <strong>V(mm/s)</strong> prepares a speed for a later request. Changing <strong>Step(mm)</strong> prepares a distance. Changing <strong>Position(mm)</strong> prepares a destination. None of these edits, by itself, is a request to move the axis.</p>
+<p>Make edits while the machine is settled and the parameter fields are available. The ordinary application policy locks the jog parameters during movement, active machining, loading, homing, positioning and tool operations. A field becoming unavailable while a move is active is therefore expected; do not rely on changing it midway through travel.</p>
+<ol class="journey">
+<li><strong>Identify the axis row and the field heading.</strong><p>Say the intended meaning to yourself, for example “X step distance” or “Z machine-coordinate destination.” This prevents a correctly typed number from being placed in the wrong field.</p></li>
+<li><strong>Read the current accepted value.</strong><p>A previous operator or saved session may have left a different speed, distance or destination. Do not assume the displayed value is a factory default or a suitable value for the current task.</p></li>
+<li><strong>Enter the approved value in the field.</strong><p>Check the complete number, including sign, decimal point and unit. Step magnitude and speed are positive values; the direction button supplies the sign of a step. A destination itself may be negative when that coordinate is appropriate.</p></li>
+<li><strong>Confirm the edit with Enter.</strong><p>The bound parameter editors commit through Enter or normal field validation. Use an explicit confirmation before a movement request, then reread the accepted display. If you decide against the edit before committing it, Escape restores the accepted value.</p></li>
+<li><strong>Resolve any rejection before continuing.</strong><p>An error or restored previous value means you must establish what was actually accepted. Do not press a direction or Goto control hoping that the typed draft will be used.</p></li>
+<li><strong>Check the related controls.</strong><p>For a step, check mode, speed and jog percentage as well as distance. For Goto, check the current Machine position, destination, speed and whole route.</p></li>
+</ol>
+<table><caption>Table 7-4. Similar-looking entries with different meanings</caption><thead><tr><th scope="col">Example field entry</th><th scope="col">Meaning</th><th scope="col">What it does not mean</th></tr></thead><tbody>
+<tr><td>X V = 10</td><td>Base X jog speed of 10 mm/s before the jog percentage.</td><td>Move X by 10 mm.</td></tr>
+<tr><td>X Step = 10</td><td>A 10 mm step magnitude for X.</td><td>Move to machine X 10.</td></tr>
+<tr><td>X Position = 10</td><td>Destination machine X 10 mm for Goto X.</td><td>Move 10 mm from wherever X is now.</td></tr>
+</tbody></table>
+<p>The table is a meaning comparison, not a set of values to enter. A number accepted by the editor is not automatically suitable for the machine or the task. Field limits and runtime movement limits serve different purposes, and neither can see every fixture.</p>
+<h3>Read decimal places without guessing</h3>
+<p>The main-window parameter fields can suppress trailing zeros. A displayed 1, 1.0 or 1.000 can represent the same length. They also have finite display precision; do not infer physical accuracy from the number of decimal places. Use the accepted number format of the actual field and recheck the resulting value after committing it.</p>
+<aside class="learning-example"><h3>The right numeral in the wrong column</h3><p>You intend to move by 2 mm but type 2 into Position instead of Step. A later Goto would request machine coordinate 2, which could be a long distance from the current position. Reading the heading before and after the edit catches the mistake before it becomes movement.</p></aside>
+<p>Do not treat closing and reopening the application as a way to clear potentially unsuitable jog values. These operator parameters belong to the saved settings. Recheck them at the beginning of work and after a handover.</p>
+
+</section>
+<section id="continuous" aria-labelledby="continuous-title"><h2 id="continuous-title">7.5 Use Continuous Jog as a held direction command</h2>
+
+<p>In <strong>Continuous Jog</strong>, a direction control requests ongoing movement while its accepted press remains held. You choose the axis, direction and speed, then control when to request stopping by releasing the held command. This is useful when the approved task calls for operator-observed movement rather than a pre-entered distance.</p>
+<p>Continuous does not mean that the axis can move forever or ignore its limits. Controller limits, faults and stop requests can prevent or end travel. It also does not mean that releasing the control produces zero stopping distance. The machine must respond and decelerate according to its motion configuration.</p>
+<ol class="journey">
+<li><strong>Complete the pre-movement checks.</strong><p>Confirm the route and axis direction. For a first familiarization exercise, use the supervised procedure and an unobstructed area; do not learn the control while approaching a fixture.</p></li>
+<li><strong>Select Continuous Jog while stopped.</strong><p>Read the displayed mode name. Do not infer the mode from how the previous movement behaved.</p></li>
+<li><strong>Set and confirm the axis V value and jog percentage.</strong><p>Use the approved values for the task. The Step and Position fields do not set the travel distance of this continuous direction request.</p></li>
+<li><strong>Press and hold the intended direction control.</strong><p>Observe the physical axis and the corresponding position readout. Keep the pointer and your attention under deliberate control rather than switching windows during the movement.</p></li>
+<li><strong>Release the held control to request stopping.</strong><p>Allow for the actual stopping response. Verify that travel has ended before issuing another action or treating the position as settled.</p></li>
+<li><strong>Reassess before the next movement.</strong><p>Each new request starts from the new position. Check whether clearance, direction or the required speed has changed.</p></li>
+</ol>
+<h3>Do not combine input sources casually</h3>
+<p>The same direction command can be associated with a screen control and a configured keyboard shortcut. The application tracks accepted held inputs. If you hold more than one input for the same continuous command, releasing only one can leave another held input active. Operate through one deliberate input method and release all held movement inputs when stopping.</p>
+<p>If motion does not stop as expected after release, use the appropriate stopping response. Do not spend time testing whether the pointer, a key or a window change is responsible while an unsafe movement continues.</p>
+<table><caption>Table 7-5. What the Continuous Jog fields control</caption><thead><tr><th scope="col">Item</th><th scope="col">Effect on this request</th></tr></thead><tbody>
+<tr><td>Axis and +/− button</td><td>Select the moving axis and direction.</td></tr>
+<tr><td>V and jog percentage</td><td>Determine the requested speed captured when movement begins.</td></tr>
+<tr><td>Step value</td><td>Does not turn continuous movement into a finite step.</td></tr>
+<tr><td>Position value</td><td>Does not act as a destination for a continuous direction button.</td></tr>
+<tr><td>Release of the held command</td><td>Requests that continuous jog to stop when no held source for that command remains.</td></tr>
+</tbody></table>
+<aside class="learning-example"><h3>A small Step value does not limit Continuous Jog</h3><p>The Step field displays 0.1 mm, but Continuous Jog is selected. Holding X+ does not request only 0.1 mm. It requests continuous positive-X travel. If you need a finite step, stop, select Step Jog and verify the complete request before pressing the direction control.</p></aside>
+<p>Do not use a mode change as your normal way to stop. The mode editor is ordinarily unavailable during motion, and changing future control behaviour is a different action from deliberately stopping the current movement.</p>
+
+</section>
+<section id="step" aria-labelledby="step-title"><h2 id="step-title">7.6 Use Step Jog for one known displacement</h2>
+
+<p>In <strong>Step Jog</strong>, a direction press requests one finite displacement using that axis's Step value. The sign comes from the direction button. With a positive magnitude entered in Step, X+ requests a positive X displacement and X− requests a negative X displacement.</p>
+<p>The request is issued when the direction press begins. Letting go does not cancel the accepted step, and holding the button is not the method for setting its distance. This is the essential difference from Continuous Jog. Use a separate motion-stop command if an issued step needs to be interrupted.</p>
+<ol class="journey">
+<li><strong>Prepare the axis and route.</strong><p>Check clearance for the entire configured displacement from the current position, not merely for an initial small movement.</p></li>
+<li><strong>Select Step Jog while stopped.</strong><p>Read the selected mode. Do not assume that a quick click on a direction button always means a step.</p></li>
+<li><strong>Set and confirm the axis Step value.</strong><p>Use the approved positive distance in millimetres. Check the decimal point, then check the speed and jog percentage separately.</p></li>
+<li><strong>Press the intended direction once.</strong><p>Release normally and observe the resulting movement. Do not hold the control expecting continuous travel or click repeatedly to make an uncertain move “take.”</p></li>
+<li><strong>Wait for the requested movement to finish.</strong><p>Check the settled position and the physical result. If the move stops early or a message appears, investigate before assuming the full distance was travelled.</p></li>
+<li><strong>Recheck before another step.</strong><p>The next step starts from the new position. Reassess remaining clearance rather than counting clicks as a substitute for observing travel.</p></li>
+</ol>
+<table><caption>Table 7-6. Illustrative single-axis step arithmetic</caption><thead><tr><th scope="col">Starting machine X</th><th scope="col">Step and direction</th><th scope="col">Expected coordinate if the move completes normally</th></tr></thead><tbody>
+<tr><td>40 mm</td><td>Step 2 mm, X+</td><td>42 mm.</td></tr>
+<tr><td>40 mm</td><td>Step 2 mm, X−</td><td>38 mm.</td></tr>
+<tr><td>−10 mm</td><td>Step 2 mm, X+</td><td>−8 mm.</td></tr>
+<tr><td>−10 mm</td><td>Step 2 mm, X−</td><td>−12 mm.</td></tr>
+</tbody></table>
+<p>These are arithmetic examples for a stationary, established starting position. They do not override movement limits or guarantee completion. If a request is rejected or interrupted, its intended endpoint is not evidence that the axis actually reached it.</p>
+<h3>Separate distance from speed</h3>
+<p>A smaller step reduces the requested displacement; it does not necessarily reduce the selected speed. A lower speed does not shorten an incorrectly large step. Check both values. Near an object, use only the approach method, distance and speed approved for that task; a small-looking number is not a universal clearance rule.</p>
+<aside class="learning-example"><h3>A brief press, a long movement</h3><p>The Step value was left at 50 mm after another task. You briefly press X+, expecting a tiny adjustment. Step Jog requests the entered 50 mm, regardless of the short press. If the movement must be interrupted, use the appropriate stop control rather than relying on release.</p></aside>
+<p>An additional accepted step while the same jog is still progressing can add to its previous target, rather than starting a fresh distance from the number you happen to see at that instant. Repeated presses can therefore extend pending travel. Wait for the current move to finish before making the next deliberate adjustment.</p>
+<p>Do not issue rapid repeated presses as an informal distance counter. Rejections, interruptions, movement still in progress or an overlooked mode can make “five clicks” an unreliable description of the final position. For learning and ordinary deliberate adjustment, issue one request, observe its result, then decide the next request.</p>
+<p>Changing the work origin does not change the meaning of a positive or negative step. The step is a displacement along the selected axis. See <a href="05-coordinates.html#position-distance">the distinction between position and distance</a> if the difference from Goto is still unclear.</p>
+
+</section>
+<section id="speed" aria-labelledby="speed-title"><h2 id="speed-title">7.7 Combine axis speed and jog percentage correctly</h2>
+
+<p>The <strong>V(mm/s)</strong> field gives an axis's base jog speed. The separate jog percentage scales that speed for a new manual-movement request. Both values matter. Reading only the percentage leaves you without the base value; reading only V leaves you without the selected scale.</p>
+<p>The relationship is: requested jog speed equals the axis V value multiplied by the jog percentage, divided by 100. It applies to continuous direction movement, step movement and the corresponding single-axis Goto command. For a diagonal request, the calculation is made separately for X and Y.</p>
+<table><caption>Table 7-7. Illustrative jog-speed calculations</caption><thead><tr><th scope="col">Axis V</th><th scope="col">Jog percentage</th><th scope="col">Requested speed for the new move</th></tr></thead><tbody>
+<tr><td>20 mm/s</td><td>100%</td><td>20 mm/s.</td></tr>
+<tr><td>20 mm/s</td><td>50%</td><td>10 mm/s.</td></tr>
+<tr><td>20 mm/s</td><td>10%</td><td>2 mm/s.</td></tr>
+<tr><td>40 mm/s</td><td>50%</td><td>20 mm/s.</td></tr>
+</tbody></table>
+<p>These values demonstrate arithmetic, not suitable speeds for your machine. Notice that the same 50% can give different speeds when the base values differ. The percentage is not a universal “slow” or “safe” setting.</p>
+<h3>Know when the values take effect</h3>
+<p>The application captures the speed for a jog request when that request begins. The jog percentage is not a live feed slider for steering an already accepted jog. The ordinary parameter policy also locks these edits during motion. Stop and settle the movement before changing its preparation values, then check the values used for the next request.</p>
+<p>The default jog percentage spans <strong>5–100%</strong>. It has no zero setting for stopping. The machining-feed percentage is a different control, used for the machining program. Lowering that other percentage does not provide a general stop for manual movement. Learn the location of each before operating.</p>
+<h3>Requested speed is not a promise of constant observed speed</h3>
+<p>The machine accelerates and decelerates, and its configured limits remain in force. A short step may end before the axis reaches the requested speed. That alone does not mean the value was ignored. Do not increase a setting simply because a short observed move looked slower than expected.</p>
+<p>The top-strip V readout estimates the combined commanded X/Y/Z movement from position changes. It is not necessarily equal to one axis's entered V, particularly during acceleration or diagonal movement. It is also not an independent physical measurement of motion or proof of standstill.</p>
+<aside class="learning-example"><h3>Speed changes travel time, not the step destination</h3><p>In an explanatory example, a positive 2 mm step from machine X 40 has an intended endpoint of X 42. Choosing another permitted speed changes how the movement is requested to travel; it does not turn that step into 1 mm or 4 mm. Distance and speed remain separate settings.</p></aside>
+<p>Keep the units clear. A speed of 10 mm/s is equivalent to 600 mm/min. A machining file's feed number is not automatically in the same unit as the V field. Refer to <a href="05-coordinates.html#speed-units">Chapter 5's speed-unit examples</a> before transferring any approved value between sources.</p>
+<p>Choose operating speeds from the installed task procedure. This manual does not select a cutting feed, approach speed or acceptable stopping distance for a particular tool and fixture.</p>
+
+</section>
+<section id="diagonal" aria-labelledby="diagonal-title"><h2 id="diagonal-title">7.8 Treat a diagonal command as two axis movements</h2>
+
+<p>The four diagonal controls combine a positive or negative X request with a positive or negative Y request. They are convenient for moving in both horizontal directions, but their arrow icons do not establish the exact geometric path or promise a 45-degree movement.</p>
+<p>Each axis uses its own V value, scaled by the common jog percentage. In Step Jog, each also uses its own Step value. If the two values differ, the distances or speeds differ. The application issues the two axis requests together; this is not the same as asking a machining program to follow a specified straight contour at one coordinated path speed.</p>
+<table><caption>Table 7-8. The four diagonal direction combinations</caption><thead><tr><th scope="col">Combination</th><th scope="col">X request</th><th scope="col">Y request</th></tr></thead><tbody>
+<tr><td>X− and Y+</td><td>Decrease X.</td><td>Increase Y.</td></tr>
+<tr><td>X+ and Y+</td><td>Increase X.</td><td>Increase Y.</td></tr>
+<tr><td>X− and Y−</td><td>Decrease X.</td><td>Decrease Y.</td></tr>
+<tr><td>X+ and Y−</td><td>Increase X.</td><td>Decrease Y.</td></tr>
+</tbody></table>
+<figure class="concept-figure"><img src="assets/images/07-diagonal-components.svg" alt="Conceptual positive diagonal step with independent changes of plus 2 millimetres in X and plus 1 millimetre in Y. The illustrated component arrows are not a commanded path."><figcaption>Figure 7-2. A diagonal step combines the two configured axis distances. The drawing explains the endpoint arithmetic, not the actual time-dependent route.</figcaption></figure>
+<h3>Prepare both rows</h3>
+<p>Before a diagonal movement, read X V and Y V, and in step mode read both Step values. Check that the entire two-axis route is suitable for the present height of the tool. Z is not raised automatically by a diagonal button.</p>
+<p>For example, with illustrative X Step 2 mm and Y Step 1 mm, the X+/Y+ command requests those two changes. It does not request “one 2 mm diagonal step” or automatically make the Y distance equal to X. Different speeds, acceleration and travel limits can also mean that the axes do not finish together.</p>
+<ol class="journey">
+<li><strong>Confirm that a two-axis movement is appropriate.</strong><p>If the route needs a carefully controlled clearance or contour, use the approved procedure rather than assuming a diagonal jog will trace it.</p></li>
+<li><strong>Check the selected mode and both axes' values.</strong><p>Confirm the intended sign combination and the common jog percentage.</p></li>
+<li><strong>Issue one deliberate diagonal command.</strong><p>In Continuous Jog, hold and then release the command to request stopping of both axes. In Step Jog, one press issues the two finite displacements.</p></li>
+<li><strong>Observe both movements and their result.</strong><p>If either movement differs from the approved expectation, stop and investigate. Do not compensate by immediately pressing another direction.</p></li>
+</ol>
+<p>If the second axis request is rejected after the first was accepted, the application requests the first axis to stop. This handling does not guarantee that no partial movement occurred. Following a rejected or interrupted diagonal command, recheck the actual settled positions of both axes before deciding the next action.</p>
+<p>A controller limit may affect one axis differently from the other. Do not rely on a limit to shape a diagonal path or stop both axes at a convenient point. The machine limits are not a representation of your clamps and material.</p>
+<aside class="learning-example"><h3>A diagonal icon beside a tall fixture</h3><p>The icon points diagonally toward a clear region, but the tool must pass a nearby fixture at its current Z height. Neither the icon nor the final clear region proves the intervening path is suitable. Use the approved clearance procedure before requesting horizontal movement.</p></aside>
+
+</section>
+<section id="destination" aria-labelledby="destination-title"><h2 id="destination-title">7.9 Move one axis to an absolute machine coordinate</h2>
+
+<p><strong>Goto X</strong>, <strong>Goto Y</strong> and <strong>Goto Z</strong> request a single-axis move to the value in that axis's <strong>Position(mm)</strong> field. The value is an absolute <strong>machine coordinate</strong>. It is not a distance from the present location and not a coordinate measured from the current work origin.</p>
+<p>The application requires the whole machine to be homed before these commands are available. This includes YG as well as the main display axes. Goto also requires the relevant axis and overall operation state to permit manual movement. A correctly entered destination cannot bypass those conditions.</p>
+<figure class="concept-figure"><img src="assets/images/07-step-versus-destination.svg" alt="From machine X 40, positive Step 10 requests X 50; Position 10 followed by Goto X requests X 10, which is a negative 30 millimetre change."><figcaption>Figure 7-3. A step describes how far; a destination describes where. Both illustrations begin at the same machine coordinate.</figcaption></figure>
+<ol class="journey">
+<li><strong>Check complete homing and a settled machine.</strong><p>Read Homed, the axis readiness indications and any relevant message. Finish or resolve other operations first.</p></li>
+<li><strong>Read the current Machine position for the axis.</strong><p>Use the Machine position panel, not Work position. Establish whether the proposed destination is greater or smaller than the current machine coordinate.</p></li>
+<li><strong>Enter and confirm the Position value in the correct row.</strong><p>Check sign, decimal point and millimetres. Reread the accepted value. Editing it does not itself start movement.</p></li>
+<li><strong>Check speed, jog percentage and the complete route.</strong><p>The axis uses its jog-speed preparation. There is no automatic preliminary Z lift for Goto X or Goto Y.</p></li>
+<li><strong>Press the matching Goto button once.</strong><p>The selected Continuous Jog or Step Jog mode does not change this command into a held move or a step. The finite destination request continues after button release.</p></li>
+<li><strong>Observe and verify the settled result.</strong><p>A request-accepted message means the request was admitted, not that the axis has arrived. If interrupted or limited, establish the actual resulting position before another command.</p></li>
+</ol>
+<table><caption>Table 7-9. Illustrative Goto X destinations</caption><thead><tr><th scope="col">Current machine X</th><th scope="col">Position entry</th><th scope="col">Requested change</th></tr></thead><tbody>
+<tr><td>40 mm</td><td>50 mm</td><td>Positive 10 mm toward machine X 50.</td></tr>
+<tr><td>40 mm</td><td>10 mm</td><td>Negative 30 mm toward machine X 10.</td></tr>
+<tr><td>40 mm</td><td>40 mm</td><td>The same machine coordinate, not another 40 mm step.</td></tr>
+<tr><td>−20 mm</td><td>−5 mm</td><td>Positive 15 mm toward machine X −5.</td></tr>
+</tbody></table>
+<p>These examples assume valid coordinates inside the applicable travel range. The controller constrains jog targets to operational travel limits. An out-of-range entry is therefore not a reliable way to request the typed endpoint; movement may be limited rather than arriving at that number. Use an approved in-range destination and verify the result, rather than relying on a limit to choose it for you.</p>
+<h3>Work references do not redefine the Goto field</h3>
+<p>If Work X is 10 but Machine X is 410, entering Position 10 requests machine X 10. It does not mean “stay at work X 10.” Changing the selected work reference or the file's absolute/incremental coordinate mode does not turn the manual Goto field into a work-coordinate or relative-distance field.</p>
+<p>Goto is also different from <strong>Go Ref</strong> or parking. Those are separate positioning operations with their own route logic. Do not borrow their expected preliminary movement and assume it applies to a single-axis Goto.</p>
+<p>If you stop a destination move and then issue the same Goto again, it is a new request toward the same stored machine coordinate from the new position. Recheck the route and all conditions first; do not treat the second press as an automatic recovery procedure.</p>
+
+</section>
+<section id="keyboard" aria-labelledby="keyboard-title"><h2 id="keyboard-title">7.10 Use keyboard movement with the same care as screen controls</h2>
+
+<p>Keyboard shortcuts are configurable. The presence of X and Y direction buttons does not mean that the computer's arrow keys, number pad or any familiar key combination has automatically been assigned to them. Use only the documented assignments for this installation.</p>
+<p>A configured direction shortcut invokes the same jog command and therefore follows the selected Continuous Jog or Step Jog mode. In continuous mode, the accepted held shortcut maintains the direction request until its release. In step mode, the initial press issues the finite step; releasing the key does not cancel that move.</p>
+<p>A Goto shortcut, if assigned, remains a destination command. It uses the accepted Position value in the corresponding axis row. A short key press can therefore start substantial travel if that destination is distant. The keyboard does not make the stored destination less important.</p>
+<table><caption>Table 7-10. Keyboard situations to understand</caption><thead><tr><th scope="col">Situation</th><th scope="col">Expected control behaviour</th><th scope="col">Operator practice</th></tr></thead><tbody>
+<tr><td>A direction shortcut is held in Continuous Jog</td><td>The held command requests ongoing motion.</td><td>Release deliberately and verify stopping.</td></tr>
+<tr><td>A direction shortcut is pressed in Step Jog</td><td>One finite step is requested.</td><td>Observe completion; use a separate stop if necessary.</td></tr>
+<tr><td>The operating system repeats a held key</td><td>The shortcut manager suppresses repeat retriggering.</td><td>Do not use key-repeat timing as a distance-control method.</td></tr>
+<tr><td>The main window loses activation</td><td>The shortcut manager releases its held commands.</td><td>Stop deliberately before switching tasks; a finite step or Goto is not cancelled merely by key release.</td></tr>
+<tr><td>A shortcut is missing, disabled or conflicting</td><td>It may not provide the expected command.</td><td>Have the actual assignment checked; do not try random alternatives.</td></tr>
+</tbody></table>
+<h3>Know which control has keyboard focus</h3>
+<p>Keyboard focus means the control currently receiving ordinary keyboard input. In a numeric field, Enter normally confirms the edit. A focused direction button can respond to Space or Enter as a press/release control. Those are different contexts. Check the selected control before using a key that might operate it.</p>
+<p>Do not assume that typing in a field disables every configured machine shortcut. Confirm and finish the edit, then make a separate deliberate movement request. Avoid casual keyboard use while another person is working near the machine.</p>
+<h3>Use one movement input method at a time</h3>
+<p>Holding a screen direction button and a shortcut for the same command can leave two accepted input sources active. Releasing one is not necessarily releasing the other. Keep manual movement deliberate, avoid mixed held inputs, and release all movement keys and buttons before another activity.</p>
+<aside class="learning-example"><h3>Switching windows is not the stopping procedure</h3><p>You issue a step and then open another window. Although the keyboard manager releases held inputs when the main window deactivates, the accepted finite step is not dependent on holding the key. It can continue. Use the proper stop when interruption is required, and wait for the result before changing tasks.</p></aside>
+<p>Shortcut configuration, duplicate assignments and the keyboard enable setting are covered in the later <a href="index.html#chapter-24">Keyboard Shortcuts</a> chapter. For ordinary operation, have the approved mappings available and practise their meaning in a supervised setting. Do not create a new movement assignment during a live positioning task.</p>
+
+</section>
+<section id="stopping" aria-labelledby="stopping-title"><h2 id="stopping-title">7.11 Stop the movement and verify the resulting state</h2>
+
+<p>Choose the stopping action according to the movement you actually issued. Releasing a held continuous command, interrupting a finite step and stopping all machine motion are related actions, but they are not interchangeable in every context.</p>
+<p>For immediate danger, use the installed emergency response. For ordinary interruption through the application, use the appropriate motion-stop control and observe the response. Do not use window closing, changing mode, editing a value or reducing the wrong percentage as an improvised stop.</p>
+<table><caption>Table 7-11. Ending or interrupting manual movement</caption><thead><tr><th scope="col">Situation</th><th scope="col">Action and expected meaning</th></tr></thead><tbody>
+<tr><td>One continuous direction command is held</td><td>Release all held inputs for that command to request its jog stop; verify that the movement settles.</td></tr>
+<tr><td>A continuous diagonal command is held</td><td>Release its held inputs to request stopping of both participating axis jogs.</td></tr>
+<tr><td>An accepted step is still travelling</td><td>Use a motion-stop command if it must be interrupted. Button release does not cancel it.</td></tr>
+<tr><td>An accepted Goto is still travelling</td><td>Use a motion-stop command if it must be interrupted. Releasing the Goto button does not cancel it.</td></tr>
+<tr><td>Several motion sources may be active or the input state is uncertain</td><td>Use the appropriate all-motion stopping response; do not assume releasing one input ends every movement.</td></tr>
+</tbody></table>
+<h3>The nearby Pause buttons share an all-motion command</h3>
+<p>The Pause controls in the run, jog and motion areas share the same all-motion Pause command. They preserve the main program cursor and cancel auxiliary continuations. Use the separate Reset button when TP0 must also be rewound after stopping.</p>
+<p>Pause also requests all motion to stop, but preserves the main machining program's cursor rather than requesting that reset. This distinction concerns the machining program. It does not promise that a cancelled manual step will later continue for its untravelled remainder.</p>
+<p>Neither travel-stop request independently proves that the spindle has stopped rotating or that physical access is permitted. Follow <a href="02-safe-operation.html#stopping">Chapter 2's stopping and access guidance</a> and the installed machine procedure.</p>
+<ol class="journey">
+<li><strong>Release held movement inputs and issue the required stop.</strong><p>Do not keep a movement key pressed while trying to establish a stopped state.</p></li>
+<li><strong>Wait for the physical and reported stopping response.</strong><p>An accepted request means the command was accepted, not that standstill is instantaneous.</p></li>
+<li><strong>Read the settled position and any message.</strong><p>For an interrupted finite move, the final position may be between the original starting point and the requested target.</p></li>
+<li><strong>Resolve the reason for stopping.</strong><p>If movement was unexpected, establish the mode, fields, direction and command used before requesting another move.</p></li>
+<li><strong>Prepare the next request as a new decision.</strong><p>Check the new starting position, remaining route and approved values. Do not assume a repeat click resumes exactly the uncompleted distance.</p></li>
+</ol>
+<aside class="learning-example"><h3>An interrupted step is not a stored remainder</h3><p>In an explanatory example, a 10 mm step from X 40 is stopped near X 44. Pressing X+ again in Step Jog requests another configured step from the resulting state; it is not automatically a request for the remaining 6 mm of the earlier move. Settle and verify the position before deciding the next movement.</p></aside>
+<p>A repeated Goto has a different meaning: it requests the same stored absolute destination again. That distinction is another reason to identify the command before restarting. After an interruption, do not alternate between steps and Goto without checking which coordinate or distance each request will use.</p>
+<p>If a stop is rejected, movement continues unexpectedly or machine state is uncertain, follow the appropriate emergency or recovery procedure and obtain assistance. Do not rely on a still readout alone to determine the physical condition.</p>
+
+</section>
+<section id="problems" aria-labelledby="problems-title"><h2 id="problems-title">7.12 Investigate an unavailable control or an unexpected result</h2>
+
+<p>When a movement does not behave as expected, first establish whether the request was unavailable, rejected, accepted but limited, or interrupted after starting. These are different situations. Do not repeat the request until its meaning and the resulting machine position are understood.</p>
+<table><caption>Table 7-12. Questions to investigate before another movement</caption><thead><tr><th scope="col">Observation</th><th scope="col">Check</th><th scope="col">Avoid assuming</th></tr></thead><tbody>
+<tr><td>Direction controls are unavailable</td><td>Operator access, connection, axis readiness, loading and active machining or auxiliary operations.</td><td>That changing to a keyboard command will bypass the condition appropriately.</td></tr>
+<tr><td>Goto is unavailable although direction jog is possible</td><td>Complete-machine homing and the destination command's other readiness conditions.</td><td>That the Goto button is faulty.</td></tr>
+<tr><td>The parameter fields cannot be edited</td><td>Whether movement, stopping, program activity, loading or a managed operation still exists.</td><td>That an edit can be made while motion is being carried out.</td></tr>
+<tr><td>The axis keeps moving after button release</td><td>Whether Step Jog or Goto was issued, or another continuous input remains held.</td><td>That every manual move must stop on release.</td></tr>
+<tr><td>The step is larger than expected</td><td>Accepted Step value, units, selected mode and any additional presses during travel.</td><td>That the duration of a click defines step length.</td></tr>
+<tr><td>Goto moves in an unexpected direction</td><td>The current Machine position and absolute Position entry, including its sign.</td><td>That a positive destination always means positive travel.</td></tr>
+<tr><td>The axis stops short of the typed destination</td><td>Stop/fault messages, operational limits and the actual accepted request.</td><td>That an accepted request proves arrival at the typed number.</td></tr>
+<tr><td>A diagonal move is not symmetrical</td><td>Both axes' speeds, step distances, limits and any partial rejection.</td><td>That the icon promises equal movement or a fixed-angle path.</td></tr>
+<tr><td>The speed differs from the entered V</td><td>Jog percentage, acceleration/deceleration, axis limits and whether the display is combined speed.</td><td>That V must equal the instantaneous displayed speed.</td></tr>
+</tbody></table>
+<p>If movement is already unexpected, act on stopping first. The table is for investigation after the situation has been brought to the appropriate controlled state; it is not a reason to delay a necessary stop.</p>
+<h3>Report the request in a reproducible way</h3>
+<p>A useful report includes the selected mode, axis/direction or Goto button, accepted V, jog percentage, Step or Position value, starting and resulting Machine position, and any error message. Also identify whether you used a screen control or a configured shortcut and whether the application was in Simulation or Normal mode.</p>
+<aside class="learning-example"><h3>A useful description</h3><p>“In Simulation, from machine X 40, I selected Step Jog with X Step 2 and pressed X+ once. I released the button and the movement continued to X 42.” This is consistent with a finite step. “The machine did not stop when I let go” leaves out the mode that explains the behaviour.</p></aside>
+<p>The Goto command records its requested starting position, destination and speed and can report acceptance or rejection. An acceptance entry is not an arrival record. Detailed reporting also differs between command types, so do not assume every ordinary direction press has the same report entry as Goto.</p>
+<figure class="figure-placeholder"><p class="placeholder-label">FIGURE 7-4 · APPLICATION EXAMPLE REQUIRED</p><h3>A checked destination request and its result</h3><p>Supply a labelled Simulation example showing the Machine position, the accepted Position field, axis V, jog percentage and the corresponding Goto request in the report. If showing before/after views, identify the initial coordinate and actual settled final coordinate.</p><p>Suggested image: <code>assets/images/07-goto-request-and-result.png</code>. State explicitly that the example values are instructional and that an accepted report entry is separate from verified arrival.</p><figcaption>Keep the field headings and axis labels visible. A cropped number alone cannot explain a destination request.</figcaption></figure>
+<p>Do not change travel limits, gantry settings, axis direction or sensor assignments to solve an unexplained jog result. Those are machine-configuration decisions. If the correct input produces behaviour inconsistent with the approved installation, record the evidence and obtain authorized assistance.</p>
+
+</section>
+<section id="practice" aria-labelledby="practice-title"><h2 id="practice-title">7.13 Practise the decisions and check your understanding</h2>
+
+<p>The most useful manual-motion habit is to describe the complete request before issuing it. Name the axis, mode, direction or destination, distance where applicable, speed and stopping method. If any part of that description is uncertain, the movement is not yet fully prepared.</p>
+<p>For initial familiarization, use supervised Simulation and the installed training procedure. Learn which fields affect which controls, then learn the corresponding physical directions and clearances at the machine under supervision. Simulation can teach the input sequence; it cannot qualify the real setup.</p>
+<h3>Compare three requests from the same starting point</h3>
+<p>Imagine a stationary, homed simulation at machine X 40 mm. The following rows are separate examples, each beginning again at that same coordinate. They are not a sequence of instructions to execute on the physical machine.</p>
+<table><caption>Table 7-13. Choose the request that matches the intention</caption><thead><tr><th scope="col">Intention</th><th scope="col">Relevant preparation and command</th><th scope="col">How to interpret the result</th></tr></thead><tbody>
+<tr><td>Move in positive X while observing</td><td>Select Continuous Jog, check X V and jog percentage, hold X+.</td><td>The ending coordinate depends on travel before release and stopping. No step endpoint was specified.</td></tr>
+<tr><td>Request a positive 2 mm displacement</td><td>Select Step Jog, confirm X Step 2, check speed, press X+ once.</td><td>The intended endpoint is machine X 42 if the request completes normally without limitation.</td></tr>
+<tr><td>Request machine X 10</td><td>Confirm X Position 10 and speed, then issue Goto X with the full route checked.</td><td>The requested change is negative 30 mm. The positive numeral 10 is a destination, not a positive distance.</td></tr>
+</tbody></table>
+<p>Now imagine that the displayed Work X happens to be zero at machine X 40. That work readout does not change any of the three meanings above. A step still describes a displacement, and Goto still uses the machine coordinate. This is why reading the correct panel matters.</p>
+<h3>A complete deliberate-movement routine</h3>
+<ol class="journey">
+<li><strong>Read the state and surroundings.</strong><p>Confirm mode, connection, access and readiness, and inspect the complete route for the actual tool and setup.</p></li>
+<li><strong>Choose the kind of request.</strong><p>Decide between continuous direction movement, a step and a machine-coordinate destination. Do not make that decision after pressing a button.</p></li>
+<li><strong>Prepare the correct fields.</strong><p>Confirm the axis values and jog percentage. Reread accepted entries after editing.</p></li>
+<li><strong>Describe the stopping method.</strong><p>Know whether release requests stopping or whether a finite movement needs a separate stop if interrupted.</p></li>
+<li><strong>Issue one deliberate request and observe.</strong><p>Do not mix input methods, add unplanned repeated steps or assume the screen's arrow is an obstacle-free route.</p></li>
+<li><strong>Verify the settled result before the next task.</strong><p>Read the actual resulting state, resolve any message and recheck the next route from the new position.</p></li>
+</ol>
+<h3>Questions to discuss before operating independently</h3>
+<ol class="journey">
+<li><strong>Does a quick direction click always mean a short step?</strong><p>No. The selected mode controls the behaviour. In Step Jog, the accepted Step value controls distance, not click duration.</p></li>
+<li><strong>Does releasing a Step Jog button cancel the movement?</strong><p>No. Use the appropriate stop control if the issued finite move needs interruption.</p></li>
+<li><strong>With V 20 mm/s and jog percentage 50%, what speed is requested for a new jog?</strong><p>10 mm/s, subject to the machine's motion limits and acceleration behaviour.</p></li>
+<li><strong>Does a low jog percentage make an excessively large Step value smaller?</strong><p>No. Speed and distance are separate.</p></li>
+<li><strong>From machine X 40, does Position 10 mean positive 10 mm?</strong><p>No. Goto X requests machine X 10, which is 30 mm in the negative direction from that starting coordinate.</p></li>
+<li><strong>Will Goto X automatically raise Z before travelling?</strong><p>No. It is a single-axis request. Any required clearance preparation must come from the approved procedure.</p></li>
+<li><strong>Does Step Jog mode turn Goto into a step command?</strong><p>No. Goto retains its absolute machine-coordinate meaning.</p></li>
+<li><strong>Does a diagonal icon guarantee equal axis distances?</strong><p>No. Each axis has its own values, and the two independent requests are not a guaranteed straight-contour move.</p></li>
+<li><strong>Can an extra step press during travel extend the pending target?</strong><p>Yes, if accepted. Wait for the current movement to finish before making the next deliberate adjustment.</p></li>
+<li><strong>Does a request-accepted message prove arrival?</strong><p>No. Verify the settled result and any limiting, interruption or fault condition.</p></li>
+</ol>
+<p>After manual positioning, follow the appropriate next procedure. <a href="index.html#chapter-08">Work Origins and Zero Setting</a> explains establishing the job reference. <a href="index.html#chapter-09">Positioning, Return to Work and Parking</a> explains the separate managed positioning commands. <a href="index.html#chapter-17">Pause, Reset and Recovery</a> will cover machining interruptions in more detail.</p>
+<p>For physical jog buttons, see <a href="23-io-configuration.html#jog-inputs">Wiring panel jog buttons</a>.</p>
+<aside class="source-note"><p><strong>Scope of this chapter.</strong> Reviewed against RouterXYZAC+TC manual-motion commands, parameter bindings, command availability, keyboard handling, reporting and controller jog semantics on 8 October 2026. The two diagrams are conceptual. Two application screenshots remain to be supplied. Example numbers do not specify operating values for the installed machine.</p></aside>
+
+</section>
+</div><footer class="page-footer"><span>RouterXYZAC+TC · Operator Manual · Chapter 7</span><a href="index.html#chapter-07">Return to the contents</a></footer></main></body></html>

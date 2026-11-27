@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="780" viewBox="0 0 1000 780" role="img" aria-labelledby="title desc">
+<title id="title">Complete machine homing sequence</title><desc id="desc">Prepare the gantry, home Z and apply its displacement. Home X and Y concurrently, with any enabled companion. After both finish, apply X displacement then the coordinated gantry displacement, restore coupling and check completion.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#476975"/></marker></defs>
+<rect width="1000" height="780" fill="#f7fafb"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#173e4b" text-anchor="middle">
+<text x="500" y="36" font-size="25" font-weight="700">One Home request · the supplied sequence</text>
+<rect x="235" y="58" width="530" height="62" rx="10" fill="#e3eef0" stroke="#8eafb8"/><text x="500" y="96" font-size="21">Prepare any enabled gantry</text>
+<path d="M500 121V150" stroke="#476975" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="190" y="158" width="620" height="85" rx="10" fill="#dbeee8" stroke="#7ba594"/><text x="500" y="191" font-size="22" font-weight="700">Z first</text><text x="500" y="221" font-size="19">Search → release → stop → configured displacement</text>
+<path d="M500 244V268H260V294" fill="none" stroke="#476975" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M500 268H740V294" fill="none" stroke="#476975" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="40" y="303" width="440" height="125" rx="10" fill="#fff" stroke="#8eafb8"/><text x="260" y="338" font-size="22" font-weight="700">X sensor sequence</text><text x="260" y="373" font-size="19">Search → release → stop</text><text x="260" y="402" font-size="18">May finish before or after Y</text>
+<rect x="520" y="303" width="440" height="125" rx="10" fill="#fff" stroke="#8eafb8"/><text x="740" y="338" font-size="22" font-weight="700">Y sensor sequence (+ optional YG)</text><text x="740" y="373" font-size="19">Separate sensor: each side homes</text><text x="740" y="402" font-size="18">No separate sensor: remain coupled</text>
+<path d="M260 429V456H500M740 429V456H500V482" fill="none" stroke="#476975" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="155" y="490" width="690" height="80" rx="10" fill="#e3eef0" stroke="#8eafb8"/><text x="500" y="524" font-size="21">After both sensor sequences finish:</text><text x="500" y="551" font-size="19">X displacement, then coordinated Y/YG displacement*</text>
+<path d="M500 571V597" stroke="#476975" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="190" y="605" width="620" height="75" rx="10" fill="#dbeee8" stroke="#7ba594"/><text x="500" y="637" font-size="21" font-weight="700">Restore coupling where required</text><text x="500" y="665" font-size="19">Then verify the result and the whole machine</text>
+<text x="500" y="720" font-size="18">* A displacement stage is skipped when its configured movement is zero.</text>
+<text x="500" y="751" font-size="17" fill="#576e77">Sequence diagram only. Arrows show order, not physical travel directions or distances.</text>
+</g></svg>

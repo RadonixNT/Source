@@ -1,0 +1,17 @@
+// Start only when Background qualifies the configured spindle interlocks.
+// Optional unmapped feedback is omitted; assigned feedback must be confirmed.
+// Reverse must be explicitly configured. The current EtherCAT inverter contract
+// has no reverse object; a CCW signal alone cannot add that capability.
+// Result 0: minimum acceleration delay completed; 2: readiness/reverse unavailable.
+// Success is command completion, not independent measurement of spindle RPM.
+TIMER StartTime;
+IF NOT SpindleReady OR NOT SpindleReverseConfigured THEN
+    SpindleCW := FALSE;
+    SpindleCCW := FALSE;
+    TOOLPATH_STOP(TOOLPATH := 0);
+    END_FUNCTION(Result := 2);
+END_IF;
+SpindleCW := FALSE;
+SpindleCCW := TRUE;
+StartTime(TYPE := TON, IN := TRUE, PT := SpindleOnTime);
+IF StartTime.Q THEN END_FUNCTION(Result := 0); END_IF;

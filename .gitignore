@@ -1,0 +1,16 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+TestResults/
+**/Setup/Output/
+/interfaces/*/Runtime/
+/interfaces/*/Packages/
+/interfaces/*/PublicPackages/
+*.zip
+*.nupkg
+*.exe
+*.dll
+*.pdb
+*.ntlic
+*.pfx
+*.p12

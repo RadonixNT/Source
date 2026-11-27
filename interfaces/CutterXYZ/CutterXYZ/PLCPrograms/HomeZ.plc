@@ -1,0 +1,108 @@
+// Independent Z-axis edge homing for the Router-XYYZ machine.
+//
+// The sequence matches the Z branch of Home Z-XYY:
+//   search in HomeDirection, release in the opposite direction, stop, assign
+//   HomePosition - HomeDisplace, then move to HomePosition.
+//
+// Result 0: homing and the configured displacement completed.
+// Result 1: search, release, or stop timed out.
+// Result 2: an invalid HomeDirection (must be -1 or +1).
+CONST INTEGER PHASE_SEARCH := 0;
+CONST INTEGER PHASE_RELEASE := 1;
+CONST INTEGER PHASE_STOPPING := 2;
+CONST INTEGER PHASE_DISPLACE := 3;
+CONST INTEGER PHASE_FAILED := 4;
+INTEGER PHASE_TIMEOUT_MS := 120000;
+
+// One immutable settings snapshot per activation; never reread live settings
+// after homing has started.
+REAL ZHomePosition := 0.0;
+REAL ZHomeDisplace := 0.0;
+REAL ZHomeVelocity := 0.0;
+REAL ZHomeReturnVelocity := 0.0;
+INTEGER ZHomeDirection := 1;
+
+INTEGER Phase := 0;
+INTEGER PendingResult := 0;
+TIMER PhaseTimeout;
+
+// Step 1: Reset the sequence and reject an invalid
+// home direction before starting motion.
+IF SF.FirstScan THEN
+    PHASE_TIMEOUT_MS := Controller.HomeTimeout * 1000;
+    ZHomePosition := Z.HomePosition;
+    ZHomeDisplace := Z.HomeDisplace;
+    ZHomeVelocity := Z.HomeVelocity;
+    ZHomeReturnVelocity := Z.HomeReturnVelocity;
+    ZHomeDirection := Z.HomeDirection;
+
+    Phase := PHASE_SEARCH;
+    PendingResult := 0;
+
+    IF (ZHomeDirection <> -1 AND ZHomeDirection <> 1) THEN
+        PendingResult := 2;
+        Phase := PHASE_FAILED;
+    END_IF;
+END_IF;
+
+// Step 2: Supervise sensor search, sensor release, and the final stop.
+PhaseTimeout(
+    TYPE := TON,
+    IN := (Phase = PHASE_SEARCH AND NOT HomeSensorZ)
+        OR (Phase = PHASE_RELEASE AND HomeSensorZ)
+        OR (Phase = PHASE_STOPPING AND NOT Z.Stopped),
+    PT := PHASE_TIMEOUT_MS
+);
+
+IF PhaseTimeout.Q THEN
+    PendingResult := 1;
+    Phase := PHASE_FAILED;
+END_IF;
+
+// Step 3: Search in HomeDirection until the Z home sensor becomes active.
+IF Phase = PHASE_SEARCH THEN
+    IF HomeSensorZ THEN
+        Phase := PHASE_RELEASE;
+        AXIS_HOME(Z := -ZHomeDirection, Velocity := ZHomeReturnVelocity);
+    ELSE
+        AXIS_HOME(Z := ZHomeDirection, Velocity := ZHomeVelocity);
+    END_IF;
+
+// Step 4: Reverse opposite to HomeDirection until the sensor becomes inactive.
+ELSIF Phase = PHASE_RELEASE THEN
+    IF NOT HomeSensorZ THEN
+        Phase := PHASE_STOPPING;
+        AXES_STOP(Z);
+    ELSE
+        AXIS_HOME(Z := -ZHomeDirection, Velocity := ZHomeReturnVelocity);
+    END_IF;
+
+// Step 5: Stop completely, then assign the coordinate immediately before the
+// configured signed HomeDisplace motion.
+ELSIF Phase = PHASE_STOPPING THEN
+    AXES_STOP(Z);
+    IF Z.Stopped THEN
+        AXIS_SET_HOME(
+            Axis := Z,
+            Position := ZHomePosition - ZHomeDisplace
+        );
+        IF ZHomeDisplace = 0.0 THEN
+            END_FUNCTION(Result := 0);
+        ELSE
+            Phase := PHASE_DISPLACE;
+        END_IF;
+    END_IF;
+
+// Step 6: Move to HomePosition at the captured search velocity so the physical
+// move equals HomeDisplace. Return velocity is only for sensor release.
+ELSIF Phase = PHASE_DISPLACE THEN
+    TOOLPATH_SYNC_RUN(Homing := TRUE, Z := ZHomePosition, Velocity := ZHomeVelocity);
+    END_FUNCTION(Result := 0);
+
+ELSE
+    // Failure recovery: do not finish the PLC function while Z is moving.
+    AXES_STOP(Z);
+    IF Z.Stopped THEN
+        END_FUNCTION(Result := PendingResult);
+    END_IF;
+END_IF;

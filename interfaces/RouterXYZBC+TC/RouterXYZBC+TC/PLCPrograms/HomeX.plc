@@ -1,0 +1,59 @@
+// Router generated home SHA256: 2E01AEFC9433204236AF71C6CAC8D421B3F944F705E556835FE25580D836F91B
+// Generated from Axes/HomeSequence, gantry selection and home-sensor mappings.
+// Editing this source makes it engineer-owned; automatic regeneration then stops.
+// Result: 0 success; 1 sensor/stop timeout; 2 invalid direction; 3 coupling failure.
+INTEGER Stage := 0;
+INTEGER Phase := 0;
+INTEGER Result := 0;
+INTEGER TimeoutMs := 120000;
+TIMER SearchTimeout;
+TIMER ReleaseTimeout;
+TIMER CouplingTimeout;
+REAL DisplaceVelocity := 0.0;
+REAL XPosition := 0.0;
+REAL XDisplace := 0.0;
+REAL XVelocity := 0.0;
+REAL XReturn := 0.0;
+INTEGER XDirection := -1;
+LOGIC XSeen := FALSE;
+LOGIC XReleased := FALSE;
+IF SF.FirstScan THEN
+Stage := 0; Phase := 0; Result := 0; TimeoutMs := Controller.HomeTimeout * 1000;
+XPosition := X.HomePosition; XDisplace := X.HomeDisplace;
+XVelocity := X.HomeVelocity; XReturn := X.HomeReturnVelocity; XDirection := X.HomeDirection;
+XSeen := FALSE; XReleased := FALSE;
+IF XDirection <> -1 AND XDirection <> 1 THEN Result := 2; END_IF;
+END_IF;
+SearchTimeout(TYPE := TON, IN := (Phase = 1 OR Phase = 2) AND Result = 0, PT := TimeoutMs);
+ReleaseTimeout(TYPE := TON, IN := (Phase = 3 OR Phase = 4) AND Result = 0, PT := TimeoutMs);
+CouplingTimeout(TYPE := TON, IN := Phase = 0 AND Result = 0, PT := 60000);
+IF SearchTimeout.Q OR ReleaseTimeout.Q THEN Result := 1; END_IF;
+IF CouplingTimeout.Q THEN Result := 3; END_IF;
+IF Result <> 0 THEN
+AXES_STOP(X);
+IF X.Stopped THEN
+END_FUNCTION(Result := Result);
+END_IF;
+ELSIF Stage = 0 THEN
+IF Phase = 0 THEN
+IF Result = 0 THEN Phase := 1; END_IF;
+ELSIF Phase = 1 THEN
+IF XSeen OR HomeSensorX THEN XSeen := TRUE; AXES_STOP(X); ELSE AXIS_HOME(X := XDirection, Velocity := XVelocity); END_IF;
+IF XSeen THEN Phase := 2; END_IF;
+ELSIF Phase = 2 THEN
+AXES_STOP(X); IF X.Stopped THEN Phase := 3; END_IF;
+ELSIF Phase = 3 THEN
+IF XReleased OR NOT HomeSensorX THEN XReleased := TRUE; AXES_STOP(X); ELSE AXIS_HOME(X := -XDirection, Velocity := XReturn); END_IF;
+IF XReleased THEN Phase := 4; END_IF;
+ELSIF Phase = 4 THEN
+AXES_STOP(X); IF X.Stopped THEN
+AXIS_SET_HOME(Axis := X, Position := XPosition - XDisplace);
+Phase := 5; END_IF;
+ELSIF Phase = 5 THEN
+IF XDisplace <> 0.0 THEN
+DisplaceVelocity := XVelocity;
+TOOLPATH_SYNC_RUN(Homing := TRUE, X := XPosition, Velocity := DisplaceVelocity);
+END_IF;
+END_FUNCTION(Result := 0);
+END_IF;
+END_IF;

@@ -1,0 +1,2 @@
+// Program end completes in the same scan. M30 reuses this completion contract.
+END_FUNCTION(Result := 0);
